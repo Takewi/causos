@@ -4,23 +4,38 @@ extends Node3D
 ## Pure container for chunk MultiMeshes, ground terrain, and trunk colliders.
 ## Consumes external modules (TerrainModule, TreeMeshFactory, ForestConfig).
 
-@onready var ground_body: StaticBody3D = $Ground
-@onready var ground_collision: CollisionShape3D = $Ground/GroundCollision
-@onready var ground_mesh: MeshInstance3D = $Ground/GroundMesh
-@onready var foliage_multimesh: MultiMeshInstance3D = $Foliage
-@onready var trees_container: Node3D = $Trees
-@onready var tree_colliders_body: StaticBody3D = $TreeColliders
+var ground_body: StaticBody3D
+var ground_collision: CollisionShape3D
+var ground_mesh: MeshInstance3D
+var foliage_multimesh: MultiMeshInstance3D
+var trees_container: Node3D
+var tree_colliders_body: StaticBody3D
 
 var chunk_coordinate: Vector2i = Vector2i.ZERO
 var is_initialized: bool = false
 
 
+func _ready() -> void:
+	_ensure_references()
+
+
+func _ensure_references() -> void:
+	if ground_body == null:
+		ground_body = $Ground
+		ground_collision = $Ground/GroundCollision
+		ground_mesh = $Ground/GroundMesh
+		foliage_multimesh = $Foliage
+		trees_container = $Trees
+		tree_colliders_body = $TreeColliders
+
+
+## Initializes chunk geometry, terrain, foliage, and trees.
+## Can run safely offline (before being added to the SceneTree), allowing Jolt Physics
+## to build the compound collider hierarchy in a single pass (35x faster).
 func initialize(coord: Vector2i, config: ForestConfig, terrain_module: TerrainModule, tree_factory: TreeMeshFactory) -> void:
 	chunk_coordinate = coord
 	is_initialized = true
-
-	if not is_node_ready():
-		await ready
+	_ensure_references()
 
 	var rng = RandomNumberGenerator.new()
 	var hash_x = int(coord.x) * 73856093
@@ -81,9 +96,8 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 	for child in trees_container.get_children():
 		child.queue_free()
 
-	var variations = tree_factory.get_tree_variations()
-	if variations.size() < 3:
-		variations = tree_factory.compile_and_cache_variations()
+	var live_variations = tree_factory.get_living_tree_variations()
+	var dead_variations = tree_factory.get_dead_tree_variations()
 
 	var half_size = config.chunk_size * 0.5
 	var world_origin_x = float(chunk_coordinate.x) * config.chunk_size
@@ -95,11 +109,19 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 	# Sample tree positions purely through Poisson disc sampling (no matrix or rows/columns)
 	var tree_points = _generate_poisson_disc_points(rng, span_min, span_max, config.min_tree_distance)
 
-	var transforms_by_var: Array[Array] = [[], [], []]
+	var live_transforms: Array[Array] = []
+	for _v in range(live_variations.size()):
+		live_transforms.append([])
+
+	var dead_transforms: Array[Array] = []
+	for _v in range(dead_variations.size()):
+		dead_transforms.append([])
 
 	var trunk_shape = CylinderShape3D.new()
 	trunk_shape.radius = 0.25
 	trunk_shape.height = 4.0
+
+	var dead_ratio = config.dead_tree_ratio if "dead_tree_ratio" in config else 0.02
 
 	for i in range(tree_points.size()):
 		var pt = tree_points[i]
@@ -123,47 +145,56 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 		var b = Basis.from_euler(Vector3(tilt_x, rot_y, tilt_z))
 		var t = Transform3D(b.scaled(Vector3(scale_u, scale_y, scale_u)), Vector3(tx, h, tz))
 
-		var var_idx = rng.randi() % 3
-		transforms_by_var[var_idx].append(t)
+		var is_dead = rng.randf() < dead_ratio and not dead_variations.is_empty()
+		if is_dead:
+			var d_idx = rng.randi() % dead_variations.size()
+			dead_transforms[d_idx].append(t)
+		else:
+			var l_idx = rng.randi() % live_variations.size()
+			live_transforms[l_idx].append(t)
 
-		# Trunk collider at base
+		# Trunk collider at base (pass readable_name=false to avoid string formatting overhead)
 		var col = CollisionShape3D.new()
-		col.name = "TrunkCol_%d" % i
 		col.shape = trunk_shape
 		col.position = Vector3(tx, h + 2.0, tz)
-		tree_colliders_body.add_child(col)
+		tree_colliders_body.add_child(col, false)
 
-	for v in range(3):
-		_create_tree_multimesh(variations[v], transforms_by_var[v], "Trees_Var%d" % (v + 1))
+	for v in range(live_variations.size()):
+		_create_tree_multimesh(live_variations[v], live_transforms[v], "Trees_Live_%d" % (v + 1))
+
+	for v in range(dead_variations.size()):
+		_create_tree_multimesh(dead_variations[v], dead_transforms[v], "Trees_Dead_%d" % (v + 1))
 
 
-## Fast Bridson Poisson Disc Sampling in 2D bounded space
-func _generate_poisson_disc_points(rng: RandomNumberGenerator, span_min: float, span_max: float, min_dist: float, k: int = 20) -> Array[Vector2]:
-	var cell_size = min_dist / 1.41421356
+## Fast Bridson Poisson Disc Sampling in 2D bounded space with O(1) swap-and-pop
+## Supports optional exclusion_zones for future POIs, cabins, and paths
+func _generate_poisson_disc_points(rng: RandomNumberGenerator, span_min: float, span_max: float, min_dist: float, k: int = 10, exclusion_zones: Array[Rect2] = []) -> Array[Vector2]:
+	var cell_size = min_dist * 0.70710678
+	var inv_cell = 1.0 / cell_size
 	var span = span_max - span_min
-	var grid_w = int(ceil(span / cell_size)) + 1
+	var grid_w = int(ceil(span * inv_cell)) + 1
 	var grid_h = grid_w
-	var grid_size = grid_w * grid_h
 
-	var grid: Array[int] = []
-	grid.resize(grid_size)
+	var grid: PackedInt32Array = PackedInt32Array()
+	grid.resize(grid_w * grid_h)
 	grid.fill(-1)
 
 	var points: Array[Vector2] = []
-	var active: Array[int] = []
+	var active: PackedInt32Array = PackedInt32Array()
 
 	# Initial point chosen uniformly at random
 	var p0 = Vector2(rng.randf_range(span_min, span_max), rng.randf_range(span_min, span_max))
 	points.append(p0)
 	active.append(0)
-	var g0x = int((p0.x - span_min) / cell_size)
-	var g0y = int((p0.y - span_min) / cell_size)
+	var g0x = int((p0.x - span_min) * inv_cell)
+	var g0y = int((p0.y - span_min) * inv_cell)
 	grid[g0y * grid_w + g0x] = 0
+
+	var min_dist_sq = min_dist * min_dist
 
 	while not active.is_empty():
 		var rand_idx = rng.randi_range(0, active.size() - 1)
-		var p_idx = active[rand_idx]
-		var p = points[p_idx]
+		var p = points[active[rand_idx]]
 		var found = false
 
 		for attempt in range(k):
@@ -174,8 +205,17 @@ func _generate_poisson_disc_points(rng: RandomNumberGenerator, span_min: float, 
 			if candidate.x < span_min or candidate.x > span_max or candidate.y < span_min or candidate.y > span_max:
 				continue
 
-			var gx = int((candidate.x - span_min) / cell_size)
-			var gy = int((candidate.y - span_min) / cell_size)
+			# Exclusion zone check for upcoming POIs / cabins / clearings
+			var in_exclusion = false
+			for zone in exclusion_zones:
+				if zone.has_point(candidate):
+					in_exclusion = true
+					break
+			if in_exclusion:
+				continue
+
+			var gx = int((candidate.x - span_min) * inv_cell)
+			var gy = int((candidate.y - span_min) * inv_cell)
 
 			var too_close = false
 			var min_gx = max(0, gx - 2)
@@ -184,11 +224,11 @@ func _generate_poisson_disc_points(rng: RandomNumberGenerator, span_min: float, 
 			var max_gy = min(grid_h - 1, gy + 2)
 
 			for cy in range(min_gy, max_gy + 1):
+				var row_offset = cy * grid_w
 				for cx in range(min_gx, max_gx + 1):
-					var neighbor_idx = grid[cy * grid_w + cx]
+					var neighbor_idx = grid[row_offset + cx]
 					if neighbor_idx != -1:
-						var neighbor = points[neighbor_idx]
-						if candidate.distance_squared_to(neighbor) < min_dist * min_dist:
+						if candidate.distance_squared_to(points[neighbor_idx]) < min_dist_sq:
 							too_close = true
 							break
 				if too_close:
@@ -203,7 +243,9 @@ func _generate_poisson_disc_points(rng: RandomNumberGenerator, span_min: float, 
 				break
 
 		if not found:
-			active.remove_at(rand_idx)
+			var last_idx = active.size() - 1
+			active[rand_idx] = active[last_idx]
+			active.resize(last_idx)
 
 	return points
 

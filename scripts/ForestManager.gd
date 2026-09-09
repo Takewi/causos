@@ -10,6 +10,7 @@ var terrain_module: TerrainModule
 var tree_factory: TreeMeshFactory
 
 var loaded_chunks: Dictionary = {} # Vector2i -> ForestChunk
+var spawn_queue: Array[Vector2i] = []
 var last_player_chunk: Vector2i = Vector2i(999999, 999999)
 
 
@@ -20,7 +21,8 @@ func _ready() -> void:
 	# Initialize shared singletons for terrain calculation and tree meshes
 	terrain_module = TerrainModule.new(config)
 	tree_factory = TreeMeshFactory.new()
-	tree_factory.get_tree_variations() # Pre-cache variations
+	tree_factory.get_living_tree_variations()
+	tree_factory.get_dead_tree_variations()
 
 	if player == null:
 		player = _find_player_in_tree()
@@ -34,8 +36,19 @@ func _ready() -> void:
 	last_player_chunk = world_to_chunk_coord(start_pos)
 	_update_streaming(last_player_chunk)
 
+	# Spawn the immediate center chunk synchronously on startup so player stands on ground
+	if not spawn_queue.is_empty():
+		var center_chunk = spawn_queue.pop_front()
+		_spawn_chunk(center_chunk)
+
 
 func _process(_delta: float) -> void:
+	# Process 1 chunk per frame from spawn queue to prevent frame drops
+	if not spawn_queue.is_empty():
+		var next_coord = spawn_queue.pop_front()
+		if is_coord_in_grid(next_coord) and not loaded_chunks.has(next_coord):
+			_spawn_chunk(next_coord)
+
 	if player == null:
 		player = _find_player_in_tree()
 		if player == null:
@@ -95,19 +108,33 @@ func _update_streaming(center_coord: Vector2i) -> void:
 		if is_instance_valid(chunk_node):
 			chunk_node.queue_free()
 
-	# 2. Instantiate and initialize new chunks
+	# Remove pending coords that are no longer in active radius
+	var filtered_queue: Array[Vector2i] = []
+	for queued in spawn_queue:
+		if queued in active_coords:
+			filtered_queue.append(queued)
+	spawn_queue = filtered_queue
+
+	# 2. Enqueue new chunks (sorted by proximity to center)
 	for coord in active_coords:
-		if not loaded_chunks.has(coord):
-			_spawn_chunk(coord)
+		if not loaded_chunks.has(coord) and coord not in spawn_queue:
+			spawn_queue.append(coord)
+
+	spawn_queue.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var dist_a = (a - center_coord).length_squared()
+		var dist_b = (b - center_coord).length_squared()
+		return dist_a < dist_b
+	)
 
 
 func _spawn_chunk(coord: Vector2i) -> void:
 	var chunk = chunk_scene.instantiate() as ForestChunk
 	chunk.name = "Chunk_%d_%d" % [coord.x, coord.y]
 	chunk.position = chunk_coord_to_world(coord)
-	add_child(chunk)
 
+	# Initialize offline so Jolt builds compound physics shapes in a single fast pass
 	chunk.initialize(coord, config, terrain_module, tree_factory)
+	add_child(chunk)
 	loaded_chunks[coord] = chunk
 
 

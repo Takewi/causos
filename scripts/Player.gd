@@ -36,20 +36,8 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	var is_sprinting = Input.is_key_pressed(KEY_SHIFT)
-	var current_speed = sprint_speed if is_sprinting else move_speed
-
-	var input_dir = Vector2.ZERO
-	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
-		input_dir.y -= 1.0
-	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
-		input_dir.y += 1.0
-	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
-		input_dir.x -= 1.0
-	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
-		input_dir.x += 1.0
-
-	input_dir = input_dir.normalized()
+	var current_speed = sprint_speed if _is_sprint_active() else move_speed
+	var input_dir = _get_movement_input()
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if direction != Vector3.ZERO:
@@ -60,3 +48,27 @@ func _physics_process(delta: float) -> void:
 		velocity.z = move_toward(velocity.z, 0, current_speed * 8.0 * delta)
 
 	move_and_slide()
+
+
+## Movement vector querying with InputMap actions support and keyboard fallback
+func _get_movement_input() -> Vector2:
+	if InputMap.has_action("move_left") and InputMap.has_action("move_right") and InputMap.has_action("move_forward") and InputMap.has_action("move_back"):
+		return Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+
+	var dir = Vector2.ZERO
+	if Input.is_key_pressed(KEY_W) or Input.is_key_pressed(KEY_UP):
+		dir.y -= 1.0
+	if Input.is_key_pressed(KEY_S) or Input.is_key_pressed(KEY_DOWN):
+		dir.y += 1.0
+	if Input.is_key_pressed(KEY_A) or Input.is_key_pressed(KEY_LEFT):
+		dir.x -= 1.0
+	if Input.is_key_pressed(KEY_D) or Input.is_key_pressed(KEY_RIGHT):
+		dir.x += 1.0
+	return dir.normalized()
+
+
+## Sprint status querying with InputMap action support and Shift fallback
+func _is_sprint_active() -> bool:
+	if InputMap.has_action("sprint"):
+		return Input.is_action_pressed("sprint")
+	return Input.is_key_pressed(KEY_SHIFT)
