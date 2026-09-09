@@ -13,6 +13,7 @@ var min_tree_distance: float = 3.0
 
 var fps_limit: int = 60
 var vsync_enabled: bool = true
+var fullscreen_enabled: bool = false
 var show_fps_counter: bool = false
 
 
@@ -21,11 +22,28 @@ func _ready() -> void:
 	apply_display_settings()
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and not event.is_echo():
+		if event.keycode == KEY_F11 or (event.keycode == KEY_ENTER and event.alt_pressed):
+			set_fullscreen(not fullscreen_enabled)
+			get_viewport().set_input_as_handled()
+
+
 ## Applies current graphical settings to the engine
 func apply_display_settings() -> void:
 	Engine.max_fps = fps_limit
-	var mode = DisplayServer.VSYNC_ENABLED if vsync_enabled else DisplayServer.VSYNC_DISABLED
-	DisplayServer.window_set_vsync_mode(mode)
+	var vsync_mode = DisplayServer.VSYNC_ENABLED if vsync_enabled else DisplayServer.VSYNC_DISABLED
+	DisplayServer.window_set_vsync_mode(vsync_mode)
+	var win_mode = DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN if fullscreen_enabled else DisplayServer.WINDOW_MODE_WINDOWED
+	DisplayServer.window_set_mode(win_mode)
+
+
+## Sets Fullscreen mode
+func set_fullscreen(enabled: bool) -> void:
+	fullscreen_enabled = enabled
+	var mode = DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED
+	DisplayServer.window_set_mode(mode)
+	settings_changed.emit()
 
 
 ## Sets FPS limit: 30, 60, 120, 144, 0 (uncapped)

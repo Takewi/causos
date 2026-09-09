@@ -286,6 +286,11 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="FullscreenCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
+text = "Tela Cheia (Fullscreen)"
+
 [node name="VSyncCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
@@ -310,6 +315,7 @@ text = "Salvar e Voltar"
 [connection signal="pressed" from="CenterContainer/MapCreationPanel/VBox/ActionHBox/MapBackBtn" to="." method="_on_map_back_pressed"]
 [connection signal="pressed" from="CenterContainer/MapCreationPanel/VBox/ActionHBox/StartForestBtn" to="." method="_on_start_forest_pressed"]
 [connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption" to="." method="_on_fps_selected"]
+[connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/FullscreenCheck" to="." method="_on_fullscreen_toggled"]
 [connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/VSyncCheck" to="." method="_on_vsync_toggled"]
 [connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/FPSCounterCheck" to="." method="_on_fps_counter_toggled"]
 [connection signal="pressed" from="CenterContainer/SettingsPanel/VBox/SettingsBackBtn" to="." method="_on_settings_back_pressed"]

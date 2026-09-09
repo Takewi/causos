@@ -15,6 +15,7 @@ extends Control
 
 # Settings Controls
 @onready var fps_option: OptionButton = $CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption
+@onready var fullscreen_check: CheckBox = $CenterContainer/SettingsPanel/VBox/FullscreenCheck
 @onready var vsync_check: CheckBox = $CenterContainer/SettingsPanel/VBox/VSyncCheck
 @onready var fps_counter_check: CheckBox = $CenterContainer/SettingsPanel/VBox/FPSCounterCheck
 
@@ -31,6 +32,9 @@ func _ready() -> void:
 	_show_main_view()
 	_populate_settings_ui()
 	_populate_map_ui()
+	var gm = _get_gm()
+	if gm and gm.has_signal("settings_changed"):
+		gm.settings_changed.connect(_on_settings_changed)
 
 
 func _show_main_view() -> void:
@@ -80,6 +84,7 @@ func _populate_settings_ui() -> void:
 			fps_option.select(fps_option.item_count - 1)
 
 	if gm:
+		fullscreen_check.button_pressed = gm.fullscreen_enabled
 		vsync_check.button_pressed = gm.vsync_enabled
 		fps_counter_check.button_pressed = gm.show_fps_counter
 
@@ -144,6 +149,12 @@ func _on_fps_selected(index: int) -> void:
 		gm.set_fps_limit(selected_id)
 
 
+func _on_fullscreen_toggled(toggled_on: bool) -> void:
+	var gm = _get_gm()
+	if gm:
+		gm.set_fullscreen(toggled_on)
+
+
 func _on_vsync_toggled(toggled_on: bool) -> void:
 	var gm = _get_gm()
 	if gm:
@@ -154,6 +165,14 @@ func _on_fps_counter_toggled(toggled_on: bool) -> void:
 	var gm = _get_gm()
 	if gm:
 		gm.set_show_fps_counter(toggled_on)
+
+
+func _on_settings_changed() -> void:
+	var gm = _get_gm()
+	if gm and is_instance_valid(fullscreen_check):
+		fullscreen_check.set_pressed_no_signal(gm.fullscreen_enabled)
+		vsync_check.set_pressed_no_signal(gm.vsync_enabled)
+		fps_counter_check.set_pressed_no_signal(gm.show_fps_counter)
 
 
 func _on_settings_back_pressed() -> void:
