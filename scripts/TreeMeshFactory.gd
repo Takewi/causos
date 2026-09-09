@@ -139,18 +139,16 @@ func _build_umbrella_canopy_tree(seed_val: int) -> ArrayMesh:
 	var st_foliage = SurfaceTool.new()
 	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.50
 
-	# 1. Tronco principal até o nó central da copa (~6.5m)
+	# 1. Tronco principal contínuo até o nó central da copa (~6.5m)
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 2.2, rng.randf_range(-0.15, 0.15))
 	var p2 = Vector3(rng.randf_range(-0.25, 0.25), 4.6, rng.randf_range(-0.25, 0.25))
 	var p_hub = Vector3(rng.randf_range(-0.15, 0.15), 6.5, rng.randf_range(-0.15, 0.15))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.88, sides)
-	_build_cylinder_segment(st_bark, p1, p2, r_base * 0.88, r_base * 0.74, sides)
-	_build_cylinder_segment(st_bark, p2, p_hub, r_base * 0.74, r_base * 0.62, sides)
+	_build_continuous_branch(st_bark, [p0, p1, p2, p_hub], [r_base, r_base * 0.88, r_base * 0.74, r_base * 0.62], sides, true, false)
 
 	# Galho seco baixo saindo a 2.6m
 	var dry_dir = Vector3(rng.randf_range(0.6, 0.9), rng.randf_range(-0.1, 0.15), rng.randf_range(-0.4, 0.4)).normalized()
@@ -163,22 +161,27 @@ func _build_umbrella_canopy_tree(seed_val: int) -> ArrayMesh:
 		var bough_reach = rng.randf_range(3.8, 4.6)
 		# Espalha lateralmente para fora com leve subida
 		var bough_mid = p_hub + Vector3(cos(ang) * bough_reach, rng.randf_range(0.8, 1.4), sin(ang) * bough_reach)
-		_build_cylinder_segment(st_bark, p_hub, bough_mid, 0.26, 0.17, sides)
+		_build_continuous_branch(st_bark, [p_hub, bough_mid], [0.26, 0.17], sides, true, true)
 
-			# Dois galhos secundários curvando para fora e para cima
+		# Dois galhos secundários curvando para fora e para cima
 		for s in range(2):
 			var sec_ang = ang + (float(s) - 0.5) * 0.75 + rng.randf_range(-0.15, 0.15)
 			var sec_reach = rng.randf_range(2.6, 3.4)
 			var sec_tip = bough_mid + Vector3(cos(sec_ang) * sec_reach, rng.randf_range(1.2, 2.0), sin(sec_ang) * sec_reach)
-			_build_cylinder_segment(st_bark, bough_mid, sec_tip, 0.17, 0.10, sides)
-			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
-			# Ramificações terciárias nas extremidades para ancorar as folhas
-			for t in range(2):
-				var tert_ang = sec_ang + (float(t) - 0.5) * 0.8 + rng.randf_range(-0.2, 0.2)
-				var tert_tip = sec_tip + Vector3(cos(tert_ang) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.1), sin(tert_ang) * rng.randf_range(1.5, 2.2))
-				_build_cylinder_segment(st_bark, sec_tip, tert_tip, 0.10, 0.03, 4)
-				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.0, 4.8), rng, 2)
+			# Ramificação primária contínua até o tufo de folhas
+			var tert_ang0 = sec_ang - 0.35 + rng.randf_range(-0.1, 0.1)
+			var tert_tip0 = sec_tip + Vector3(cos(tert_ang0) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.1), sin(tert_ang0) * rng.randf_range(1.5, 2.2))
+			_build_continuous_branch(st_bark, [bough_mid, sec_tip, tert_tip0], [0.17, 0.10, 0.01], 4, true, true)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip0, rng.randf_range(4.0, 4.8), rng, 2)
+
+			# Ramo secundário lateral bifurcando no nó sec_tip
+			var tert_ang1 = sec_ang + 0.40 + rng.randf_range(-0.1, 0.1)
+			var tert_tip1 = sec_tip + Vector3(cos(tert_ang1) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.1), sin(tert_ang1) * rng.randf_range(1.5, 2.2))
+			_build_cylinder_segment(st_bark, sec_tip, tert_tip1, 0.08, 0.01, 4)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip1, rng.randf_range(4.0, 4.8), rng, 2)
+
+			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
 		bough_tips.append(bough_mid)
 
@@ -215,16 +218,15 @@ func _build_v_bifurcated_tree(seed_val: int) -> ArrayMesh:
 	var st_foliage = SurfaceTool.new()
 	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.52
 
-	# 1. Base até a bifurcação em V (~2.3m)
+	# 1. Base contínua até a bifurcação em V (~2.3m)
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 1.2, rng.randf_range(-0.15, 0.15))
 	var split_pt = Vector3(rng.randf_range(-0.25, 0.25), 2.3, rng.randf_range(-0.25, 0.25))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.90, sides)
-	_build_cylinder_segment(st_bark, p1, split_pt, r_base * 0.90, r_base * 0.82, sides)
+	_build_continuous_branch(st_bark, [p0, p1, split_pt], [r_base, r_base * 0.90, r_base * 0.82], sides, true, true)
 
 	# Galho seco na base
 	var dry_dir1 = Vector3(rng.randf_range(0.6, 0.9), rng.randf_range(-0.1, 0.2), rng.randf_range(-0.4, 0.4)).normalized()
@@ -247,26 +249,28 @@ func _build_v_bifurcated_tree(seed_val: int) -> ArrayMesh:
 			var dead_dir = Vector3(sin(ang), rng.randf_range(0.1, 0.35), cos(ang)).normalized()
 			_build_cylinder_segment(st_bark, p_arm_mid, p_arm_mid + dead_dir * 1.7, 0.13, 0.03, 4)
 
-		# Galhos secundários
+		# Galhos secundários contínuos
 		for sub_b in range(2):
 			var sub_ang = ang + (float(sub_b) - 0.5) * 0.85 + rng.randf_range(-0.15, 0.15)
 			var sub_dir = Vector3(cos(sub_ang) * 0.65, 0.80, sin(sub_ang) * 0.65).normalized()
 			var sec_tip = p_arm_mid + sub_dir * rng.randf_range(3.8, 4.8)
-			_build_cylinder_segment(st_bark, p_arm_mid, sec_tip, r_base * 0.40, 0.11, sides)
-			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
-			# Ramificações terciárias
-			for tert in range(2):
-				var tert_ang = sub_ang + (float(tert) - 0.5) * 0.85 + rng.randf_range(-0.2, 0.2)
-				var tert_tip = sec_tip + Vector3(cos(tert_ang) * rng.randf_range(1.4, 2.0), rng.randf_range(0.5, 1.2), sin(tert_ang) * rng.randf_range(1.4, 2.0))
-				_build_cylinder_segment(st_bark, sec_tip, tert_tip, 0.11, 0.03, 4)
-				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.0, 4.6), rng, 2)
+			var tert_ang0 = sub_ang - 0.4 + rng.randf_range(-0.1, 0.1)
+			var tert_tip0 = sec_tip + Vector3(cos(tert_ang0) * rng.randf_range(1.4, 2.0), rng.randf_range(0.5, 1.2), sin(tert_ang0) * rng.randf_range(1.4, 2.0))
+			_build_continuous_branch(st_bark, [p_arm_mid, sec_tip, tert_tip0], [r_base * 0.40, 0.11, 0.01], sides, true, true)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip0, rng.randf_range(4.0, 4.6), rng, 2)
+
+			var tert_ang1 = sub_ang + 0.45 + rng.randf_range(-0.1, 0.1)
+			var tert_tip1 = sec_tip + Vector3(cos(tert_ang1) * rng.randf_range(1.4, 2.0), rng.randf_range(0.5, 1.2), sin(tert_ang1) * rng.randf_range(1.4, 2.0))
+			_build_cylinder_segment(st_bark, sec_tip, tert_tip1, 0.08, 0.01, 4)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip1, rng.randf_range(4.0, 4.6), rng, 2)
+
+			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
 	# Ponte de galho cruzando entre as duas metades
 	if arm_mids.size() == 2:
 		var bridge_mid = (arm_mids[0] + arm_mids[1]) * 0.5 + Vector3(0, rng.randf_range(0.5, 1.5), 0)
-		_build_cylinder_segment(st_bark, arm_mids[0], bridge_mid, 0.14, 0.08, 4)
-		_build_cylinder_segment(st_bark, bridge_mid, arm_mids[1], 0.08, 0.14, 4)
+		_build_continuous_branch(st_bark, [arm_mids[0], bridge_mid, arm_mids[1]], [0.14, 0.08, 0.14], 4, true, true)
 		_add_volumetric_foliage_cards(st_foliage, bridge_mid, rng.randf_range(3.8, 4.4), rng, 2)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.22, 0.16, 0.10))
@@ -285,18 +289,16 @@ func _build_thick_gnarled_tree(seed_val: int) -> ArrayMesh:
 	var st_foliage = SurfaceTool.new()
 	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.60
 
-	# Tronco retorcido com forte inclinação
+	# Tronco retorcido com forte inclinação contínuo sem cortes
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(0.35, 0.60), 1.8, rng.randf_range(-0.35, -0.15))
 	var p2 = Vector3(rng.randf_range(0.60, 0.95), 3.8, rng.randf_range(0.15, 0.40))
 	var p3 = Vector3(rng.randf_range(0.30, 0.60), 6.5, rng.randf_range(0.45, 0.75))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.90, sides)
-	_build_cylinder_segment(st_bark, p1, p2, r_base * 0.90, r_base * 0.78, sides)
-	_build_cylinder_segment(st_bark, p2, p3, r_base * 0.78, r_base * 0.65, sides)
+	_build_continuous_branch(st_bark, [p0, p1, p2, p3], [r_base, r_base * 0.90, r_base * 0.78, r_base * 0.65], sides, true, false)
 
 	# Galho morto grosso lateral a 3.2m
 	var dead_bough = Vector3(rng.randf_range(-0.85, -0.6), rng.randf_range(-0.15, 0.1), rng.randf_range(-0.5, 0.5)).normalized()
@@ -314,15 +316,18 @@ func _build_thick_gnarled_tree(seed_val: int) -> ArrayMesh:
 			var sub_ang = ang + (float(s) - 0.5) * 1.0 + rng.randf_range(-0.2, 0.2)
 			var sub_dir = Vector3(cos(sub_ang) * 0.85, rng.randf_range(0.3, 0.6), sin(sub_ang) * 0.85).normalized()
 			var tip = bough_mid + sub_dir * rng.randf_range(2.8, 3.8)
-			_build_cylinder_segment(st_bark, bough_mid, tip, 0.22, 0.09, sides)
-			_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(4.0, 4.6), rng, 2)
 
-			# Ramificações terciárias retorcidas
-			for tert in range(2):
-				var tert_ang = sub_ang + (float(tert) - 0.5) * 0.9 + rng.randf_range(-0.2, 0.2)
-				var tert_tip = tip + Vector3(cos(tert_ang) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.0), sin(tert_ang) * rng.randf_range(1.5, 2.2))
-				_build_cylinder_segment(st_bark, tip, tert_tip, 0.09, 0.03, 4)
-				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.2, 4.8), rng, 2)
+			var tert_ang0 = sub_ang - 0.45 + rng.randf_range(-0.1, 0.1)
+			var tert_tip0 = tip + Vector3(cos(tert_ang0) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.0), sin(tert_ang0) * rng.randf_range(1.5, 2.2))
+			_build_continuous_branch(st_bark, [bough_mid, tip, tert_tip0], [0.22, 0.09, 0.01], sides, true, true)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip0, rng.randf_range(4.2, 4.8), rng, 2)
+
+			var tert_ang1 = sub_ang + 0.45 + rng.randf_range(-0.1, 0.1)
+			var tert_tip1 = tip + Vector3(cos(tert_ang1) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.0), sin(tert_ang1) * rng.randf_range(1.5, 2.2))
+			_build_cylinder_segment(st_bark, tip, tert_tip1, 0.08, 0.01, 4)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip1, rng.randf_range(4.2, 4.8), rng, 2)
+
+			_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(4.0, 4.6), rng, 2)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.18, 0.13, 0.08))
 
@@ -340,33 +345,30 @@ func _build_young_slender_tree(seed_val: int) -> ArrayMesh:
 	var st_foliage = SurfaceTool.new()
 	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.28
 
-	# Tronco fino e esguio (~10.5m) limpo na parte inferior (sem galhos baixos)
+	# Tronco fino e esguio (~10.5m) contínuo sem cortes
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(-0.1, 0.1), 3.0, rng.randf_range(-0.1, 0.1))
 	var p2 = Vector3(rng.randf_range(-0.15, 0.15), 6.5, rng.randf_range(-0.15, 0.15))
 	var p_top = Vector3(rng.randf_range(-0.15, 0.15), 10.2, rng.randf_range(-0.15, 0.15))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.82, sides)
-	_build_cylinder_segment(st_bark, p1, p2, r_base * 0.82, r_base * 0.65, sides)
-	_build_cylinder_segment(st_bark, p2, p_top, r_base * 0.65, 0.09, sides)
+	_build_continuous_branch(st_bark, [p0, p1, p2, p_top], [r_base, r_base * 0.82, r_base * 0.65, 0.09], sides, true, true)
 
-	# 4 Galhos ascendentes formando copa compacta e alta (ângulos inclinados para cima)
+	# 4 Galhos ascendentes formando copa compacta e alta
 	for i in range(4):
 		var ang = float(i) * (TAU / 4.0) + rng.randf_range(-0.25, 0.25)
 		var h_attach = rng.randf_range(7.0, 8.8)
 		var attach_pt = p2.lerp(p_top, (h_attach - 6.5) / 3.7)
 		var b_reach = rng.randf_range(2.0, 2.8)
 		var b_tip = attach_pt + Vector3(cos(ang) * b_reach, rng.randf_range(1.6, 2.5), sin(ang) * b_reach)
-		_build_cylinder_segment(st_bark, attach_pt, b_tip, 0.13, 0.06, 4)
-		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(3.4, 4.0), rng, 2)
 
-		# Raminho terciário
+		# Raminho terciário contínuo
 		var tert_ang = ang + rng.randf_range(-0.5, 0.5)
 		var tert_tip = b_tip + Vector3(cos(tert_ang) * 1.2, rng.randf_range(0.6, 1.2), sin(tert_ang) * 1.2)
-		_build_cylinder_segment(st_bark, b_tip, tert_tip, 0.06, 0.02, 4)
+		_build_continuous_branch(st_bark, [attach_pt, b_tip, tert_tip], [0.13, 0.06, 0.01], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(3.4, 4.0), rng, 2)
 		_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(3.6, 4.2), rng, 2)
 
 	# Copa no ápice
@@ -388,20 +390,17 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 	var st_foliage = SurfaceTool.new()
 	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.48
 
-	# Coluna central até ~14.2m
+	# Coluna central contínua até ~14.2m
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 4.2, rng.randf_range(-0.15, 0.15))
 	var p2 = Vector3(rng.randf_range(-0.2, 0.2), 8.5, rng.randf_range(-0.2, 0.2))
 	var p3 = Vector3(rng.randf_range(-0.2, 0.2), 12.0, rng.randf_range(-0.2, 0.2))
 	var p_top = Vector3(rng.randf_range(-0.1, 0.1), 14.2, rng.randf_range(-0.1, 0.1))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.85, sides)
-	_build_cylinder_segment(st_bark, p1, p2, r_base * 0.85, r_base * 0.70, sides)
-	_build_cylinder_segment(st_bark, p2, p3, r_base * 0.70, r_base * 0.50, sides)
-	_build_cylinder_segment(st_bark, p3, p_top, r_base * 0.50, 0.10, sides)
+	_build_continuous_branch(st_bark, [p0, p1, p2, p3, p_top], [r_base, r_base * 0.85, r_base * 0.70, r_base * 0.50, 0.08], sides, true, true)
 
 	# Andar 1 (Copa baixa a ~5.8m): 3 galhos horizontais
 	var tier1_pt = p1.lerp(p2, (5.8 - 4.2) / 4.3)
@@ -416,15 +415,19 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 	for i in range(3):
 		var ang = float(i) * (TAU / 3.0) + (PI / 3.0) + rng.randf_range(-0.2, 0.2)
 		var b_mid = tier2_pt + Vector3(cos(ang) * rng.randf_range(3.2, 4.0), rng.randf_range(0.6, 1.2), sin(ang) * rng.randf_range(3.2, 4.0))
-		_build_cylinder_segment(st_bark, tier2_pt, b_mid, 0.20, 0.09, sides)
-		_add_volumetric_foliage_cards(st_foliage, b_mid, rng.randf_range(3.8, 4.4), rng, 2)
 
-		# Ramificações terciárias
-		for t in range(2):
-			var tert_ang = ang + (float(t) - 0.5) * 0.8
-			var tert_tip = b_mid + Vector3(cos(tert_ang) * 1.8, rng.randf_range(0.5, 1.1), sin(tert_ang) * 1.8)
-			_build_cylinder_segment(st_bark, b_mid, tert_tip, 0.09, 0.03, 4)
-			_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.0, 4.6), rng, 2)
+		# Ramificações terciárias contínuas
+		var tert_ang0 = ang - 0.4
+		var tert_tip0 = b_mid + Vector3(cos(tert_ang0) * 1.8, rng.randf_range(0.5, 1.1), sin(tert_ang0) * 1.8)
+		_build_continuous_branch(st_bark, [tier2_pt, b_mid, tert_tip0], [0.20, 0.09, 0.01], sides, true, true)
+		_add_volumetric_foliage_cards(st_foliage, tert_tip0, rng.randf_range(4.0, 4.6), rng, 2)
+
+		var tert_ang1 = ang + 0.4
+		var tert_tip1 = b_mid + Vector3(cos(tert_ang1) * 1.8, rng.randf_range(0.5, 1.1), sin(tert_ang1) * 1.8)
+		_build_cylinder_segment(st_bark, b_mid, tert_tip1, 0.08, 0.01, 4)
+		_add_volumetric_foliage_cards(st_foliage, tert_tip1, rng.randf_range(4.0, 4.6), rng, 2)
+
+		_add_volumetric_foliage_cards(st_foliage, b_mid, rng.randf_range(3.8, 4.4), rng, 2)
 
 	# Andar 3 (Copa alta a ~12.2m): 4 galhos espalhados
 	for i in range(4):
@@ -450,20 +453,17 @@ func _build_dead_standing_tree(seed_val: int) -> ArrayMesh:
 	var st_bark = SurfaceTool.new()
 	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.42
 
-	# Tronco seco sinuoso até o topo esquelético (~11.4m)
+	# Tronco seco sinuoso contínuo até o topo esquelético (~11.4m)
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(-0.2, 0.2), 3.0, rng.randf_range(-0.2, 0.2))
 	var p2 = Vector3(rng.randf_range(-0.35, 0.35), 6.5, rng.randf_range(-0.35, 0.35))
 	var p3 = Vector3(rng.randf_range(-0.25, 0.25), 9.2, rng.randf_range(-0.25, 0.25))
 	var p_top = p3 + Vector3(rng.randf_range(-0.2, 0.2), 2.2, rng.randf_range(-0.2, 0.2))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.85, sides)
-	_build_cylinder_segment(st_bark, p1, p2, r_base * 0.85, r_base * 0.70, sides)
-	_build_cylinder_segment(st_bark, p2, p3, r_base * 0.70, r_base * 0.50, sides)
-	_build_cylinder_segment(st_bark, p3, p_top, r_base * 0.50, 0.005, 4)
+	_build_continuous_branch(st_bark, [p0, p1, p2, p3, p_top], [r_base, r_base * 0.85, r_base * 0.70, r_base * 0.50, 0.005], sides, true, true)
 
 	# Galho quebrado baixo a 3.5m
 	var stub_dir = Vector3(rng.randf_range(0.7, 0.9), rng.randf_range(-0.2, 0.1), rng.randf_range(-0.4, 0.4)).normalized()
@@ -502,16 +502,15 @@ func _build_dead_broken_trunk(seed_val: int) -> ArrayMesh:
 	var st_bark = SurfaceTool.new()
 	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
 
-	var sides = 5
+	var sides = 6
 	var r_base = 0.54
 
-	# Tronco grosso até a altura da quebra (~4.8m)
+	# Tronco grosso contínuo até a altura da quebra (~4.8m)
 	var p0 = Vector3.ZERO
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 2.4, rng.randf_range(-0.15, 0.15))
 	var p_snap = Vector3(rng.randf_range(-0.25, 0.25), 4.8, rng.randf_range(-0.25, 0.25))
 
-	_build_cylinder_segment(st_bark, p0, p1, r_base, r_base * 0.88, sides)
-	_build_cylinder_segment(st_bark, p1, p_snap, r_base * 0.88, r_base * 0.78, sides)
+	_build_continuous_branch(st_bark, [p0, p1, p_snap], [r_base, r_base * 0.88, r_base * 0.78], sides, true, true)
 
 	# 2 Galhos quebrados remanescentes na lateral
 	var stub1_dir = Vector3(rng.randf_range(-0.8, -0.6), rng.randf_range(-0.1, 0.2), rng.randf_range(0.4, 0.7)).normalized()
@@ -545,66 +544,192 @@ func _build_dead_broken_trunk(seed_val: int) -> ArrayMesh:
 	return _finalize_dead_tree_mesh(st_bark, Color(0.36, 0.34, 0.31))
 
 
-## Constrói um segmento de cilindro/tronco de 4 ou 5 lados com normais de face flat
-func _build_cylinder_segment(st: SurfaceTool, start_pt: Vector3, end_pt: Vector3, r_start: float, r_end: float, sides: int) -> void:
-	var dir = (end_pt - start_pt).normalized()
-	if dir.length_squared() < 0.0001:
+## Constrói uma cadeia/galho contínuo de segmentos unidos sem fendas, furos ou quinas cortadas
+func _build_continuous_branch(
+	st: SurfaceTool,
+	points: Array[Vector3],
+	radii: Array[float],
+	sides: int = 6,
+	close_start: bool = true,
+	close_end: bool = true
+) -> void:
+	var n_pts = points.size()
+	if n_pts < 2:
 		return
-	var up = Vector3.UP if abs(dir.dot(Vector3.UP)) < 0.9 else Vector3.RIGHT
-	var right = dir.cross(up).normalized()
-	var forward = right.cross(dir).normalized()
 
-	var v_start: Array[Vector3] = []
-	var v_end: Array[Vector3] = []
-	for i in range(sides):
-		var angle = float(i) * TAU / float(sides)
-		var offset = right * cos(angle) + forward * sin(angle)
-		v_start.append(start_pt + offset * r_start)
-		v_end.append(end_pt + offset * r_end)
-
-	for i in range(sides):
-		var next = (i + 1) % sides
-		var p0 = v_start[i]
-		var p1 = v_start[next]
-
-		if r_end < 0.01:
-			# Cone/Pyramid: triângulo único apontando para o ápice pontiagudo
-			var p_apex = end_pt
-			var n = (p1 - p0).cross(p_apex - p0).normalized()
-			st.set_normal(n)
-			st.set_uv(Vector2(0, 0))
-			st.add_vertex(p0)
-			st.set_normal(n)
-			st.set_uv(Vector2(1, 0))
-			st.add_vertex(p1)
-			st.set_normal(n)
-			st.set_uv(Vector2(0.5, 1))
-			st.add_vertex(p_apex)
+	# 1. Calcular tangentes/normais dos anéis em cada nó
+	var dirs: Array[Vector3] = []
+	for i in range(n_pts - 1):
+		var d = points[i + 1] - points[i]
+		var len_sq = d.length_squared()
+		if len_sq > 0.000001:
+			dirs.append(d / sqrt(len_sq))
 		else:
-			var p2 = v_end[next]
-			var p3 = v_end[i]
+			dirs.append(Vector3.UP)
 
-			var n1 = (p1 - p0).cross(p2 - p0).normalized()
-			st.set_normal(n1)
-			st.set_uv(Vector2(0, 0))
-			st.add_vertex(p0)
-			st.set_normal(n1)
-			st.set_uv(Vector2(1, 0))
-			st.add_vertex(p1)
-			st.set_normal(n1)
-			st.set_uv(Vector2(1, 1))
-			st.add_vertex(p2)
+	# Vetor normal do plano de cada nó
+	var ring_normals: Array[Vector3] = []
+	var miter_scales: Array[float] = []
 
-			var n2 = (p2 - p0).cross(p3 - p0).normalized()
-			st.set_normal(n2)
-			st.set_uv(Vector2(0, 0))
-			st.add_vertex(p0)
-			st.set_normal(n2)
-			st.set_uv(Vector2(1, 1))
-			st.add_vertex(p2)
-			st.set_normal(n2)
-			st.set_uv(Vector2(0, 1))
-			st.add_vertex(p3)
+	# Nó inicial
+	ring_normals.append(dirs[0])
+	miter_scales.append(1.0)
+
+	# Nós intermediários (onde o tronco curva e forma a quina)
+	for i in range(1, n_pts - 1):
+		var d_in = dirs[i - 1]
+		var d_out = dirs[i]
+		var joint_dir = (d_in + d_out).normalized()
+		if joint_dir.length_squared() < 0.0001:
+			joint_dir = d_out
+		ring_normals.append(joint_dir)
+
+		# Miter scale para manter o diâmetro do tronco constante na curva sem encolher nem inflar
+		var dot_val = d_in.dot(joint_dir)
+		var m_scale = 1.0
+		if dot_val > 0.001:
+			m_scale = clamp(1.0 / dot_val, 1.0, 1.35)
+		miter_scales.append(m_scale)
+
+	# Nó final
+	ring_normals.append(dirs[n_pts - 2])
+	miter_scales.append(1.0)
+
+	# 2. Propagação de coordenadas (u, v) sem torção (Parallel Transport Frame)
+	var u_axes: Array[Vector3] = []
+	var v_axes: Array[Vector3] = []
+
+	var init_up = Vector3.UP if abs(ring_normals[0].dot(Vector3.UP)) < 0.85 else Vector3.RIGHT
+	var u0 = ring_normals[0].cross(init_up).normalized()
+	var v0 = ring_normals[0].cross(u0).normalized()
+	u_axes.append(u0)
+	v_axes.append(v0)
+
+	for i in range(1, n_pts):
+		var norm = ring_normals[i]
+		var prev_u = u_axes[i - 1]
+		var proj_u = prev_u - norm * norm.dot(prev_u)
+		if proj_u.length_squared() > 0.0001:
+			u0 = proj_u.normalized()
+		else:
+			var alt_up = Vector3.UP if abs(norm.dot(Vector3.UP)) < 0.85 else Vector3.RIGHT
+			u0 = norm.cross(alt_up).normalized()
+		v0 = norm.cross(u0).normalized()
+		u_axes.append(u0)
+		v_axes.append(v0)
+
+	# 3. Gerar vértices dos anéis (compartilhados entre segmentos adjacentes)
+	var rings: Array = []
+	for i in range(n_pts):
+		var ring_verts: Array[Vector3] = []
+		var r = radii[i] * miter_scales[i]
+		var pt = points[i]
+		var u = u_axes[i]
+		var v = v_axes[i]
+
+		for j in range(sides):
+			var angle = float(j) * TAU / float(sides)
+			var offset = (u * cos(angle) + v * sin(angle)) * r
+			ring_verts.append(pt + offset)
+		rings.append(ring_verts)
+
+	# 4. Construir quads/triângulos contínuos entre anel i e anel i+1
+	var current_v_uv = 0.0
+	for i in range(n_pts - 1):
+		var r_curr = rings[i]
+		var r_next = rings[i + 1]
+		var seg_len = points[i].distance_to(points[i + 1])
+		var next_v_uv = current_v_uv + seg_len * 0.5
+
+		if radii[i + 1] < 0.01:
+			# Ápice cônico fechado na ponta
+			var apex = points[i + 1]
+			for j in range(sides):
+				var j_next = (j + 1) % sides
+				var p0 = r_curr[j]
+				var p1 = r_curr[j_next]
+				var norm = (p1 - p0).cross(apex - p0).normalized()
+				st.set_normal(norm)
+				st.set_uv(Vector2(float(j) / float(sides), current_v_uv))
+				st.add_vertex(p0)
+				st.set_normal(norm)
+				st.set_uv(Vector2(float(j + 1) / float(sides), current_v_uv))
+				st.add_vertex(p1)
+				st.set_normal(norm)
+				st.set_uv(Vector2((float(j) + 0.5) / float(sides), next_v_uv))
+				st.add_vertex(apex)
+		else:
+			for j in range(sides):
+				var j_next = (j + 1) % sides
+				var p0 = r_curr[j]
+				var p1 = r_curr[j_next]
+				var p2 = r_next[j_next]
+				var p3 = r_next[j]
+
+				var u_left = float(j) / float(sides)
+				var u_right = float(j + 1) / float(sides)
+
+				var n1 = (p1 - p0).cross(p2 - p0).normalized()
+				st.set_normal(n1)
+				st.set_uv(Vector2(u_left, current_v_uv))
+				st.add_vertex(p0)
+				st.set_normal(n1)
+				st.set_uv(Vector2(u_right, current_v_uv))
+				st.add_vertex(p1)
+				st.set_normal(n1)
+				st.set_uv(Vector2(u_right, next_v_uv))
+				st.add_vertex(p2)
+
+				var n2 = (p2 - p0).cross(p3 - p0).normalized()
+				st.set_normal(n2)
+				st.set_uv(Vector2(u_left, current_v_uv))
+				st.add_vertex(p0)
+				st.set_normal(n2)
+				st.set_uv(Vector2(u_right, next_v_uv))
+				st.add_vertex(p2)
+				st.set_normal(n2)
+				st.set_uv(Vector2(u_left, next_v_uv))
+				st.add_vertex(p3)
+
+		current_v_uv = next_v_uv
+
+	# 5. Tampas (Caps) para vedar pontas abertas
+	if close_start and radii[0] > 0.005:
+		var center_start = points[0]
+		var cap_norm = -ring_normals[0]
+		var r0_ring = rings[0]
+		for j in range(sides):
+			var j_next = (j + 1) % sides
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5, 0.5))
+			st.add_vertex(center_start)
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j_next) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j_next) * TAU / float(sides))))
+			st.add_vertex(r0_ring[j_next])
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j) * TAU / float(sides))))
+			st.add_vertex(r0_ring[j])
+
+	if close_end and radii[n_pts - 1] >= 0.01:
+		var center_end = points[n_pts - 1]
+		var cap_norm = ring_normals[n_pts - 1]
+		var rend_ring = rings[n_pts - 1]
+		for j in range(sides):
+			var j_next = (j + 1) % sides
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5, 0.5))
+			st.add_vertex(center_end)
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j) * TAU / float(sides))))
+			st.add_vertex(rend_ring[j])
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j_next) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j_next) * TAU / float(sides))))
+			st.add_vertex(rend_ring[j_next])
+
+
+## Constrói segmento cilíndrico selado e seguro
+func _build_cylinder_segment(st: SurfaceTool, start_pt: Vector3, end_pt: Vector3, r_start: float, r_end: float, sides: int = 6) -> void:
+	_build_continuous_branch(st, [start_pt, end_pt], [r_start, r_end], sides, true, true)
 
 
 ## Adiciona cluster volumétrico de folhas 2D com rotações 3D completas (Roll, Pitch, Yaw)

@@ -1,8 +1,8 @@
 class_name Player
 extends CharacterBody3D
 
-@export var move_speed: float = 6.0
-@export var sprint_speed: float = 12.0
+@export var move_speed: float = 2.2
+@export var sprint_speed: float = 3.6
 @export var mouse_sensitivity: float = 0.003
 @export var gravity: float = 20.0
 
@@ -38,8 +38,8 @@ func _physics_process(delta: float) -> void:
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if direction != Vector3.ZERO:
-		velocity.x = direction.x * current_speed
-		velocity.z = direction.z * current_speed
+		velocity.x = move_toward(velocity.x, direction.x * current_speed, current_speed * 7.0 * delta)
+		velocity.z = move_toward(velocity.z, direction.z * current_speed, current_speed * 7.0 * delta)
 	else:
 		velocity.x = move_toward(velocity.x, 0, current_speed * 8.0 * delta)
 		velocity.z = move_toward(velocity.z, 0, current_speed * 8.0 * delta)
