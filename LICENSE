@@ -1,0 +1,62 @@
+Copyright (c) 2026 Gustavo (Takewi). Todos os direitos reservados / All Rights Reserved.
+
+================================================================================
+PORTUGUÊS: LICENÇA DE USO NÃO COMERCIAL E PROPRIETÁRIA (SOURCE-AVAILABLE)
+================================================================================
+
+O código-fonte, arquitetura de software, malhas 3D procedurais e estáticas, texturas, 
+materiais, cenas, configurações e todo e qualquer recurso contido neste repositório 
+("Causos") são de propriedade intelectual exclusiva do autor.
+
+É expressamente CONCEDIDA permissão para:
+1. Visualizar e clonar o repositório estritamente para fins de estudo pessoal, 
+   pesquisa, aprendizado e avaliação técnica individual.
+2. Executar o projeto localmente em ambiente de desenvolvimento para fins de testes.
+
+É expressamente PROIBIDO, sem a prévia e expressa autorização por escrito do autor:
+1. Copiar, duplicar, reproduzir, republicar, redistribuir, sublicenciar ou transferir, 
+   total ou parcialmente, qualquer código-fonte, malha 3D, textura, shader ou asset 
+   deste projeto em qualquer mídia, repositório ou plataforma.
+2. Utilizar qualquer parte deste projeto, direta ou indiretamente, para QUALQUER 
+   finalidade comercial, empresarial ou com fins lucrativos (incluindo, sem limitação: 
+   venda, licenciamento, microtransações, monetização por anúncios, patrocínios ou paywalls).
+3. Criar obras derivadas, jogos derivados, cópias com alterações parciais ou 
+   incorporar trechos deste código/assets em outros projetos de jogos (comerciais ou não).
+4. Treinar modelos proprietários de inteligência artificial generativa com fins de 
+   reprodução comercial dos ativos proprietários do projeto.
+
+O SOFTWARE É FORNECIDO "COMO ESTÁ" (AS IS), SEM NENHUMA GARANTIA DE QUALQUER TIPO, 
+EXPRESSA OU IMPLÍCITA, INCLUINDO MAS NÃO SE LIMITANDO A GARANTIAS DE COMERCIALIZAÇÃO 
+OU ADEQUAÇÃO A UMA FINALIDADE ESPECÍFICA. EM NENHUMA HIPÓTESE O AUTOR SERÁ RESPONSÁVEL 
+POR QUAISQUER RECLAMAÇÕES, DANOS OU OUTRAS RESPONSABILIDADES.
+
+================================================================================
+ENGLISH: PROPRIETARY NON-COMMERCIAL / SOURCE-AVAILABLE LICENSE
+================================================================================
+
+All source code, software architecture, procedural and static 3D meshes, textures, 
+materials, scenes, configurations, and assets contained within this repository 
+("Causos") are the exclusive intellectual property of the author.
+
+Permission is hereby GRANTED to:
+1. View, fork, and clone this repository solely for personal study, research, 
+   learning, and individual technical evaluation.
+2. Run the project locally in a development environment for testing purposes.
+
+Permission is strictly PROHIBITED, without prior written authorization from the author:
+1. To copy, reproduce, republish, redistribute, sublicense, or distribute any part of 
+   this software, source code, 3D meshes, textures, or assets, in whole or in part, 
+   in any medium or platform.
+2. To use this project, its code, visual assets, or derived works for ANY commercial, 
+   revenue-generating, or for-profit purpose (including, without limitation: selling, 
+   microtransactions, in-game advertising, sponsorships, or paywalls).
+3. To create derivative works, reskins, forks for external distribution, or incorporate 
+   portions of this code or assets into other commercial or non-commercial games/projects.
+4. To train commercial generative artificial intelligence models using the proprietary assets.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR 
+PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY CLAIM, 
+DAMAGES, OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, 
+ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+IN THE SOFTWARE.
