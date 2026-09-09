@@ -17,9 +17,9 @@ env:
 jobs:
   build-windows:
     name: Build Windows x86_64
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     container:
-      image: barichello/godot-ci:4.7.2
+      image: barichello/godot-ci:4.3
 
     steps:
       - name: Checkout Repository
@@ -27,13 +27,22 @@ jobs:
         with:
           lfs: true
 
+      - name: Setup Godot Export Templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          cp -rf /root/.config/godot ~/.config/godot 2>/dev/null || true
+          cp -rf /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/ 2>/dev/null || true
+          ls -la ~/.local/share/godot/export_templates/
+
       - name: Setup Export Directory
         run: |
           mkdir -v -p build/windows
 
       - name: Export Project for Windows Desktop
         run: |
-          godot --headless --verbose --export-release "Windows Desktop" build/windows/${{ env.EXPORT_NAME }}.exe
+          EXPORT_DIR="$(readlink -f build/windows)"
+          godot --headless --verbose --export-release "Windows Desktop" "$EXPORT_DIR/${{ env.EXPORT_NAME }}.exe"
 
       - name: Compress Release Archive
         run: |
