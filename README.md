@@ -1,6 +1,9 @@
 # Causos
 
-Um protótipo de exploração e atmosfera em floresta densa com relevo orgânico contínuo e estética retro dos anos 90 (*Low Poly*), desenvolvido com **Godot 4.x**.
+Um protótipo de jogo de terror atmosférico e exploração em floresta densa com relevo orgânico contínuo e estética retrô dos anos 90 (*Low Poly*), desenvolvido com **Godot 4.x**.
+
+> 👁️ **A Premissa & Inspiração:**  
+> A ideia central do projeto é ser um **jogo de terror e isolamento psicológico**, concebido a partir de uma **experiência pessoal real vivida pelo autor na mata fechada no Rio Grande do Sul**. O objetivo é recriar a atmosfera pesada, o suspense e a desorientação de estar sozinho na mata nativa do interior gaúcho, resgatando a essência dos tradicionais "causos" — narrativas misteriosas passadas de boca em boca onde o folclore, a solidão e o medo do desconhecido na escuridão da floresta se entrelaçam.
 
 ---
 
