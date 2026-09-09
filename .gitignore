@@ -1,3 +1,11 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Export and build outputs
+build/
+bin/
+*.exe
+*.pck
+*.zip
+*.tar.gz
