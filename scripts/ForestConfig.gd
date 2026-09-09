@@ -18,8 +18,9 @@ extends Resource
 ## Tree Spacing & Organic Placement (Poisson Disc Sampling)
 @export_group("Trees")
 @export var min_tree_distance: float = 3.0 # Poisson minimum distance (reduces density by ~30%, opens clearings)
-@export var tree_margin: float = 3.0
+@export var tree_margin: float = 0.0 # Zero margin so trees spawn right up to chunk borders, eliminating corridors
 @export var max_canopy_planes_per_tree: int = 7 # 6 to 8 large planes for minimal overdraw
+@export var dead_tree_ratio: float = 0.02 # ~2% dead/snapped trees (pontuais e raras na paisagem)
 
 ## Ground Foliage
 @export_group("Foliage")
