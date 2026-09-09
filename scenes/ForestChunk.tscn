@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/ForestChunk.gd" id="1_mcsuc"]
+
+[node name="ForestChunk" type="Node3D" unique_id=1404756225]
+script = ExtResource("1_mcsuc")
+
+[node name="Ground" type="StaticBody3D" parent="." unique_id=1906316847]
+
+[node name="GroundCollision" type="CollisionShape3D" parent="Ground" unique_id=242279063]
+
+[node name="GroundMesh" type="MeshInstance3D" parent="Ground" unique_id=732244783]
+
+[node name="Foliage" type="MultiMeshInstance3D" parent="." unique_id=36383333]
+
+[node name="Trees" type="Node3D" parent="." unique_id=1973711829]
+
+[node name="TreeColliders" type="StaticBody3D" parent="." unique_id=1286066255]
