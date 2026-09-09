@@ -1,0 +1,143 @@
+name: Build Multiplatform Release
+
+on:
+  push:
+    branches: [ "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  EXPORT_NAME: causos
+
+jobs:
+  build:
+    name: Build ${{ matrix.platform.name }}
+    runs-on: ubuntu-24.04
+    container:
+      image: barichello/godot-ci:4.3
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - name: Windows
+            preset: "Windows Desktop"
+            dir: build/windows
+            output: causos.exe
+            artifact: causos-windows-x86_64
+          - name: Linux
+            preset: "Linux/X11"
+            dir: build/linux
+            output: causos.x86_64
+            artifact: causos-linux-x86_64
+          - name: macOS
+            preset: "macOS"
+            dir: build/macos
+            output: causos-macos.zip
+            artifact: causos-macos-universal
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Setup Godot Export Templates
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates/
+          mkdir -v -p ~/.config/
+          cp -rf /root/.config/godot ~/.config/godot 2>/dev/null || true
+          cp -rf /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/ 2>/dev/null || true
+          ls -la ~/.local/share/godot/export_templates/
+
+      - name: Setup Export Directory
+        run: |
+          mkdir -v -p ${{ matrix.platform.dir }}
+
+      - name: Export Project
+        run: |
+          EXPORT_DIR="$(readlink -f ${{ matrix.platform.dir }})"
+          godot --headless --verbose --export-release "${{ matrix.platform.preset }}" "$EXPORT_DIR/${{ matrix.platform.output }}"
+
+      - name: Post-Process Linux Binary
+        if: matrix.platform.name == 'Linux'
+        run: |
+          chmod +x ${{ matrix.platform.dir }}/${{ matrix.platform.output }}
+
+      - name: Post-Process macOS App Bundle
+        if: matrix.platform.name == 'macOS'
+        run: |
+          cd ${{ matrix.platform.dir }}
+          unzip -q ${{ matrix.platform.output }}
+          rm -f ${{ matrix.platform.output }}
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.platform.artifact }}
+          path: ${{ matrix.platform.dir }}/
+          retention-days: 14
+
+  release:
+    name: Publish GitHub Release
+    needs: [build]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: causos-windows-x86_64
+          path: release-assets/windows
+
+      - name: Download Linux Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: causos-linux-x86_64
+          path: release-assets/linux
+
+      - name: Download macOS Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: causos-macos-universal
+          path: release-assets/macos
+
+      - name: Package Release Archives
+        run: |
+          mkdir -p release-files
+
+          # Windows .zip
+          cd release-assets/windows
+          zip -r ../../release-files/${{ env.EXPORT_NAME }}-windows-x86_64.zip .
+          cd ../..
+
+          # Linux .tar.gz and .zip
+          chmod +x release-assets/linux/${{ env.EXPORT_NAME }}.x86_64
+          cd release-assets/linux
+          tar -czvf ../../release-files/${{ env.EXPORT_NAME }}-linux-x86_64.tar.gz .
+          zip -r ../../release-files/${{ env.EXPORT_NAME }}-linux-x86_64.zip .
+          cd ../..
+
+          # macOS .zip
+          cd release-assets/macos
+          zip -r -y ../../release-files/${{ env.EXPORT_NAME }}-macos.zip .
+          cd ../..
+
+          echo "=== Built Release Files ==="
+          ls -lh release-files/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-files/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
