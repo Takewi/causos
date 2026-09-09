@@ -2,6 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/Player.gd" id="1_rvslj"]
 [ext_resource type="Script" path="res://scripts/ForestManager.gd" id="2_0bbpv"]
+[ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="3_hud"]
+[ext_resource type="PackedScene" path="res://scenes/PauseMenu.tscn" id="4_pause"]
 
 [sub_resource type="Environment" id="Environment_rarhs"]
 background_mode = 1
@@ -53,3 +55,7 @@ far = 65.0
 [node name="ForestManager" type="Node3D" parent="." unique_id=2098354288 node_paths=PackedStringArray("player")]
 script = ExtResource("2_0bbpv")
 player = NodePath("../Player")
+
+[node name="HUD" parent="." instance=ExtResource("3_hud")]
+
+[node name="PauseMenu" parent="." instance=ExtResource("4_pause")]

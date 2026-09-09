@@ -1,0 +1,52 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/HUD.gd" id="1_hud"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_badge"]
+content_margin_left = 10.0
+content_margin_top = 4.0
+content_margin_right = 10.0
+content_margin_bottom = 4.0
+bg_color = Color(0.04, 0.05, 0.04, 0.65)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.35, 0.38, 0.28, 0.5)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="HUD" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1_hud")
+
+[node name="FPSBadge" type="PanelContainer" parent="."]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 96.0
+offset_bottom = 44.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_badge")
+
+[node name="FPSLabel" type="Label" parent="FPSBadge"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.92, 0.75, 1)
+theme_override_font_sizes/font_size = 14
+text = "60 FPS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Reticle" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dot" type="ColorRect" parent="Reticle"]
+custom_minimum_size = Vector2(3, 3)
+layout_mode = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.45)

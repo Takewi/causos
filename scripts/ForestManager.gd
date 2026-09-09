@@ -15,8 +15,17 @@ var last_player_chunk: Vector2i = Vector2i(999999, 999999)
 
 
 func _ready() -> void:
-	if config == null:
+	if config != null:
+		config = config.duplicate()
+	else:
 		config = ForestConfig.new()
+
+	# Apply dynamic map configuration from GameManager
+	var gm = get_node_or_null("/root/GameManager")
+	if gm != null:
+		config.world_seed = gm.world_seed
+		config.terrain_amplitude = gm.terrain_amplitude
+		config.min_tree_distance = gm.min_tree_distance
 
 	# Initialize shared singletons for terrain calculation and tree meshes
 	terrain_module = TerrainModule.new(config)

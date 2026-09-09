@@ -1,0 +1,206 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/PauseMenu.gd" id="1_pause"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 32.0
+content_margin_top = 28.0
+content_margin_right = 32.0
+content_margin_bottom = 28.0
+bg_color = Color(0.06, 0.07, 0.06, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.36, 0.32, 0.22, 0.75)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.12, 0.14, 0.11, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.35, 0.26, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.22, 0.24, 0.18, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.72, 0.42, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_primary"]
+content_margin_left = 18.0
+content_margin_top = 12.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.32, 0.27, 0.15, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.82, 0.48, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="PauseMenu" type="CanvasLayer"]
+process_mode = 3
+layer = 100
+visible = false
+script = ExtResource("1_pause")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.03, 0.04, 0.03, 0.78)
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainPauseVBox" type="VBoxContainer" parent="CenterContainer"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PauseTitle" type="Label" parent="CenterContainer/MainPauseVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 36
+text = "P A U S A"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/MainPauseVBox"]
+layout_mode = 2
+
+[node name="ResumeBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.98, 0.92, 0.78, 1)
+theme_override_colors/font_color = Color(0.92, 0.84, 0.68, 1)
+theme_override_font_sizes/font_size = 18
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
+text = "▶  Continuar"
+
+[node name="SettingsBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.95, 0.90, 0.78, 1)
+theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "⚙️  Configurações"
+
+[node name="MainMenuBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.95, 0.90, 0.78, 1)
+theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "🏠  Menu Principal"
+
+[node name="QuitBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_colors/font_hover_color = Color(0.95, 0.55, 0.55, 1)
+theme_override_colors/font_color = Color(0.75, 0.68, 0.65, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "Sair do Jogo"
+
+[node name="SettingsPanel" type="PanelContainer" parent="CenterContainer"]
+visible = false
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="VBox" type="VBoxContainer" parent="CenterContainer/SettingsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="SettingsTitle" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
+theme_override_font_sizes/font_size = 20
+text = "Configurações de Desempenho"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="FPSLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.80, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 14
+text = "Limite de Taxa de Quadros (FPS):"
+
+[node name="FPSHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="FPSOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/FPSHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSyncCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
+text = "Sincronização Vertical (V-Sync)"
+
+[node name="FPSCounterCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
+text = "Exibir Contador de FPS na Tela"
+
+[node name="SettingsBackBtn" type="Button" parent="CenterContainer/SettingsPanel/VBox"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "Voltar"
+
+[connection signal="pressed" from="CenterContainer/MainPauseVBox/ResumeBtn" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="CenterContainer/MainPauseVBox/SettingsBtn" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="CenterContainer/MainPauseVBox/MainMenuBtn" to="." method="_on_main_menu_pressed"]
+[connection signal="pressed" from="CenterContainer/MainPauseVBox/QuitBtn" to="." method="_on_quit_pressed"]
+[connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption" to="." method="_on_fps_selected"]
+[connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/VSyncCheck" to="." method="_on_vsync_toggled"]
+[connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/FPSCounterCheck" to="." method="_on_fps_counter_toggled"]
+[connection signal="pressed" from="CenterContainer/SettingsPanel/VBox/SettingsBackBtn" to="." method="_on_settings_back_pressed"]
