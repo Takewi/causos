@@ -1,0 +1,25 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage.png" id="1_gqopo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4jlod"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_gqopo")
+texture_filter = 0
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.45, 0, -0.45, 0.9, 0.7, 0.9),
+"attribute_data": PackedByteArray("/////wAAAAAAAIA//////wAAgD8AAIA//////wAAgD8AAAAA/////wAAAAAAAIA//////wAAgD8AAAAA/////wAAAAAAAAAA/////wAAAAAAAIA//////wAAgD8AAIA//////wAAgD8AAAAA/////wAAAAAAAIA//////wAAgD8AAAAA/////wAAAAAAAAAA"),
+"format": 34359738399,
+"material": SubResource("StandardMaterial3D_4jlod"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("ZmbmvgAAAAAAAAAAZmbmPgAAAAAAAAAAZmbmPjMzMz8AAAAAZmbmvgAAAAAAAAAAZmbmPjMzMz8AAAAAZmbmvjMzMz8AAAAAAAAAAAAAAABmZua+AAAAAAAAAABmZuY+AAAAADMzMz9mZuY+AAAAAAAAAABmZua+AAAAADMzMz9mZuY+AAAAADMzMz9mZua+/3//f/9/AID/f/9//38AgP9//3//fwCA/3//f/9/AID/f/9//38AgP9//3//fwCAAAD/f/9//78AAP9//3//vwAA/3//f/+/AAD/f/9//78AAP9//3//vwAA/3//f/+/")
+}]
