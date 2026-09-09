@@ -165,20 +165,20 @@ func _build_umbrella_canopy_tree(seed_val: int) -> ArrayMesh:
 		var bough_mid = p_hub + Vector3(cos(ang) * bough_reach, rng.randf_range(0.8, 1.4), sin(ang) * bough_reach)
 		_build_cylinder_segment(st_bark, p_hub, bough_mid, 0.26, 0.17, sides)
 
-		# Dois galhos secundários curvando para fora e para cima
+			# Dois galhos secundários curvando para fora e para cima
 		for s in range(2):
 			var sec_ang = ang + (float(s) - 0.5) * 0.75 + rng.randf_range(-0.15, 0.15)
 			var sec_reach = rng.randf_range(2.6, 3.4)
 			var sec_tip = bough_mid + Vector3(cos(sec_ang) * sec_reach, rng.randf_range(1.2, 2.0), sin(sec_ang) * sec_reach)
 			_build_cylinder_segment(st_bark, bough_mid, sec_tip, 0.17, 0.10, sides)
-			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.2, 3.8), rng, 4)
+			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
 			# Ramificações terciárias nas extremidades para ancorar as folhas
 			for t in range(2):
 				var tert_ang = sec_ang + (float(t) - 0.5) * 0.8 + rng.randf_range(-0.2, 0.2)
 				var tert_tip = sec_tip + Vector3(cos(tert_ang) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.1), sin(tert_ang) * rng.randf_range(1.5, 2.2))
 				_build_cylinder_segment(st_bark, sec_tip, tert_tip, 0.10, 0.03, 4)
-				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(3.4, 4.0), rng, 5)
+				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.0, 4.8), rng, 2)
 
 		bough_tips.append(bough_mid)
 
@@ -187,17 +187,17 @@ func _build_umbrella_canopy_tree(seed_val: int) -> ArrayMesh:
 		var cross1_start = bough_tips[0].lerp(p_hub, 0.3)
 		var cross1_end = bough_tips[2].lerp(p_hub, 0.3) + Vector3(0, rng.randf_range(0.5, 1.2), 0)
 		_build_cylinder_segment(st_bark, cross1_start, cross1_end, 0.14, 0.08, 4)
-		_add_volumetric_foliage_cards(st_foliage, cross1_start.lerp(cross1_end, 0.5), rng.randf_range(3.0, 3.6), rng, 4)
+		_add_volumetric_foliage_cards(st_foliage, cross1_start.lerp(cross1_end, 0.5), rng.randf_range(3.8, 4.4), rng, 2)
 
 		var cross2_start = bough_tips[1].lerp(p_hub, 0.3)
 		var cross2_end = bough_tips[3].lerp(p_hub, 0.3) + Vector3(0, rng.randf_range(0.5, 1.2), 0)
 		_build_cylinder_segment(st_bark, cross2_start, cross2_end, 0.14, 0.08, 4)
-		_add_volumetric_foliage_cards(st_foliage, cross2_start.lerp(cross2_end, 0.5), rng.randf_range(3.0, 3.6), rng, 4)
+		_add_volumetric_foliage_cards(st_foliage, cross2_start.lerp(cross2_end, 0.5), rng.randf_range(3.8, 4.4), rng, 2)
 
 	# 4. Cúpula central
 	var apex_top = p_hub + Vector3(rng.randf_range(-0.2, 0.2), rng.randf_range(3.2, 4.0), rng.randf_range(-0.2, 0.2))
 	_build_cylinder_segment(st_bark, p_hub, apex_top, 0.20, 0.08, sides)
-	_add_volumetric_foliage_cards(st_foliage, apex_top, rng.randf_range(3.6, 4.2), rng, 6)
+	_add_volumetric_foliage_cards(st_foliage, apex_top, rng.randf_range(4.2, 4.8), rng, 3)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.24, 0.17, 0.11))
 
@@ -253,21 +253,21 @@ func _build_v_bifurcated_tree(seed_val: int) -> ArrayMesh:
 			var sub_dir = Vector3(cos(sub_ang) * 0.65, 0.80, sin(sub_ang) * 0.65).normalized()
 			var sec_tip = p_arm_mid + sub_dir * rng.randf_range(3.8, 4.8)
 			_build_cylinder_segment(st_bark, p_arm_mid, sec_tip, r_base * 0.40, 0.11, sides)
-			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.0, 3.6), rng, 4)
+			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
 			# Ramificações terciárias
 			for tert in range(2):
 				var tert_ang = sub_ang + (float(tert) - 0.5) * 0.85 + rng.randf_range(-0.2, 0.2)
 				var tert_tip = sec_tip + Vector3(cos(tert_ang) * rng.randf_range(1.4, 2.0), rng.randf_range(0.5, 1.2), sin(tert_ang) * rng.randf_range(1.4, 2.0))
 				_build_cylinder_segment(st_bark, sec_tip, tert_tip, 0.11, 0.03, 4)
-				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(3.2, 3.8), rng, 5)
+				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.0, 4.6), rng, 2)
 
 	# Ponte de galho cruzando entre as duas metades
 	if arm_mids.size() == 2:
 		var bridge_mid = (arm_mids[0] + arm_mids[1]) * 0.5 + Vector3(0, rng.randf_range(0.5, 1.5), 0)
 		_build_cylinder_segment(st_bark, arm_mids[0], bridge_mid, 0.14, 0.08, 4)
 		_build_cylinder_segment(st_bark, bridge_mid, arm_mids[1], 0.08, 0.14, 4)
-		_add_volumetric_foliage_cards(st_foliage, bridge_mid, rng.randf_range(3.0, 3.6), rng, 4)
+		_add_volumetric_foliage_cards(st_foliage, bridge_mid, rng.randf_range(3.8, 4.4), rng, 2)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.22, 0.16, 0.10))
 
@@ -315,14 +315,14 @@ func _build_thick_gnarled_tree(seed_val: int) -> ArrayMesh:
 			var sub_dir = Vector3(cos(sub_ang) * 0.85, rng.randf_range(0.3, 0.6), sin(sub_ang) * 0.85).normalized()
 			var tip = bough_mid + sub_dir * rng.randf_range(2.8, 3.8)
 			_build_cylinder_segment(st_bark, bough_mid, tip, 0.22, 0.09, sides)
-			_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(3.4, 4.0), rng, 4)
+			_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(4.0, 4.6), rng, 2)
 
 			# Ramificações terciárias retorcidas
 			for tert in range(2):
 				var tert_ang = sub_ang + (float(tert) - 0.5) * 0.9 + rng.randf_range(-0.2, 0.2)
 				var tert_tip = tip + Vector3(cos(tert_ang) * rng.randf_range(1.5, 2.2), rng.randf_range(0.4, 1.0), sin(tert_ang) * rng.randf_range(1.5, 2.2))
 				_build_cylinder_segment(st_bark, tip, tert_tip, 0.09, 0.03, 4)
-				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(3.4, 4.2), rng, 5)
+				_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.2, 4.8), rng, 2)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.18, 0.13, 0.08))
 
@@ -361,16 +361,16 @@ func _build_young_slender_tree(seed_val: int) -> ArrayMesh:
 		var b_reach = rng.randf_range(2.0, 2.8)
 		var b_tip = attach_pt + Vector3(cos(ang) * b_reach, rng.randf_range(1.6, 2.5), sin(ang) * b_reach)
 		_build_cylinder_segment(st_bark, attach_pt, b_tip, 0.13, 0.06, 4)
-		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(2.6, 3.2), rng, 4)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(3.4, 4.0), rng, 2)
 
 		# Raminho terciário
 		var tert_ang = ang + rng.randf_range(-0.5, 0.5)
 		var tert_tip = b_tip + Vector3(cos(tert_ang) * 1.2, rng.randf_range(0.6, 1.2), sin(tert_ang) * 1.2)
 		_build_cylinder_segment(st_bark, b_tip, tert_tip, 0.06, 0.02, 4)
-		_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(2.6, 3.2), rng, 5)
+		_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(3.6, 4.2), rng, 2)
 
 	# Copa no ápice
-	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(3.0, 3.6), rng, 5)
+	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(3.8, 4.4), rng, 3)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.26, 0.21, 0.14))
 
@@ -409,7 +409,7 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 		var ang = float(i) * (TAU / 3.0) + rng.randf_range(-0.2, 0.2)
 		var b_tip = tier1_pt + Vector3(cos(ang) * rng.randf_range(3.0, 3.8), rng.randf_range(0.3, 0.8), sin(ang) * rng.randf_range(3.0, 3.8))
 		_build_cylinder_segment(st_bark, tier1_pt, b_tip, 0.22, 0.08, sides)
-		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(3.0, 3.6), rng, 4)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(3.8, 4.4), rng, 2)
 
 	# Andar 2 (Copa média a ~9.2m): 3 galhos rotacionados 60°
 	var tier2_pt = p2.lerp(p3, (9.2 - 8.5) / 3.5)
@@ -417,24 +417,24 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 		var ang = float(i) * (TAU / 3.0) + (PI / 3.0) + rng.randf_range(-0.2, 0.2)
 		var b_mid = tier2_pt + Vector3(cos(ang) * rng.randf_range(3.2, 4.0), rng.randf_range(0.6, 1.2), sin(ang) * rng.randf_range(3.2, 4.0))
 		_build_cylinder_segment(st_bark, tier2_pt, b_mid, 0.20, 0.09, sides)
-		_add_volumetric_foliage_cards(st_foliage, b_mid, rng.randf_range(3.0, 3.6), rng, 4)
+		_add_volumetric_foliage_cards(st_foliage, b_mid, rng.randf_range(3.8, 4.4), rng, 2)
 
 		# Ramificações terciárias
 		for t in range(2):
 			var tert_ang = ang + (float(t) - 0.5) * 0.8
 			var tert_tip = b_mid + Vector3(cos(tert_ang) * 1.8, rng.randf_range(0.5, 1.1), sin(tert_ang) * 1.8)
 			_build_cylinder_segment(st_bark, b_mid, tert_tip, 0.09, 0.03, 4)
-			_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(3.2, 3.8), rng, 5)
+			_add_volumetric_foliage_cards(st_foliage, tert_tip, rng.randf_range(4.0, 4.6), rng, 2)
 
 	# Andar 3 (Copa alta a ~12.2m): 4 galhos espalhados
 	for i in range(4):
 		var ang = float(i) * (TAU / 4.0) + rng.randf_range(-0.25, 0.25)
 		var b_tip = p3 + Vector3(cos(ang) * rng.randf_range(2.6, 3.4), rng.randf_range(0.8, 1.5), sin(ang) * rng.randf_range(2.6, 3.4))
 		_build_cylinder_segment(st_bark, p3, b_tip, 0.16, 0.07, sides)
-		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(3.2, 3.8), rng, 5)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(4.0, 4.6), rng, 2)
 
 	# Ápice
-	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(3.6, 4.2), rng, 6)
+	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(4.2, 4.8), rng, 3)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.20, 0.15, 0.10))
 
@@ -703,6 +703,7 @@ func _finalize_tree_mesh(st_bark: SurfaceTool, st_foliage: SurfaceTool, bark_col
 	foliage_mat.albedo_texture = tex
 	foliage_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	foliage_mat.alpha_scissor_threshold = 0.5
+	foliage_mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_ALWAYS
 	foliage_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
 	foliage_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	foliage_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST

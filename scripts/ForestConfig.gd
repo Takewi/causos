@@ -21,6 +21,8 @@ extends Resource
 @export var tree_margin: float = 0.0 # Zero margin so trees spawn right up to chunk borders, eliminating corridors
 @export var max_canopy_planes_per_tree: int = 7 # 6 to 8 large planes for minimal overdraw
 @export var dead_tree_ratio: float = 0.02 # ~2% dead/snapped trees (pontuais e raras na paisagem)
+@export var tree_visibility_range_end: float = 65.0 # GPU distance culling matching fog distance
+@export var tree_fade_margin: float = 10.0 # Smooth fading for tree distance culling
 
 ## Ground Foliage
 @export_group("Foliage")
