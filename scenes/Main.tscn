@@ -1,0 +1,53 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/Player.gd" id="1_rvslj"]
+[ext_resource type="Script" path="res://scripts/ForestManager.gd" id="2_0bbpv"]
+
+[sub_resource type="Environment" id="Environment_rarhs"]
+background_mode = 1
+background_color = Color(0.62, 0.56, 0.45, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.42, 0.46, 0.34, 1)
+ambient_light_energy = 0.85
+tonemap_mode = 2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.72, 0.64, 0.5, 1)
+fog_density = 0.02
+fog_depth_begin = 20.0
+fog_depth_end = 55.0
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vcsgt"]
+radius = 0.35
+height = 1.8
+
+[node name="Main" type="Node3D" unique_id=729814401]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=811518647]
+transform = Transform3D(0.809017, -0.20103438, 0.55233747, 0, 0.9396926, 0.34202012, -0.58778524, -0.2767001, 0.7602273, 0, 0, 0)
+light_color = Color(1, 0.85, 0.55, 1)
+light_energy = 2.2
+shadow_enabled = true
+shadow_bias = 0.04
+directional_shadow_max_distance = 50.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1449331073]
+environment = SubResource("Environment_rarhs")
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=503661655]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8, 0)
+script = ExtResource("1_rvslj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1075878909]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_vcsgt")
+
+[node name="Head" type="Node3D" parent="Player" unique_id=1642266021]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/Head" unique_id=902441980]
+current = true
+
+[node name="ForestManager" type="Node3D" parent="." unique_id=2098354288 node_paths=PackedStringArray("player")]
+script = ExtResource("2_0bbpv")
+player = NodePath("../Player")
