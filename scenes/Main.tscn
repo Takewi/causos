@@ -15,9 +15,9 @@ tonemap_mode = 2
 fog_enabled = true
 fog_mode = 1
 fog_light_color = Color(0.24, 0.35, 0.22, 1)
-fog_density = 0.03
-fog_depth_begin = 6.0
-fog_depth_end = 36.0
+fog_density = 1.0
+fog_depth_begin = 8.0
+fog_depth_end = 45.0
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_vcsgt"]
 radius = 0.35
@@ -32,7 +32,7 @@ light_energy = 2.0
 shadow_enabled = true
 shadow_bias = 0.04
 directional_shadow_mode = 1
-directional_shadow_max_distance = 38.0
+directional_shadow_max_distance = 45.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1449331073]
 environment = SubResource("Environment_rarhs")
@@ -50,7 +50,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Player/Head" unique_id=902441980]
 current = true
-far = 42.0
+far = 80.0
 
 [node name="ForestManager" type="Node3D" parent="." unique_id=2098354288 node_paths=PackedStringArray("player")]
 script = ExtResource("2_0bbpv")

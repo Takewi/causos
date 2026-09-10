@@ -20,23 +20,23 @@ extends Resource
 @export var min_tree_distance: float = 3.0 # Poisson minimum distance (reduces density by ~30%, opens clearings)
 @export var tree_margin: float = 0.0 # Zero margin so trees spawn right up to chunk borders, eliminating corridors
 @export var max_canopy_planes_per_tree: int = 7 # 6 to 8 large planes for minimal overdraw
-@export var tree_visibility_range_end: float = 40.0 # GPU distance culling matching fog distance
-@export var tree_fade_margin: float = 6.0 # Smooth fading for tree distance culling
+@export var tree_visibility_range_end: float = 75.0 # Extended beyond fog (45m) so no tree popping is ever visible
+@export var tree_fade_margin: float = 0.0 # Disabled fade margin to eliminate any semi-transparent trees
 
 ## Ground Foliage
 @export_group("Foliage")
 @export var foliage_count: int = 1200
-@export var foliage_visibility_range_end: float = 30.0 # Culling distance for GPU
-@export var foliage_fade_margin: float = 6.0
+@export var foliage_visibility_range_end: float = 55.0 # Beyond fog limit (45m)
+@export var foliage_fade_margin: float = 0.0
 
 ## Lighting & Atmosphere (Atmospheric Green Mist Forest)
 @export_group("Atmosphere & Lighting")
-@export var max_shadow_distance: float = 38.0 # Focused shadow cascades covering up to fog limit
+@export var max_shadow_distance: float = 45.0 # Focused shadow cascades covering up to opaque fog limit
 @export var sun_light_energy: float = 2.0 # Vivid sun light penetrating canopy
 @export var sun_light_color: Color = Color(1.0, 0.88, 0.65) # Warm sun rays
 @export var ambient_light_color: Color = Color(0.32, 0.40, 0.28) # Canopy green ambient penumbra
 @export var ambient_light_energy: float = 0.85 # High ambient energy (no pitch black)
 @export var fog_color: Color = Color(0.24, 0.35, 0.22) # Atmospheric greenish mist
-@export var fog_depth_begin: float = 6.0 # Begins close to player (6m) for dense jungle atmosphere
-@export var fog_depth_end: float = 36.0 # Soft progressive cutoff (36m)
-@export var fog_density: float = 0.03 # Natural depth fog density
+@export var fog_depth_begin: float = 8.0 # Soft progressive beginning near player (8m)
+@export var fog_depth_end: float = 45.0 # 100% opaque wall of mist at 45m
+@export var fog_density: float = 1.0 # 1.0 = 100% opaque at fog_depth_end in Depth Fog mode

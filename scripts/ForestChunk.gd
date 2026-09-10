@@ -58,7 +58,7 @@ func initialize(coord: Vector2i, config: ForestConfig, terrain_module: TerrainMo
 func _populate_foliage(rng: RandomNumberGenerator, config: ForestConfig, terrain_module: TerrainModule) -> void:
 	foliage_multimesh.visibility_range_end = config.foliage_visibility_range_end
 	foliage_multimesh.visibility_range_end_margin = config.foliage_fade_margin
-	foliage_multimesh.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+	foliage_multimesh.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
 	foliage_multimesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 	var foliage_mesh_res = load("res://assets/models/lowpoly_foliage.tres") as Mesh
@@ -271,5 +271,5 @@ func _create_tree_multimesh(mesh: Mesh, transforms: Array, node_name: String, co
 	if config:
 		mm_inst.visibility_range_end = config.tree_visibility_range_end
 		mm_inst.visibility_range_end_margin = config.tree_fade_margin
-		mm_inst.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+		mm_inst.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
 	trees_container.add_child(mm_inst)

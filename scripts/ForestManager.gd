@@ -38,6 +38,7 @@ func _ready() -> void:
 		world_env.environment.fog_light_color = config.fog_color
 		world_env.environment.fog_depth_begin = config.fog_depth_begin
 		world_env.environment.fog_depth_end = config.fog_depth_end
+		world_env.environment.fog_density = config.fog_density
 		world_env.environment.background_color = config.fog_color
 		world_env.environment.ambient_light_color = config.ambient_light_color
 		world_env.environment.ambient_light_energy = config.ambient_light_energy
