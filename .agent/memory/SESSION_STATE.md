@@ -55,10 +55,14 @@
   - Acessibilidade e navegação completa por controle nos menus (`MainMenu` e `PauseMenu`), com foco programático automático (`grab_focus`) nos botões principais e suporte ao botão B / cancel para retornar telas.
 - [x] **Skill de Internacionalização (`causos-translations`)**:
   - Skill encapsulada em `.agent/skills/causos-translations/SKILL.md` documentando a arquitetura de i18n, fluxo de compilação via CLI, consulta com `tr()` e reação a eventos de troca de idioma.
-- [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`) e Remoção de Emojis**:
-  - Fonte organizada em `assets/fonts/m5x7.ttf` com antialiasing desativado (`antialiasing=0`) para máxima nitidez pixel-art.
-  - Aplicada globalmente no projeto via `gui/theme/custom_font="res://assets/fonts/m5x7.ttf"` no `project.godot`, herdada automaticamente por todos os nós de UI (`MainMenu`, `PauseMenu`, `HUD`).
-  - Remoção completa de emojis e caracteres especiais sem glifos em `m5x7` nos menus, botões, arquivos `.tscn` e no catálogo de localização (`translations.csv` / `.translation`).
+- [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`), Resolução Nativa e Remoção de Emojis**:
+  - Resolução base de viewport atualizada para 1920x1080 com `textures/canvas_textures/default_texture_filter=0` (Nearest), eliminando interpolação bilinear e desfoque da UI em 1080p ou tela cheia.
+  - Configuração do `.import` da fonte `m5x7.ttf` ajustada para `hinting=0` e `subpixel_positioning=0`, garantindo alinhamento estrito aos pixels físicos.
+  - Escalas de fonte revisadas para múltiplos de proporção limpa (Título 64px, Botões 24-28px, Rótulos e Opções 20px).
+  - Remoção da borda branca externa padrão do Godot ao clicar em botões: criação do tema global `assets/ui_theme.tres` e styleboxes customizados de `focus` e `pressed` com borda dourada idêntica ao `hover` (`corner_radius = 6`, `expand_margin = 0`).
+  - Suporte contínuo a seleção de resolução no modo tela cheia (`win.content_scale_size`), permitindo alternar resoluções de renderização sem bloqueio do dropdown.
+  - Rastreamento de foco dinâmico via mouse (`mouse_entered`), garantindo transições suaves entre foco por controle/teclado e interação por ponteiro.
+  - Ausência total de emojis em qualquer elemento visual ou textual.
 - [x] **Compatibilidade com Godot 4.7 (`project.godot` e Metadados)**:
   - Atualização da flag de engine em `config/features` para `4.7` e inclusão de `compatibility/default_parent_skeleton_in_mesh_instance_3d=true`.
   - Metadados de compressão VRAM etc2/astc sincronizados nos arquivos `.import` de texturas (`branch_leaves` e `foliage`), eliminando alterações residuais automáticas do editor.
