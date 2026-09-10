@@ -818,14 +818,35 @@ func _build_low_crooked_gnarled_tree(seed_val: int) -> ArrayMesh:
 	var dead_bough = Vector3(rng.randf_range(-0.8, -0.5), rng.randf_range(-0.1, 0.1), rng.randf_range(-0.4, 0.4)).normalized()
 	_build_cylinder_segment(st_bark, p1, p1 + dead_bough * 0.8, 0.09, 0.02, 4)
 
-	# 3 ramos tortos
+	# 3 ramos tortos principais com sub-ramos e folhagem abundante
 	for i in range(3):
 		var ang = float(i) * (TAU / 3.0) + rng.randf_range(-0.2, 0.2)
-		var tip = p3 + Vector3(cos(ang) * rng.randf_range(1.1, 1.5), rng.randf_range(0.4, 0.8), sin(ang) * rng.randf_range(1.1, 1.5))
-		_build_continuous_branch(st_bark, [p3, tip], [0.10, 0.01], 4, true, true)
-		_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(1.5, 1.9), rng, 2)
+		var b_reach = rng.randf_range(1.2, 1.6)
+		var tip = p3 + Vector3(cos(ang) * b_reach, rng.randf_range(0.3, 0.7), sin(ang) * b_reach)
+		_build_continuous_branch(st_bark, [p3, tip], [0.11, 0.02], 4, true, true)
 
-	_add_volumetric_foliage_cards(st_foliage, p3, rng.randf_range(1.6, 2.0), rng, 2)
+		# Tufo de folhas na ponta do ramo principal
+		_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(1.7, 2.1), rng, 3)
+
+		# Sub-ramo lateral secundário com folhagem
+		var sub_ang = ang + rng.randf_range(-0.5, 0.5)
+		var sub_tip = tip + Vector3(cos(sub_ang) * 0.75, rng.randf_range(0.3, 0.6), sin(sub_ang) * 0.75)
+		_build_cylinder_segment(st_bark, tip, sub_tip, 0.05, 0.01, 4)
+		_add_volumetric_foliage_cards(st_foliage, sub_tip, rng.randf_range(1.6, 2.0), rng, 3)
+
+		# Folhagem no meio do ramo
+		_add_volumetric_foliage_cards(st_foliage, p3.lerp(tip, 0.55), rng.randf_range(1.5, 1.9), rng, 2)
+
+	# Tufo central no nó principal p3
+	_add_volumetric_foliage_cards(st_foliage, p3, rng.randf_range(1.8, 2.2), rng, 4)
+
+	# Ápice vertical saindo de p3 com cúpula de folhas
+	var apex = p3 + Vector3(rng.randf_range(-0.1, 0.1), rng.randf_range(0.8, 1.2), rng.randf_range(-0.1, 0.1))
+	_build_cylinder_segment(st_bark, p3, apex, 0.09, 0.02, 4)
+	_add_volumetric_foliage_cards(st_foliage, apex, rng.randf_range(1.8, 2.2), rng, 3)
+
+	# Tufo baixo na altura de p2 para preenchimento volumétrico do tronco
+	_add_volumetric_foliage_cards(st_foliage, p2 + Vector3(rng.randf_range(-0.2, 0.2), 0.2, rng.randf_range(-0.2, 0.2)), rng.randf_range(1.6, 2.0), rng, 2)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.20, 0.15, 0.10))
 
