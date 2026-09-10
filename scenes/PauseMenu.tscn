@@ -3,10 +3,10 @@
 [ext_resource type="Script" path="res://scripts/ui/PauseMenu.gd" id="1_pause"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-content_margin_left = 36.0
-content_margin_top = 30.0
-content_margin_right = 36.0
-content_margin_bottom = 30.0
+content_margin_left = 44.0
+content_margin_top = 36.0
+content_margin_right = 44.0
+content_margin_bottom = 36.0
 bg_color = Color(0.06, 0.07, 0.06, 0.95)
 border_width_left = 2
 border_width_top = 2
@@ -18,13 +18,13 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 shadow_color = Color(0, 0, 0, 0.6)
-shadow_size = 14
+shadow_size = 16
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
 bg_color = Color(0.12, 0.14, 0.11, 0.85)
 border_width_left = 1
 border_width_top = 1
@@ -37,10 +37,10 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
 bg_color = Color(0.22, 0.24, 0.18, 0.95)
 border_width_left = 2
 border_width_top = 2
@@ -53,10 +53,10 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-content_margin_left = 20.0
-content_margin_top = 10.0
-content_margin_right = 20.0
-content_margin_bottom = 10.0
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
 bg_color = Color(0.08, 0.1, 0.08, 0.98)
 border_width_left = 2
 border_width_top = 2
@@ -69,10 +69,10 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_primary"]
-content_margin_left = 20.0
-content_margin_top = 12.0
-content_margin_right = 20.0
-content_margin_bottom = 12.0
+content_margin_left = 22.0
+content_margin_top = 14.0
+content_margin_right = 22.0
+content_margin_bottom = 14.0
 bg_color = Color(0.32, 0.27, 0.15, 0.95)
 border_width_left = 2
 border_width_top = 2
@@ -85,10 +85,10 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_primary_pressed"]
-content_margin_left = 20.0
-content_margin_top = 12.0
-content_margin_right = 20.0
-content_margin_bottom = 12.0
+content_margin_left = 22.0
+content_margin_top = 14.0
+content_margin_right = 22.0
+content_margin_bottom = 14.0
 bg_color = Color(0.2, 0.17, 0.09, 0.98)
 border_width_left = 2
 border_width_top = 2
@@ -136,16 +136,16 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MainPauseVBox" type="VBoxContainer" parent="CenterContainer"]
-custom_minimum_size = Vector2(320, 0)
+custom_minimum_size = Vector2(380, 0)
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 16
 
 [node name="PauseTitle" type="Label" parent="CenterContainer/MainPauseVBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.94, 0.88, 0.76, 1)
 theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
-theme_override_constants/shadow_offset_y = 3
-theme_override_font_sizes/font_size = 48
+theme_override_constants/shadow_offset_y = 4
+theme_override_font_sizes/font_size = 56
 text = "P A U S A"
 horizontal_alignment = 1
 
@@ -153,11 +153,11 @@ horizontal_alignment = 1
 layout_mode = 2
 
 [node name="ResumeBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
-custom_minimum_size = Vector2(0, 52)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 theme_override_colors/font_hover_color = Color(0.98, 0.92, 0.78, 1)
 theme_override_colors/font_color = Color(0.92, 0.84, 0.68, 1)
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 32
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_primary_pressed")
@@ -165,11 +165,11 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
 text = "Continuar"
 
 [node name="SettingsBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.78, 1)
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -177,11 +177,11 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 text = "Configurações"
 
 [node name="MainMenuBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.78, 1)
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -189,11 +189,11 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 text = "Menu Principal"
 
 [node name="QuitBtn" type="Button" parent="CenterContainer/MainPauseVBox"]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 theme_override_colors/font_hover_color = Color(0.95, 0.55, 0.55, 1)
 theme_override_colors/font_color = Color(0.75, 0.68, 0.65, 1)
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -202,18 +202,18 @@ text = "Sair do Jogo"
 
 [node name="SettingsPanel" type="PanelContainer" parent="CenterContainer"]
 visible = false
-custom_minimum_size = Vector2(500, 0)
+custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
 
 [node name="VBox" type="VBoxContainer" parent="CenterContainer/SettingsPanel"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 18
 
 [node name="SettingsTitle" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
-theme_override_font_sizes/font_size = 28
+theme_override_font_sizes/font_size = 36
 text = "Configurações"
 horizontal_alignment = 1
 
@@ -223,17 +223,17 @@ layout_mode = 2
 [node name="LanguageLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 26
 text = "Idioma / Language:"
 
 [node name="LanguageHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 
 [node name="LanguageOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/LanguageHBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -242,17 +242,17 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 [node name="ResolutionLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 26
 text = "Resolução de Tela:"
 
 [node name="ResolutionHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 
 [node name="ResolutionOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/ResolutionHBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -261,47 +261,80 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 [node name="FPSLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 26
 text = "Limite de Taxa de Quadros (FPS):"
 
 [node name="FPSHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
 
 [node name="FPSOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/FPSHBox"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 
 [node name="FullscreenCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
+flat = true
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_focus")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Tela Cheia (Fullscreen)"
 
 [node name="VSyncCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
+flat = true
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_focus")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Sincronização Vertical (V-Sync)"
 
 [node name="FPSCounterCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
+flat = true
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_focus")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_focus")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
 text = "Exibir Contador de FPS na Tela"
 
 [node name="SettingsBackBtn" type="Button" parent="CenterContainer/SettingsPanel/VBox"]
-custom_minimum_size = Vector2(0, 46)
+custom_minimum_size = Vector2(0, 54)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 28
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")

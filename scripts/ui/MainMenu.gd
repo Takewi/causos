@@ -66,6 +66,7 @@ func _ready() -> void:
 	if gm and gm.has_signal("settings_changed"):
 		gm.settings_changed.connect(_on_settings_changed)
 	_setup_focus_behavior()
+	_style_option_popups()
 
 
 func _notification(what: int) -> void:
@@ -204,7 +205,7 @@ func _setup_focus_behavior() -> void:
 		seed_input, random_seed_btn, relief_option, density_option,
 		map_back_btn, start_forest_btn,
 		language_option, resolution_option, fps_option,
-		fullscreen_check, vsync_check, fps_counter_check, settings_back_btn
+		settings_back_btn
 	]
 	for node in interactive_nodes:
 		if is_instance_valid(node):
@@ -214,6 +215,21 @@ func _setup_focus_behavior() -> void:
 func _on_control_mouse_entered(node: Control) -> void:
 	if is_instance_valid(node) and node.is_visible_in_tree():
 		node.grab_focus()
+
+
+func _style_option_popups() -> void:
+	var option_buttons = [
+		relief_option, density_option, language_option, resolution_option, fps_option
+	]
+	for opt in option_buttons:
+		if is_instance_valid(opt):
+			opt.add_theme_font_size_override("font_size", 28)
+			var popup = opt.get_popup()
+			if popup:
+				popup.add_theme_font_size_override("font_size", 28)
+				popup.add_theme_constant_override("v_separation", 12)
+				popup.add_theme_constant_override("item_start_padding", 16)
+				popup.add_theme_constant_override("item_end_padding", 16)
 
 
 func _populate_map_ui() -> void:

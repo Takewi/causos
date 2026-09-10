@@ -58,7 +58,9 @@
 - [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`), Resolução Nativa e Remoção de Emojis**:
   - Resolução base de viewport atualizada para 1920x1080 com `textures/canvas_textures/default_texture_filter=0` (Nearest), eliminando interpolação bilinear e desfoque da UI em 1080p ou tela cheia.
   - Configuração do `.import` da fonte `m5x7.ttf` ajustada para `hinting=0` e `subpixel_positioning=0`, garantindo alinhamento estrito aos pixels físicos.
-  - Escalas de fonte revisadas para múltiplos de proporção limpa (Título 64px, Botões 24-28px, Rótulos e Opções 20px).
+  - Escalas de fonte generosas e layout expandido sem economia de tela (Título 80px, Títulos de Painel 36px, Botões Principais 32px, Seletores OptionButton e Popups 28px, Rótulos e CheckBoxes 26px, painéis expandidos para 700px de largura).
+  - Popups de seletores estilizados com fonte 28px e separação vertical de 12px, garantindo legibilidade e espaço amplo nas opções.
+  - Inputs do tipo checkmark (`CheckBox`) totalmente sem bordas ou animações: `flat = true` com `StyleBoxEmpty` em todos os estados (`normal`, `hover`, `pressed`, `hover_pressed`, `focus`, `disabled`) no tema global e nas cenas, e remoção do gatilho de foco no `mouse_entered`.
   - Remoção da borda branca externa padrão do Godot ao clicar em botões: criação do tema global `assets/ui_theme.tres` e styleboxes customizados de `focus` e `pressed` com borda dourada idêntica ao `hover` (`corner_radius = 6`, `expand_margin = 0`).
   - Suporte contínuo a seleção de resolução no modo tela cheia (`win.content_scale_size`), permitindo alternar resoluções de renderização sem bloqueio do dropdown.
   - Rastreamento de foco dinâmico via mouse (`mouse_entered`), garantindo transições suaves entre foco por controle/teclado e interação por ponteiro.
