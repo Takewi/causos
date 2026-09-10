@@ -105,13 +105,14 @@ func _build_umbrella_canopy_tree(seed_val: int) -> ArrayMesh:
 	var sides = 6
 	var r_base = 0.50
 
-	# 1. Tronco principal contínuo até o nó central da copa (~6.5m)
-	var p0 = Vector3.ZERO
+	# 1. Tronco principal contínuo com raiz subterrânea alargada até o nó central (~6.5m)
+	var p_root = Vector3(0, -1.2, 0)
+	var p0 = Vector3(0, 0.05, 0)
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 2.2, rng.randf_range(-0.15, 0.15))
 	var p2 = Vector3(rng.randf_range(-0.25, 0.25), 4.6, rng.randf_range(-0.25, 0.25))
 	var p_hub = Vector3(rng.randf_range(-0.15, 0.15), 6.5, rng.randf_range(-0.15, 0.15))
 
-	_build_continuous_branch(st_bark, [p0, p1, p2, p_hub], [r_base, r_base * 0.88, r_base * 0.74, r_base * 0.62], sides, true, false)
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p_hub], [r_base * 1.30, r_base * 1.05, r_base * 0.88, r_base * 0.74, r_base * 0.62], sides, true, false)
 
 	# Galho seco baixo saindo a 2.6m
 	var dry_dir = Vector3(rng.randf_range(0.6, 0.9), rng.randf_range(-0.1, 0.15), rng.randf_range(-0.4, 0.4)).normalized()
@@ -184,12 +185,13 @@ func _build_v_bifurcated_tree(seed_val: int) -> ArrayMesh:
 	var sides = 6
 	var r_base = 0.52
 
-	# 1. Base contínua até a bifurcação em V (~2.3m)
-	var p0 = Vector3.ZERO
+	# 1. Base contínua com raiz subterrânea até a bifurcação em V (~2.3m)
+	var p_root = Vector3(0, -1.2, 0)
+	var p0 = Vector3(0, 0.05, 0)
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 1.2, rng.randf_range(-0.15, 0.15))
 	var split_pt = Vector3(rng.randf_range(-0.25, 0.25), 2.3, rng.randf_range(-0.25, 0.25))
 
-	_build_continuous_branch(st_bark, [p0, p1, split_pt], [r_base, r_base * 0.90, r_base * 0.82], sides, true, true)
+	_build_continuous_branch(st_bark, [p_root, p0, p1, split_pt], [r_base * 1.30, r_base * 1.05, r_base * 0.90, r_base * 0.82], sides, true, true)
 
 	# Galho seco na base
 	var dry_dir1 = Vector3(rng.randf_range(0.6, 0.9), rng.randf_range(-0.1, 0.2), rng.randf_range(-0.4, 0.4)).normalized()
@@ -255,13 +257,14 @@ func _build_thick_gnarled_tree(seed_val: int) -> ArrayMesh:
 	var sides = 6
 	var r_base = 0.60
 
-	# Tronco retorcido com forte inclinação contínuo sem cortes
-	var p0 = Vector3.ZERO
+	# Tronco retorcido com raiz subterrânea e forte inclinação
+	var p_root = Vector3(0, -1.2, 0)
+	var p0 = Vector3(0, 0.05, 0)
 	var p1 = Vector3(rng.randf_range(0.35, 0.60), 1.8, rng.randf_range(-0.35, -0.15))
 	var p2 = Vector3(rng.randf_range(0.60, 0.95), 3.8, rng.randf_range(0.15, 0.40))
 	var p3 = Vector3(rng.randf_range(0.30, 0.60), 6.5, rng.randf_range(0.45, 0.75))
 
-	_build_continuous_branch(st_bark, [p0, p1, p2, p3], [r_base, r_base * 0.90, r_base * 0.78, r_base * 0.65], sides, true, false)
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p3], [r_base * 1.32, r_base * 1.05, r_base * 0.90, r_base * 0.78, r_base * 0.65], sides, true, false)
 
 	# Galho morto grosso lateral a 3.2m
 	var dead_bough = Vector3(rng.randf_range(-0.85, -0.6), rng.randf_range(-0.15, 0.1), rng.randf_range(-0.5, 0.5)).normalized()
@@ -311,13 +314,14 @@ func _build_young_slender_tree(seed_val: int) -> ArrayMesh:
 	var sides = 6
 	var r_base = 0.28
 
-	# Tronco fino e esguio (~10.5m) contínuo sem cortes
-	var p0 = Vector3.ZERO
+	# Tronco fino e esguio com base enterrada (~10.5m)
+	var p_root = Vector3(0, -1.2, 0)
+	var p0 = Vector3(0, 0.05, 0)
 	var p1 = Vector3(rng.randf_range(-0.1, 0.1), 3.0, rng.randf_range(-0.1, 0.1))
 	var p2 = Vector3(rng.randf_range(-0.15, 0.15), 6.5, rng.randf_range(-0.15, 0.15))
 	var p_top = Vector3(rng.randf_range(-0.15, 0.15), 10.2, rng.randf_range(-0.15, 0.15))
 
-	_build_continuous_branch(st_bark, [p0, p1, p2, p_top], [r_base, r_base * 0.82, r_base * 0.65, 0.09], sides, true, true)
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p_top], [r_base * 1.25, r_base * 1.05, r_base * 0.82, r_base * 0.65, 0.09], sides, true, true)
 
 	# 4 Galhos ascendentes formando copa compacta e alta
 	for i in range(4):
@@ -356,14 +360,15 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 	var sides = 6
 	var r_base = 0.48
 
-	# Coluna central contínua até ~14.2m
-	var p0 = Vector3.ZERO
+	# Coluna central contínua com base enterrada até ~14.2m
+	var p_root = Vector3(0, -1.2, 0)
+	var p0 = Vector3(0, 0.05, 0)
 	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 4.2, rng.randf_range(-0.15, 0.15))
 	var p2 = Vector3(rng.randf_range(-0.2, 0.2), 8.5, rng.randf_range(-0.2, 0.2))
 	var p3 = Vector3(rng.randf_range(-0.2, 0.2), 12.0, rng.randf_range(-0.2, 0.2))
 	var p_top = Vector3(rng.randf_range(-0.1, 0.1), 14.2, rng.randf_range(-0.1, 0.1))
 
-	_build_continuous_branch(st_bark, [p0, p1, p2, p3, p_top], [r_base, r_base * 0.85, r_base * 0.70, r_base * 0.50, 0.08], sides, true, true)
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p3, p_top], [r_base * 1.30, r_base * 1.05, r_base * 0.85, r_base * 0.70, r_base * 0.50, 0.08], sides, true, true)
 
 	# Andar 1 (Copa baixa a ~5.8m): 3 galhos horizontais
 	var tier1_pt = p1.lerp(p2, (5.8 - 4.2) / 4.3)

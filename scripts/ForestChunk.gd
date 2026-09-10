@@ -121,8 +121,8 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 		live_transforms.append(q_list)
 
 	var trunk_shape = CylinderShape3D.new()
-	trunk_shape.radius = 0.25
-	trunk_shape.height = 4.0
+	trunk_shape.radius = 0.28
+	trunk_shape.height = 4.5
 
 	for i in range(tree_points.size()):
 		var pt = tree_points[i]
@@ -153,7 +153,7 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 		# Trunk collider at base (pass readable_name=false to avoid string formatting overhead)
 		var col = CollisionShape3D.new()
 		col.shape = trunk_shape
-		col.position = Vector3(tx, h + 2.0, tz)
+		col.position = Vector3(tx, h + 1.8, tz)
 		tree_colliders_body.add_child(col, false)
 
 	for q in range(4):
