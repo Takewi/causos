@@ -23,7 +23,7 @@ var min_tree_distance: float = 3.0
 var fps_limit: int = 60
 var vsync_enabled: bool = true
 var fullscreen_enabled: bool = false
-var current_resolution_index: int = 0
+var current_resolution_index: int = 3
 var show_fps_counter: bool = false
 var current_locale: String = "pt_BR"
 
@@ -37,10 +37,19 @@ func _ready() -> void:
 	if seed_string.is_empty():
 		randomize_seed()
 	var current_size = DisplayServer.window_get_size()
+	var matched = false
 	for i in range(RESOLUTIONS.size()):
 		if RESOLUTIONS[i] == current_size:
 			current_resolution_index = i
+			matched = true
 			break
+	if not matched:
+		var screen = DisplayServer.window_get_current_screen()
+		var screen_size = DisplayServer.screen_get_size(screen)
+		if screen_size.y >= 1080 or screen_size.y == 0:
+			current_resolution_index = 3
+		else:
+			current_resolution_index = 0
 	TranslationServer.set_locale(current_locale)
 	apply_display_settings()
 
@@ -61,7 +70,7 @@ func apply_display_settings() -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		apply_resolution()
+	apply_resolution()
 
 
 ## Sets Fullscreen mode
@@ -71,18 +80,20 @@ func set_fullscreen(enabled: bool) -> void:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
-		apply_resolution()
+	apply_resolution()
 	settings_changed.emit()
 
 
-## Applies the current resolution to the window if in windowed mode
+## Applies the current resolution to the viewport content scale and window
 func apply_resolution() -> void:
-	if fullscreen_enabled:
-		return
 	if current_resolution_index >= 0 and current_resolution_index < RESOLUTIONS.size():
 		var res = RESOLUTIONS[current_resolution_index]
-		DisplayServer.window_set_size(res)
-		center_window(res)
+		var root_win = get_tree().root
+		if root_win:
+			root_win.content_scale_size = res
+		if not fullscreen_enabled:
+			DisplayServer.window_set_size(res)
+			center_window(res)
 
 
 ## Centers the window on the current screen

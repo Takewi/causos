@@ -65,6 +65,7 @@ func _ready() -> void:
 	var gm = _get_gm()
 	if gm and gm.has_signal("settings_changed"):
 		gm.settings_changed.connect(_on_settings_changed)
+	_setup_focus_behavior()
 
 
 func _notification(what: int) -> void:
@@ -194,7 +195,25 @@ func _refresh_resolution_options() -> void:
 		var label = gm.get_resolution_label(i) if (gm and gm.has_method("get_resolution_label")) else "%d x %d" % [res_list[i].x, res_list[i].y]
 		resolution_option.add_item(label, i)
 	resolution_option.select(cur_idx)
-	resolution_option.disabled = is_fs
+	resolution_option.disabled = false
+
+
+func _setup_focus_behavior() -> void:
+	var interactive_nodes: Array[Control] = [
+		play_btn, settings_btn, quit_btn,
+		seed_input, random_seed_btn, relief_option, density_option,
+		map_back_btn, start_forest_btn,
+		language_option, resolution_option, fps_option,
+		fullscreen_check, vsync_check, fps_counter_check, settings_back_btn
+	]
+	for node in interactive_nodes:
+		if is_instance_valid(node):
+			node.mouse_entered.connect(_on_control_mouse_entered.bind(node))
+
+
+func _on_control_mouse_entered(node: Control) -> void:
+	if is_instance_valid(node) and node.is_visible_in_tree():
+		node.grab_focus()
 
 
 func _populate_map_ui() -> void:
