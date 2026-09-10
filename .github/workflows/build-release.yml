@@ -69,12 +69,10 @@ jobs:
         run: |
           chmod +x ${{ matrix.platform.dir }}/${{ matrix.platform.output }}
 
-      - name: Post-Process macOS App Bundle
-        if: matrix.platform.name == 'macOS'
-        run: |
-          cd ${{ matrix.platform.dir }}
-          unzip -q ${{ matrix.platform.output }}
-          rm -f ${{ matrix.platform.output }}
+      # O bundle .app NAO e descompactado aqui de proposito: actions/upload-artifact
+      # reempacota o conteudo e descarta as permissoes POSIX, zerando o bit +x de
+      # Contents/MacOS/causos. O macOS entao recusa abrir o app (erro -10810).
+      # Mantendo o .zip do Godot intacto, modos e assinatura adhoc sobrevivem.
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -170,13 +168,24 @@ jobs:
           zip -r ../../release-files/${{ env.EXPORT_NAME }}-linux-x86_64.zip .
           cd ../..
 
-          # macOS .zip
-          cd release-assets/macos
-          zip -r -y ../../release-files/${{ env.EXPORT_NAME }}-macos.zip .
-          cd ../..
+          # macOS: reaproveita o .zip gerado pelo Godot sem reempacotar.
+          # Reempacotar aqui perderia o bit de execucao de Contents/MacOS/causos,
+          # que actions/upload-artifact nao preserva.
+          cp release-assets/macos/${{ env.EXPORT_NAME }}-macos.zip \
+             release-files/${{ env.EXPORT_NAME }}-macos.zip
 
           echo "=== Built Release Files ==="
           ls -lh release-files/
+
+      - name: Verify macOS Executable Bit
+        run: |
+          ENTRY=$(unzip -Z release-files/${{ env.EXPORT_NAME }}-macos.zip \
+            "*.app/Contents/MacOS/*" | grep -v '/$')
+          echo "$ENTRY"
+          if ! echo "$ENTRY" | grep -q '^-rwx'; then
+            echo "::error::O binario em Contents/MacOS perdeu o bit de execucao; o app nao abriria no macOS."
+            exit 1
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
