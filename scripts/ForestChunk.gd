@@ -7,7 +7,7 @@ extends Node3D
 var ground_body: StaticBody3D
 var ground_collision: CollisionShape3D
 var ground_mesh: MeshInstance3D
-var foliage_multimesh: MultiMeshInstance3D
+var foliage_container: Node3D
 var trees_container: Node3D
 var tree_colliders_body: StaticBody3D
 
@@ -24,7 +24,7 @@ func _ensure_references() -> void:
 		ground_body = $Ground
 		ground_collision = $Ground/GroundCollision
 		ground_mesh = $Ground/GroundMesh
-		foliage_multimesh = $Foliage
+		foliage_container = $Foliage
 		trees_container = $Trees
 		tree_colliders_body = $TreeColliders
 
@@ -56,38 +56,112 @@ func initialize(coord: Vector2i, config: ForestConfig, terrain_module: TerrainMo
 
 
 func _populate_foliage(rng: RandomNumberGenerator, config: ForestConfig, terrain_module: TerrainModule) -> void:
-	foliage_multimesh.visibility_range_end = config.foliage_visibility_range_end
-	foliage_multimesh.visibility_range_end_margin = config.foliage_fade_margin
-	foliage_multimesh.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
-	foliage_multimesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	for child in foliage_container.get_children():
+		child.queue_free()
 
 	var foliage_mesh_res = load("res://assets/models/lowpoly_foliage.tres") as Mesh
-	var mm = MultiMesh.new()
-	mm.transform_format = MultiMesh.TRANSFORM_3D
-	mm.mesh = foliage_mesh_res
-	mm.instance_count = config.foliage_count
+	if foliage_mesh_res == null:
+		return
+	var mesh_aabb = foliage_mesh_res.get_aabb()
 
-	var half_size = config.chunk_size * 0.5
+	# Spatial partition: 4x4 grid of 25x25m sub-cells per 100m chunk
+	# Eliminates chunk-wide popping by giving each sub-cell its own tight AABB.
+	# Any sub-cell culling happens at >42m, hidden completely behind the 45m opaque fog wall.
+	var num_cells = 4
+	var cell_size = config.chunk_size / float(num_cells)
+	var half_chunk = config.chunk_size * 0.5
+
 	var world_origin_x = float(chunk_coordinate.x) * config.chunk_size
 	var world_origin_z = float(chunk_coordinate.y) * config.chunk_size
 
-	for i in range(config.foliage_count):
-		var fx = rng.randf_range(-half_size, half_size)
-		var fz = rng.randf_range(-half_size, half_size)
-		var wx = world_origin_x + fx
-		var wz = world_origin_z + fz
-		var h = terrain_module.get_height(wx, wz)
+	for cz in range(num_cells):
+		var z_min = -half_chunk + float(cz) * cell_size
+		var z_max = z_min + cell_size
+		for cx in range(num_cells):
+			var x_min = -half_chunk + float(cx) * cell_size
+			var x_max = x_min + cell_size
 
-		var rot_y = rng.randf_range(0.0, TAU)
-		var s = rng.randf_range(0.8, 1.4)
+			var cell_transforms: Array[Transform3D] = []
 
-		var b = Basis.from_euler(Vector3(0.0, rot_y, 0.0))
-		var t = Transform3D(b.scaled(Vector3(s, s, s)), Vector3(fx, h, fz))
+			# 1. Stratified baseline coverage: 8x8 micro-grid (~3.1m spacing with jitter)
+			# Eliminates empty voids / barren gaps so grass is consistently present
+			var micro_grid = 8
+			var micro_step = cell_size / float(micro_grid)
+			for mz in range(micro_grid):
+				var mz_base = z_min + float(mz) * micro_step
+				for mx in range(micro_grid):
+					var mx_base = x_min + float(mx) * micro_step
+					var tuft_count = 1 if rng.randf() > 0.45 else 2
+					for _t in range(tuft_count):
+						var fx = mx_base + rng.randf_range(0.15, micro_step - 0.15)
+						var fz = mz_base + rng.randf_range(0.15, micro_step - 0.15)
+						var wx = world_origin_x + fx
+						var wz = world_origin_z + fz
+						# Exact polygon surface height prevents grass from being submerged under terrain
+						var h = terrain_module.get_mesh_height(wx, wz, config) + 0.02
 
-		mm.set_instance_transform(i, t)
+						var rot_y = rng.randf_range(0.0, TAU)
+						var tilt_x = rng.randf_range(-0.04, 0.04)
+						var tilt_z = rng.randf_range(-0.04, 0.04)
+						var s = rng.randf_range(0.85, 1.35)
 
-	mm.custom_aabb = AABB(Vector3(-half_size, -config.terrain_amplitude - 2.0, -half_size), Vector3(config.chunk_size, config.terrain_amplitude * 2.0 + 6.0, config.chunk_size))
-	foliage_multimesh.multimesh = mm
+						var b = Basis.from_euler(Vector3(tilt_x, rot_y, tilt_z))
+						cell_transforms.append(Transform3D(b.scaled(Vector3(s, s, s)), Vector3(fx, h, fz)))
+
+			# 2. Organic clustered clumps / touceiras (8 to 12 natural clumps per 25x25m cell)
+			var num_clumps = rng.randi_range(8, 12)
+			for _c in range(num_clumps):
+				var clump_cx = rng.randf_range(x_min + 1.5, x_max - 1.5)
+				var clump_cz = rng.randf_range(z_min + 1.5, z_max - 1.5)
+				var clump_tufts = rng.randi_range(3, 5)
+				var clump_scale_base = rng.randf_range(0.95, 1.45)
+
+				for _t in range(clump_tufts):
+					var offset_ang = rng.randf_range(0.0, TAU)
+					var offset_dist = rng.randf_range(0.15, 0.85)
+					var fx = clump_cx + cos(offset_ang) * offset_dist
+					var fz = clump_cz + sin(offset_ang) * offset_dist
+					var wx = world_origin_x + fx
+					var wz = world_origin_z + fz
+					var h = terrain_module.get_mesh_height(wx, wz, config) + 0.02
+
+					var rot_y = rng.randf_range(0.0, TAU)
+					var tilt_x = rng.randf_range(-0.05, 0.05)
+					var tilt_z = rng.randf_range(-0.05, 0.05)
+					var s = clump_scale_base * rng.randf_range(0.85, 1.15)
+
+					var b = Basis.from_euler(Vector3(tilt_x, rot_y, tilt_z))
+					cell_transforms.append(Transform3D(b.scaled(Vector3(s, s, s)), Vector3(fx, h, fz)))
+
+			if cell_transforms.is_empty():
+				continue
+
+			# Build MultiMesh for this 25x25m cell
+			var mm = MultiMesh.new()
+			mm.transform_format = MultiMesh.TRANSFORM_3D
+			mm.mesh = foliage_mesh_res
+			mm.instance_count = cell_transforms.size()
+			for i in range(cell_transforms.size()):
+				mm.set_instance_transform(i, cell_transforms[i])
+
+			# Tight merged AABB for precise frustum and distance culling
+			var combined_aabb = cell_transforms[0] * mesh_aabb
+			for i in range(1, cell_transforms.size()):
+				combined_aabb = combined_aabb.merge(cell_transforms[i] * mesh_aabb)
+			mm.custom_aabb = combined_aabb
+
+			var mm_inst = MultiMeshInstance3D.new()
+			mm_inst.name = "Foliage_C%d_%d" % [cx + 1, cz + 1]
+			mm_inst.multimesh = mm
+			mm_inst.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			mm_inst.extra_cull_margin = 2.0
+
+			if config:
+				mm_inst.visibility_range_end = config.foliage_visibility_range_end
+				mm_inst.visibility_range_end_margin = config.foliage_fade_margin
+				mm_inst.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_DISABLED
+
+			foliage_container.add_child(mm_inst)
 
 
 ## Generates trees using Poisson Disc Sampling (Bridson algorithm)

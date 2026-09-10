@@ -44,6 +44,35 @@ func get_height(world_x: float, world_z: float) -> float:
 	return noise.get_noise_2d(world_x, world_z) * amplitude
 
 
+## Exact interpolated height on the triangulated terrain polygon mesh
+func get_mesh_height(world_x: float, world_z: float, config: ForestConfig = null) -> float:
+	var chunk_size = config.chunk_size if config else 100.0
+	var segments = config.terrain_segments if config else 32
+	var step = chunk_size / float(segments)
+
+	var gx = world_x / step
+	var gz = world_z / step
+	var ix = int(floor(gx))
+	var iz = int(floor(gz))
+	var u = gx - float(ix)
+	var v = gz - float(iz)
+
+	var x0 = float(ix) * step
+	var z0 = float(iz) * step
+	var x1 = x0 + step
+	var z1 = z0 + step
+
+	var h00 = get_height(x0, z0)
+	var h10 = get_height(x1, z0)
+	var h01 = get_height(x0, z1)
+	var h11 = get_height(x1, z1)
+
+	if u + v <= 1.0:
+		return h00 + u * (h10 - h00) + v * (h01 - h00)
+	else:
+		return h11 + (1.0 - u) * (h01 - h11) + (1.0 - v) * (h10 - h11)
+
+
 ## Generates a 32x32 segmented flat-shaded terrain mesh for a chunk
 func generate_terrain_mesh(chunk_coord: Vector2i, config: ForestConfig) -> ArrayMesh:
 	var st = SurfaceTool.new()

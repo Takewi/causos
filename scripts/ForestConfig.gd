@@ -25,8 +25,8 @@ extends Resource
 
 ## Ground Foliage
 @export_group("Foliage")
-@export var foliage_count: int = 1200
-@export var foliage_visibility_range_end: float = 55.0 # Beyond fog limit (45m)
+@export var foliage_count: int = 2400 # Rich stratified ground cover & natural clusters (150 per 25x25m cell)
+@export var foliage_visibility_range_end: float = 60.0 # Beyond 45m opaque fog limit so sub-cells never pop into view
 @export var foliage_fade_margin: float = 0.0
 
 ## Lighting & Atmosphere (Atmospheric Green Mist Forest)

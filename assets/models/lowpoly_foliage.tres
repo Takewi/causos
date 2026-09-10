@@ -7,10 +7,13 @@ transparency = 2
 alpha_scissor_threshold = 0.5
 alpha_antialiasing_mode = 0
 cull_mode = 2
+shading_mode = 1
 diffuse_mode = 1
 specular_mode = 2
 albedo_texture = ExtResource("1_gqopo")
 texture_filter = 0
+backlight_enabled = true
+backlight = Color(0.24, 0.32, 0.18, 1)
 
 [resource]
 _surfaces = [{
