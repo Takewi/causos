@@ -120,9 +120,18 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 			q_list.append([])
 		live_transforms.append(q_list)
 
-	var trunk_shape = CylinderShape3D.new()
-	trunk_shape.radius = 0.28
-	trunk_shape.height = 4.5
+	# Dynamic collision shapes tailored per vegetation stratum
+	var trunk_shape_tall = CylinderShape3D.new()
+	trunk_shape_tall.radius = 0.28
+	trunk_shape_tall.height = 4.5
+
+	var trunk_shape_med = CylinderShape3D.new()
+	trunk_shape_med.radius = 0.20
+	trunk_shape_med.height = 2.8
+
+	var trunk_shape_low = CylinderShape3D.new()
+	trunk_shape_low.radius = 0.14
+	trunk_shape_low.height = 1.8
 
 	for i in range(tree_points.size()):
 		var pt = tree_points[i]
@@ -150,10 +159,17 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 		var l_idx = rng.randi() % live_variations.size()
 		live_transforms[q_idx][l_idx].append(t)
 
-		# Trunk collider at base (pass readable_name=false to avoid string formatting overhead)
+		# Trunk collider at base tailored to vegetation stratum (pass readable_name=false to avoid string formatting overhead)
 		var col = CollisionShape3D.new()
-		col.shape = trunk_shape
-		col.position = Vector3(tx, h + 1.8, tz)
+		if l_idx < 5:
+			col.shape = trunk_shape_tall
+			col.position = Vector3(tx, h + 1.8 * scale_y, tz)
+		elif l_idx < 10:
+			col.shape = trunk_shape_med
+			col.position = Vector3(tx, h + 1.2 * scale_y, tz)
+		else:
+			col.shape = trunk_shape_low
+			col.position = Vector3(tx, h + 0.8 * scale_y, tz)
 		tree_colliders_body.add_child(col, false)
 
 	for q in range(4):

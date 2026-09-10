@@ -1,12 +1,25 @@
 class_name TreeMeshFactory
 extends RefCounted
 
-## Compiles and provides static, low-poly tree mesh variations with rich organic morphology:
-## - Archetype 1: Classic Umbrella Canopy Tree (dossel aberto, galhos espalhados lateralmente com curvatura, cúpula ampla)
-## - Archetype 2: V-Bifurcated Native Tree (tronco bifurcado em V logo na base, copas duplas entrelaçadas)
-## - Archetype 3: Old Gnarled Crooked Tree (tronco grosso inclinado, bacias assimétricas retorcidas e galho seco inferior)
-## - Archetype 4: Young Slender Tree (tronco fino, copa alta e compacta para preenchimento vertical)
-## - Archetype 5: Tall Multi-Tier Dense Tree (tronco alto com andares horizontais de galhos e copa emergente)
+## Compiles and provides static, low-poly tree mesh variations across 3 vertical strata:
+## - ESTRATO ALTO (Dossel / Altas, ~10m - 14m):
+##   * Archetype 1: Classic Umbrella Canopy Tree (dossel aberto, galhos espalhados lateralmente com curvatura, cúpula ampla)
+##   * Archetype 2: V-Bifurcated Native Tree (tronco bifurcado em V logo na base, copas duplas entrelaçadas)
+##   * Archetype 3: Old Gnarled Crooked Tree (tronco grosso inclinado, bacias assimétricas retorcidas e galho seco inferior)
+##   * Archetype 4: Young Slender Tree (tronco fino, copa alta e compacta para preenchimento vertical)
+##   * Archetype 5: Tall Multi-Tier Dense Tree (tronco alto com andares horizontais de galhos e copa emergente)
+## - ESTRATO MÉDIO (Sub-bosque / Médias, ~5m - 6m - 1/2 da altura):
+##   * Archetype 6: Medium Umbrella Canopy (guarda-chuva intermediário de sub-bosque)
+##   * Archetype 7: Medium V-Bifurcated (bifurcada média em dois eixos)
+##   * Archetype 8: Medium Gnarled Crooked (árvore média torta/retorcida com galho seco)
+##   * Archetype 9: Medium Slender Sapling (árvore esguia intermediária)
+##   * Archetype 10: Medium Multi-Tier (árvore média com dois andares horizontais)
+## - ESTRATO BAIXO (Arbustos / Baixas, ~3m - 4m - 1/3 da altura):
+##   * Archetype 11: Low Bushy Canopy Tree (arvoreta arbustiva de copa baixa e densa)
+##   * Archetype 12: Low V-Bifurcated Shrub (arvoreta baixa bifurcada com ramagem ampla)
+##   * Archetype 13: Low Crooked Gnarled Shrub (arvoreta retorcida de tronco sinuoso)
+##   * Archetype 14: Low Slender Sapling (broto esguio / arvoreta jovem)
+##   * Archetype 15: Low Multi-Branch Dense Shrub (arbusto denso multiramificado na base)
 ## - Volumetric 3D leaf cards: clusters com rotações completas em Roll, Pitch e Yaw, incluindo planos inclinados para cima e para baixo.
 
 var cached_living_variations: Array[Mesh] = []
@@ -23,17 +36,28 @@ func get_tree_variations() -> Array[Mesh]:
 	return get_living_tree_variations()
 
 
+func get_tall_tree_variations() -> Array[Mesh]:
+	var all = get_living_tree_variations()
+	return all.slice(0, 5)
+
+
+func get_medium_tree_variations() -> Array[Mesh]:
+	var all = get_living_tree_variations()
+	return all.slice(5, 10)
+
+
+func get_short_tree_variations() -> Array[Mesh]:
+	var all = get_living_tree_variations()
+	return all.slice(10, 15)
+
+
 func _load_or_compile_all() -> void:
 	if not cached_living_variations.is_empty():
 		return
 
-	var live_paths = [
-		"res://assets/models/tree_variation_1.tres",
-		"res://assets/models/tree_variation_2.tres",
-		"res://assets/models/tree_variation_3.tres",
-		"res://assets/models/tree_variation_4.tres",
-		"res://assets/models/tree_variation_5.tres"
-	]
+	var live_paths: Array[String] = []
+	for i in range(1, 16):
+		live_paths.append("res://assets/models/tree_variation_%d.tres" % i)
 
 	var all_loaded = true
 	var loaded_live: Array[Mesh] = []
@@ -47,7 +71,7 @@ func _load_or_compile_all() -> void:
 		else:
 			all_loaded = false
 
-	if all_loaded and loaded_live.size() == 5:
+	if all_loaded and loaded_live.size() == 15:
 		cached_living_variations = loaded_live
 		return
 
@@ -57,30 +81,83 @@ func _load_or_compile_all() -> void:
 func compile_and_cache_variations() -> Array[Mesh]:
 	cached_living_variations.clear()
 
-	# Variation 1: Classic Umbrella Canopy Tree (dossel aberto, galhos espalhados lateralmente)
+	# --- NÍVEL 1: ÁRVORES ALTAS / CANÓPIA (Altura total: ~10m - 14m) ---
+	# Variation 1: Classic Umbrella Canopy Tree
 	var m1 = _build_umbrella_canopy_tree(101)
 	ResourceSaver.save(m1, "res://assets/models/tree_variation_1.tres")
 	cached_living_variations.append(m1)
 
-	# Variation 2: V-Bifurcated Native Tree (tronco bifurcado em V logo abaixo)
+	# Variation 2: V-Bifurcated Native Tree
 	var m2 = _build_v_bifurcated_tree(202)
 	ResourceSaver.save(m2, "res://assets/models/tree_variation_2.tres")
 	cached_living_variations.append(m2)
 
-	# Variation 3: Old Gnarled Crooked Tree (tronco grosso, torto, galhos assimétricos)
+	# Variation 3: Old Gnarled Crooked Tree
 	var m3 = _build_thick_gnarled_tree(303)
 	ResourceSaver.save(m3, "res://assets/models/tree_variation_3.tres")
 	cached_living_variations.append(m3)
 
-	# Variation 4: Young Slender Tree (esguia, copa alta e compacta)
+	# Variation 4: Young Slender Tree
 	var m4 = _build_young_slender_tree(404)
 	ResourceSaver.save(m4, "res://assets/models/tree_variation_4.tres")
 	cached_living_variations.append(m4)
 
-	# Variation 5: Tall Multi-Tier Dense Tree (tronco alto com andares verticais de galhos)
+	# Variation 5: Tall Multi-Tier Dense Tree
 	var m5 = _build_tall_multitier_tree(505)
 	ResourceSaver.save(m5, "res://assets/models/tree_variation_5.tres")
 	cached_living_variations.append(m5)
+
+	# --- NÍVEL 2: ÁRVORES MÉDIAS / SUB-BOSQUE (1/2 da altura: ~5m - 6m) ---
+	# Variation 6: Medium Umbrella Canopy Tree
+	var m6 = _build_med_umbrella_tree(606)
+	ResourceSaver.save(m6, "res://assets/models/tree_variation_6.tres")
+	cached_living_variations.append(m6)
+
+	# Variation 7: Medium V-Bifurcated Tree
+	var m7 = _build_med_v_bifurcated_tree(707)
+	ResourceSaver.save(m7, "res://assets/models/tree_variation_7.tres")
+	cached_living_variations.append(m7)
+
+	# Variation 8: Medium Gnarled Crooked Tree
+	var m8 = _build_med_thick_gnarled_tree(808)
+	ResourceSaver.save(m8, "res://assets/models/tree_variation_8.tres")
+	cached_living_variations.append(m8)
+
+	# Variation 9: Medium Young Slender Tree
+	var m9 = _build_med_young_slender_tree(909)
+	ResourceSaver.save(m9, "res://assets/models/tree_variation_9.tres")
+	cached_living_variations.append(m9)
+
+	# Variation 10: Medium Multi-Tier Dense Tree
+	var m10 = _build_med_multitier_tree(1010)
+	ResourceSaver.save(m10, "res://assets/models/tree_variation_10.tres")
+	cached_living_variations.append(m10)
+
+	# --- NÍVEL 3: ÁRVORES BAIXAS / ARBUSTOS (1/3 da altura: ~3m - 4m) ---
+	# Variation 11: Low Bushy Canopy Tree
+	var m11 = _build_low_bushy_canopy_tree(1111)
+	ResourceSaver.save(m11, "res://assets/models/tree_variation_11.tres")
+	cached_living_variations.append(m11)
+
+	# Variation 12: Low V-Bifurcated Shrub-Tree
+	var m12 = _build_low_v_bifurcated_tree(1212)
+	ResourceSaver.save(m12, "res://assets/models/tree_variation_12.tres")
+	cached_living_variations.append(m12)
+
+	# Variation 13: Low Crooked Gnarled Shrub-Tree
+	var m13 = _build_low_crooked_gnarled_tree(1313)
+	ResourceSaver.save(m13, "res://assets/models/tree_variation_13.tres")
+	cached_living_variations.append(m13)
+
+	# Variation 14: Low Slender Sapling Tree
+	var m14 = _build_low_slender_sapling(1414)
+	ResourceSaver.save(m14, "res://assets/models/tree_variation_14.tres")
+	cached_living_variations.append(m14)
+
+	# Variation 15: Low Multi-Branch Dense Shrub Tree
+	var m15 = _build_low_dense_shrub_tree(1515)
+	ResourceSaver.save(m15, "res://assets/models/tree_variation_15.tres")
+	cached_living_variations.append(m15)
 
 	# Update fallback lowpoly_tree.tres
 	ResourceSaver.save(m1, "res://assets/models/lowpoly_tree.tres")
@@ -408,6 +485,422 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(4.2, 4.8), rng, 3)
 
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.20, 0.15, 0.10))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 6: Guarda-Chuva Médio de Sub-bosque (1/2 da altura: ~5.0m a ~5.5m)
+## Tronco moderado, copa aberta distribuída horizontalmente na meia-altura
+## -----------------------------------------------------------------------------
+func _build_med_umbrella_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.28
+	var p_root = Vector3(0, -0.8, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(-0.1, 0.1), 1.3, rng.randf_range(-0.1, 0.1))
+	var p_hub = Vector3(rng.randf_range(-0.1, 0.1), 3.2, rng.randf_range(-0.1, 0.1))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p_hub], [r_base * 1.30, r_base * 1.05, r_base * 0.85, r_base * 0.65], sides, true, false)
+
+	# Galho seco lateral
+	var dry_dir = Vector3(rng.randf_range(0.6, 0.9), rng.randf_range(-0.1, 0.15), rng.randf_range(-0.4, 0.4)).normalized()
+	_build_cylinder_segment(st_bark, p1 + Vector3(0, 0.2, 0), p1 + Vector3(0, 0.2, 0) + dry_dir * 1.0, 0.09, 0.02, 4)
+
+	# 4 galhos estilo guarda-chuva espalhando lateralmente
+	for i in range(4):
+		var ang = float(i) * (TAU / 4.0) + rng.randf_range(-0.2, 0.2)
+		var b_reach = rng.randf_range(2.0, 2.5)
+		var b_mid = p_hub + Vector3(cos(ang) * b_reach, rng.randf_range(0.4, 0.8), sin(ang) * b_reach)
+		_build_continuous_branch(st_bark, [p_hub, b_mid], [0.16, 0.10], sides, true, true)
+
+		for s in range(2):
+			var sec_ang = ang + (float(s) - 0.5) * 0.75 + rng.randf_range(-0.1, 0.1)
+			var sec_reach = rng.randf_range(1.3, 1.8)
+			var sec_tip = b_mid + Vector3(cos(sec_ang) * sec_reach, rng.randf_range(0.6, 1.1), sin(sec_ang) * sec_reach)
+			_build_continuous_branch(st_bark, [b_mid, sec_tip], [0.10, 0.01], 4, true, true)
+			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(2.2, 2.6), rng, 2)
+
+		_add_volumetric_foliage_cards(st_foliage, b_mid, rng.randf_range(2.0, 2.4), rng, 2)
+
+	# Cúpula no ápice
+	var apex_top = p_hub + Vector3(rng.randf_range(-0.1, 0.1), rng.randf_range(1.8, 2.3), rng.randf_range(-0.1, 0.1))
+	_build_cylinder_segment(st_bark, p_hub, apex_top, 0.13, 0.05, sides)
+	_add_volumetric_foliage_cards(st_foliage, apex_top, rng.randf_range(2.3, 2.7), rng, 3)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.25, 0.18, 0.12))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 7: Bifurcada Média em "V" (1/2 da altura: ~4.8m a ~5.2m)
+## Tronco bifurca a 1.3m em dois ramos principais com copas médias
+## -----------------------------------------------------------------------------
+func _build_med_v_bifurcated_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.30
+	var p_root = Vector3(0, -0.8, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(-0.08, 0.08), 0.7, rng.randf_range(-0.08, 0.08))
+	var split_pt = Vector3(rng.randf_range(-0.12, 0.12), 1.3, rng.randf_range(-0.12, 0.12))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, split_pt], [r_base * 1.30, r_base * 1.05, r_base * 0.90, r_base * 0.80], sides, true, true)
+
+	var v_angles = [rng.randf_range(-0.2, 0.2), rng.randf_range(PI - 0.25, PI + 0.25)]
+	var arm_mids: Array[Vector3] = []
+	for a_idx in range(2):
+		var ang = v_angles[a_idx]
+		var v_lean = Vector3(cos(ang) * 0.50, 0.95, sin(ang) * 0.50).normalized()
+		var arm_len = rng.randf_range(2.2, 2.7)
+		var p_arm_mid = split_pt + v_lean * arm_len + Vector3(rng.randf_range(-0.12, 0.12), 0, rng.randf_range(-0.12, 0.12))
+		_build_cylinder_segment(st_bark, split_pt, p_arm_mid, r_base * 0.56, r_base * 0.40, sides)
+		arm_mids.append(p_arm_mid)
+
+		for sub_b in range(2):
+			var sub_ang = ang + (float(sub_b) - 0.5) * 0.85 + rng.randf_range(-0.1, 0.1)
+			var sub_dir = Vector3(cos(sub_ang) * 0.65, 0.80, sin(sub_ang) * 0.65).normalized()
+			var sec_tip = p_arm_mid + sub_dir * rng.randf_range(2.0, 2.5)
+			_build_continuous_branch(st_bark, [p_arm_mid, sec_tip], [r_base * 0.36, 0.01], 4, true, true)
+			_add_volumetric_foliage_cards(st_foliage, sec_tip, rng.randf_range(2.2, 2.6), rng, 2)
+
+		_add_volumetric_foliage_cards(st_foliage, p_arm_mid, rng.randf_range(2.0, 2.4), rng, 2)
+
+	if arm_mids.size() == 2:
+		var bridge_mid = (arm_mids[0] + arm_mids[1]) * 0.5 + Vector3(0, rng.randf_range(0.3, 0.8), 0)
+		_build_continuous_branch(st_bark, [arm_mids[0], bridge_mid, arm_mids[1]], [0.09, 0.05, 0.09], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, bridge_mid, rng.randf_range(2.0, 2.4), rng, 2)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.22, 0.16, 0.10))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 8: Torta Média de Sub-bosque (1/2 da altura: ~4.6m a ~5.0m)
+## Tronco sinuoso inclinado com nós, galho seco lateral e copa assimétrica
+## -----------------------------------------------------------------------------
+func _build_med_thick_gnarled_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.32
+	var p_root = Vector3(0, -0.8, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(0.2, 0.32), 1.0, rng.randf_range(-0.2, -0.1))
+	var p2 = Vector3(rng.randf_range(0.32, 0.50), 2.1, rng.randf_range(0.1, 0.22))
+	var p3 = Vector3(rng.randf_range(0.15, 0.32), 3.4, rng.randf_range(0.22, 0.40))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p3], [r_base * 1.30, r_base * 1.05, r_base * 0.90, r_base * 0.76, r_base * 0.62], sides, true, false)
+
+	# Galho morto lateral
+	var dead_bough = Vector3(rng.randf_range(-0.85, -0.6), rng.randf_range(-0.15, 0.1), rng.randf_range(-0.5, 0.5)).normalized()
+	_build_cylinder_segment(st_bark, p2, p2 + dead_bough * 1.4, 0.14, 0.03, 4)
+
+	# 3 Galhos tortos a partir de p3
+	for i in range(3):
+		var ang = float(i) * (TAU / 3.0) + rng.randf_range(-0.2, 0.2)
+		var b_dir = Vector3(cos(ang) * 0.85, rng.randf_range(0.25, 0.55), sin(ang) * 0.85).normalized()
+		var b_mid = p3 + b_dir * rng.randf_range(1.8, 2.3)
+		_build_cylinder_segment(st_bark, p3, b_mid, r_base * 0.52, 0.14, sides)
+
+		for s in range(2):
+			var sub_ang = ang + (float(s) - 0.5) * 0.9 + rng.randf_range(-0.15, 0.15)
+			var sub_dir = Vector3(cos(sub_ang) * 0.85, rng.randf_range(0.3, 0.6), sin(sub_ang) * 0.85).normalized()
+			var tip = b_mid + sub_dir * rng.randf_range(1.5, 2.0)
+			_build_continuous_branch(st_bark, [b_mid, tip], [0.12, 0.01], 4, true, true)
+			_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(2.2, 2.6), rng, 2)
+
+		_add_volumetric_foliage_cards(st_foliage, b_mid, rng.randf_range(2.0, 2.4), rng, 2)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.19, 0.14, 0.09))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 9: Esguia Média de Sub-bosque (1/2 da altura: ~5.4m a ~5.8m)
+## Tronco esguio reto, galhos ascendentes compactos
+## -----------------------------------------------------------------------------
+func _build_med_young_slender_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.18
+	var p_root = Vector3(0, -0.8, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(-0.06, 0.06), 1.8, rng.randf_range(-0.06, 0.06))
+	var p2 = Vector3(rng.randf_range(-0.08, 0.08), 3.6, rng.randf_range(-0.08, 0.08))
+	var p_top = Vector3(rng.randf_range(-0.08, 0.08), 5.5, rng.randf_range(-0.08, 0.08))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p_top], [r_base * 1.25, r_base * 1.05, r_base * 0.82, r_base * 0.65, 0.06], sides, true, true)
+
+	for i in range(4):
+		var ang = float(i) * (TAU / 4.0) + rng.randf_range(-0.25, 0.25)
+		var h_attach = rng.randf_range(3.8, 4.8)
+		var attach_pt = p2.lerp(p_top, (h_attach - 3.6) / 1.9)
+		var b_reach = rng.randf_range(1.2, 1.6)
+		var b_tip = attach_pt + Vector3(cos(ang) * b_reach, rng.randf_range(0.9, 1.4), sin(ang) * b_reach)
+		_build_continuous_branch(st_bark, [attach_pt, b_tip], [0.08, 0.01], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(1.9, 2.3), rng, 2)
+
+	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(2.2, 2.6), rng, 3)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.26, 0.21, 0.14))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 10: Média em Andares (1/2 da altura: ~5.2m a ~5.6m)
+## Tronco com dois andares horizontais de folhagem
+## -----------------------------------------------------------------------------
+func _build_med_multitier_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.26
+	var p_root = Vector3(0, -0.8, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(-0.08, 0.08), 2.2, rng.randf_range(-0.08, 0.08))
+	var p2 = Vector3(rng.randf_range(-0.1, 0.1), 4.2, rng.randf_range(-0.1, 0.1))
+	var p_top = Vector3(rng.randf_range(-0.06, 0.06), 5.4, rng.randf_range(-0.06, 0.06))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p_top], [r_base * 1.28, r_base * 1.05, r_base * 0.85, r_base * 0.65, 0.06], sides, true, true)
+
+	# Andar 1 (~2.6m)
+	for i in range(3):
+		var ang = float(i) * (TAU / 3.0) + rng.randf_range(-0.2, 0.2)
+		var b_tip = p1 + Vector3(cos(ang) * rng.randf_range(1.6, 2.1), rng.randf_range(0.2, 0.5), sin(ang) * rng.randf_range(1.6, 2.1))
+		_build_cylinder_segment(st_bark, p1, b_tip, 0.13, 0.05, 4)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(2.0, 2.4), rng, 2)
+
+	# Andar 2 (~4.2m)
+	for i in range(3):
+		var ang = float(i) * (TAU / 3.0) + (PI / 3.0) + rng.randf_range(-0.2, 0.2)
+		var b_tip = p2 + Vector3(cos(ang) * rng.randf_range(1.4, 1.8), rng.randf_range(0.3, 0.7), sin(ang) * rng.randf_range(1.4, 1.8))
+		_build_cylinder_segment(st_bark, p2, b_tip, 0.10, 0.04, 4)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(2.0, 2.4), rng, 2)
+
+	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(2.2, 2.6), rng, 3)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.21, 0.16, 0.11))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 11: Arvoreta Arbustiva de Copa Baixa (1/3 da altura: ~3.2m a ~3.6m)
+## Tronco curto, ramagem farta abrindo logo a 1.2m do solo
+## -----------------------------------------------------------------------------
+func _build_low_bushy_canopy_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.18
+	var p_root = Vector3(0, -0.6, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(-0.06, 0.06), 0.6, rng.randf_range(-0.06, 0.06))
+	var p_hub = Vector3(rng.randf_range(-0.06, 0.06), 1.2, rng.randf_range(-0.06, 0.06))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p_hub], [r_base * 1.25, r_base * 1.05, r_base * 0.85, r_base * 0.70], sides, true, false)
+
+	for i in range(4):
+		var ang = float(i) * (TAU / 4.0) + rng.randf_range(-0.2, 0.2)
+		var b_reach = rng.randf_range(1.2, 1.6)
+		var b_tip = p_hub + Vector3(cos(ang) * b_reach, rng.randf_range(0.3, 0.7), sin(ang) * b_reach)
+		_build_continuous_branch(st_bark, [p_hub, b_tip], [0.11, 0.04], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(1.6, 2.0), rng, 2)
+
+		var sub_ang = ang + rng.randf_range(-0.4, 0.4)
+		var sub_tip = b_tip + Vector3(cos(sub_ang) * 0.8, rng.randf_range(0.3, 0.6), sin(sub_ang) * 0.8)
+		_build_cylinder_segment(st_bark, b_tip, sub_tip, 0.04, 0.01, 4)
+		_add_volumetric_foliage_cards(st_foliage, sub_tip, rng.randf_range(1.5, 1.9), rng, 2)
+
+	var apex = p_hub + Vector3(rng.randf_range(-0.06, 0.06), 1.4, rng.randf_range(-0.06, 0.06))
+	_build_cylinder_segment(st_bark, p_hub, apex, 0.09, 0.03, sides)
+	_add_volumetric_foliage_cards(st_foliage, apex, rng.randf_range(1.8, 2.2), rng, 3)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.24, 0.18, 0.12))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 12: Arvoreta Baixa Bifurcada (1/3 da altura: ~3.0m a ~3.4m)
+## Tronco divide-se rente ao chão (~0.85m) em dois braços arbustivos
+## -----------------------------------------------------------------------------
+func _build_low_v_bifurcated_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.18
+	var p_root = Vector3(0, -0.6, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var split_pt = Vector3(rng.randf_range(-0.06, 0.06), 0.85, rng.randf_range(-0.06, 0.06))
+
+	_build_continuous_branch(st_bark, [p_root, p0, split_pt], [r_base * 1.25, r_base * 1.05, r_base * 0.85], sides, true, true)
+
+	var v_angles = [rng.randf_range(-0.2, 0.2), rng.randf_range(PI - 0.25, PI + 0.25)]
+	for a_idx in range(2):
+		var ang = v_angles[a_idx]
+		var v_lean = Vector3(cos(ang) * 0.55, 0.90, sin(ang) * 0.55).normalized()
+		var p_stem = split_pt + v_lean * rng.randf_range(1.5, 1.9)
+		_build_cylinder_segment(st_bark, split_pt, p_stem, r_base * 0.52, r_base * 0.36, sides)
+
+		var tip1 = p_stem + Vector3(cos(ang - 0.3) * 0.9, rng.randf_range(0.4, 0.8), sin(ang - 0.3) * 0.9)
+		var tip2 = p_stem + Vector3(cos(ang + 0.3) * 0.9, rng.randf_range(0.4, 0.8), sin(ang + 0.3) * 0.9)
+		_build_continuous_branch(st_bark, [p_stem, tip1], [0.07, 0.01], 4, true, true)
+		_build_continuous_branch(st_bark, [p_stem, tip2], [0.07, 0.01], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, tip1, rng.randf_range(1.5, 1.9), rng, 2)
+		_add_volumetric_foliage_cards(st_foliage, tip2, rng.randf_range(1.5, 1.9), rng, 2)
+		_add_volumetric_foliage_cards(st_foliage, p_stem, rng.randf_range(1.5, 1.8), rng, 2)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.22, 0.17, 0.11))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 13: Arvoreta Baixa Retorcida (1/3 da altura: ~2.9m a ~3.3m)
+## Tronco curto, curvo e retorcido com galhinho seco e folhagem densa baixa
+## -----------------------------------------------------------------------------
+func _build_low_crooked_gnarled_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.20
+	var p_root = Vector3(0, -0.6, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(0.12, 0.22), 0.7, rng.randf_range(-0.12, -0.06))
+	var p2 = Vector3(rng.randf_range(0.22, 0.35), 1.5, rng.randf_range(0.06, 0.15))
+	var p3 = Vector3(rng.randf_range(0.10, 0.20), 2.2, rng.randf_range(0.15, 0.25))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p3], [r_base * 1.28, r_base * 1.05, r_base * 0.88, r_base * 0.74, r_base * 0.60], sides, true, false)
+
+	# Galho morto baixo
+	var dead_bough = Vector3(rng.randf_range(-0.8, -0.5), rng.randf_range(-0.1, 0.1), rng.randf_range(-0.4, 0.4)).normalized()
+	_build_cylinder_segment(st_bark, p1, p1 + dead_bough * 0.8, 0.09, 0.02, 4)
+
+	# 3 ramos tortos
+	for i in range(3):
+		var ang = float(i) * (TAU / 3.0) + rng.randf_range(-0.2, 0.2)
+		var tip = p3 + Vector3(cos(ang) * rng.randf_range(1.1, 1.5), rng.randf_range(0.4, 0.8), sin(ang) * rng.randf_range(1.1, 1.5))
+		_build_continuous_branch(st_bark, [p3, tip], [0.10, 0.01], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, tip, rng.randf_range(1.5, 1.9), rng, 2)
+
+	_add_volumetric_foliage_cards(st_foliage, p3, rng.randf_range(1.6, 2.0), rng, 2)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.20, 0.15, 0.10))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 14: Broto Esguio / Arvoreta Jovem (1/3 da altura: ~3.4m a ~3.8m)
+## Tronco muito fino e flexível, copa compacta
+## -----------------------------------------------------------------------------
+func _build_low_slender_sapling(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.13
+	var p_root = Vector3(0, -0.6, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p1 = Vector3(rng.randf_range(-0.05, 0.05), 1.0, rng.randf_range(-0.05, 0.05))
+	var p2 = Vector3(rng.randf_range(-0.06, 0.06), 2.0, rng.randf_range(-0.06, 0.06))
+	var p_top = Vector3(rng.randf_range(-0.05, 0.05), 3.0, rng.randf_range(-0.05, 0.05))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p1, p2, p_top], [r_base * 1.22, r_base * 1.05, r_base * 0.80, r_base * 0.62, 0.04], sides, true, true)
+
+	for i in range(4):
+		var ang = float(i) * (TAU / 4.0) + rng.randf_range(-0.2, 0.2)
+		var h_attach = rng.randf_range(1.8, 2.6)
+		var attach_pt = p1.lerp(p_top, (h_attach - 1.0) / 2.0)
+		var b_tip = attach_pt + Vector3(cos(ang) * rng.randf_range(0.7, 1.0), rng.randf_range(0.4, 0.8), sin(ang) * rng.randf_range(0.7, 1.0))
+		_build_continuous_branch(st_bark, [attach_pt, b_tip], [0.05, 0.01], 4, true, true)
+		_add_volumetric_foliage_cards(st_foliage, b_tip, rng.randf_range(1.3, 1.7), rng, 2)
+
+	_add_volumetric_foliage_cards(st_foliage, p_top, rng.randf_range(1.5, 1.9), rng, 3)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.27, 0.22, 0.15))
+
+
+## -----------------------------------------------------------------------------
+## ARQUÉTIPO 15: Arbusto Multiramificado Denso (1/3 da altura: ~2.8m a ~3.4m)
+## Ramificação na base formando densa massa vegetal na altura dos olhos
+## -----------------------------------------------------------------------------
+func _build_low_dense_shrub_tree(seed_val: int) -> ArrayMesh:
+	var rng = RandomNumberGenerator.new()
+	rng.seed = seed_val
+
+	var st_bark = SurfaceTool.new()
+	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var st_foliage = SurfaceTool.new()
+	st_foliage.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	var sides = 6
+	var r_base = 0.17
+	var p_root = Vector3(0, -0.6, 0)
+	var p0 = Vector3(0, 0.05, 0)
+	var p_split = Vector3(rng.randf_range(-0.04, 0.04), 0.55, rng.randf_range(-0.04, 0.04))
+
+	_build_continuous_branch(st_bark, [p_root, p0, p_split], [r_base * 1.25, r_base * 1.05, r_base * 0.85], sides, true, true)
+
+	for i in range(3):
+		var ang = float(i) * (TAU / 3.0) + rng.randf_range(-0.2, 0.2)
+		var stem_mid = p_split + Vector3(cos(ang) * 0.8, rng.randf_range(0.8, 1.2), sin(ang) * 0.8)
+		_build_cylinder_segment(st_bark, p_split, stem_mid, r_base * 0.50, 0.07, 4)
+
+		for s in range(2):
+			var sub_ang = ang + (float(s) - 0.5) * 0.7
+			var twig_tip = stem_mid + Vector3(cos(sub_ang) * 0.8, rng.randf_range(0.6, 1.0), sin(sub_ang) * 0.8)
+			_build_continuous_branch(st_bark, [stem_mid, twig_tip], [0.06, 0.01], 4, true, true)
+			_add_volumetric_foliage_cards(st_foliage, twig_tip, rng.randf_range(1.5, 1.9), rng, 2)
+
+		_add_volumetric_foliage_cards(st_foliage, stem_mid, rng.randf_range(1.5, 1.9), rng, 2)
+
+	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.21, 0.16, 0.10))
 
 
 ## Constrói uma cadeia/galho contínuo de segmentos unidos sem fendas, furos ou quinas cortadas
