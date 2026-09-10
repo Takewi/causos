@@ -56,6 +56,9 @@
 - [x] **Compatibilidade com Godot 4.7 (`project.godot` e Metadados)**:
   - Atualização da flag de engine em `config/features` para `4.7` e inclusão de `compatibility/default_parent_skeleton_in_mesh_instance_3d=true`.
   - Metadados de compressão VRAM etc2/astc sincronizados nos arquivos `.import` de texturas (`branch_leaves` e `foliage`), eliminando alterações residuais automáticas do editor.
+- [x] **Modularização e Organização dos Scripts por Escopo**:
+  - Reorganização da pasta `scripts/` em subpastas por domínio: `core/` (`GameManager`), `player/` (`Player`), `ui/` (`MainMenu`, `PauseMenu`, `HUD`) e `world/` (`ForestChunk`, `ForestConfig`, `ForestManager`, `TerrainModule`, `TreeMeshFactory`).
+  - Atualizados os caminhos em `project.godot`, cenas (`.tscn`), recursos (`.tres`) e documentação de skills.
 
 ### CI/CD & Automação de Releases
 - [x] **Automação Contínua de Releases Multiplataforma (`build-release.yml`)**:

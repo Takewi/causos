@@ -87,7 +87,7 @@ func _update_localized_texts() -> void:
 
 ## 4. Integração com o `GameManager`
 
-O singleton [`scripts/GameManager.gd`](file:///home/takewi/godot/causos/scripts/GameManager.gd) centraliza o estado do idioma do jogo:
+O singleton [`GameManager.gd`](file:///home/takewi/godot/causos/scripts/core/GameManager.gd) centraliza o estado do idioma do jogo:
 
 ```gdscript
 # Obter código do idioma atual
@@ -105,7 +105,7 @@ A função `GameManager.set_locale(code)`:
 ---
 
 ## 5. Menus com Seletor de Idioma
-Tanto o [`MainMenu.gd`](file:///home/takewi/godot/causos/scripts/MainMenu.gd) quanto o [`PauseMenu.gd`](file:///home/takewi/godot/causos/scripts/PauseMenu.gd) possuem o array canônico de idiomas:
+Tanto o [`MainMenu.gd`](file:///home/takewi/godot/causos/scripts/ui/MainMenu.gd) quanto o [`PauseMenu.gd`](file:///home/takewi/godot/causos/scripts/ui/PauseMenu.gd) possuem o array canônico de idiomas:
 
 ```gdscript
 const LANGUAGES: Array[Dictionary] = [

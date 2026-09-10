@@ -1,6 +1,6 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/ForestChunk.gd" id="1_mcsuc"]
+[ext_resource type="Script" path="res://scripts/world/ForestChunk.gd" id="1_mcsuc"]
 
 [node name="ForestChunk" type="Node3D" unique_id=1404756225]
 script = ExtResource("1_mcsuc")

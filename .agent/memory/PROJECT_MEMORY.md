@@ -11,8 +11,12 @@
 ---
 
 ## 2. Regras Técnicas e Arquitetura Godot 4
-- **Princípio da Responsabilidade Única (SRP)**:
-  - Cada script e classe possui um escopo delimitado: geração procedural de relevo (`TerrainModule`), morfologia de malhas (`TreeMeshFactory`), gerenciamento de streaming de chunks (`ForestManager`), lógica de chunk local (`ForestChunk`), controle global e configurações (`GameManager`), interface (`MainMenu`, `PauseMenu`, `HUD`).
+- **Princípio da Responsabilidade Única (SRP) & Organização por Escopos**:
+  - Scripts organizados em subpastas por domínio:
+    * `scripts/core/`: Controle global, configurações e singletons (`GameManager`).
+    * `scripts/player/`: Mecânicas de movimentação e câmera do jogador (`Player`).
+    * `scripts/ui/`: Telas e elementos de interface (`MainMenu`, `PauseMenu`, `HUD`).
+    * `scripts/world/`: Geração procedural de relevo (`TerrainModule`), morfologia e cache de malhas (`TreeMeshFactory`), streaming de chunks (`ForestManager`), nós locais de chunk (`ForestChunk`) e parâmetros de mundo (`ForestConfig`).
   - Proibidos scripts monolíticos ou acoplamento direto entre sistemas sem mediação por nós ou singletons declarados.
 - **Renderização e Densidade com MultiMeshInstance3D**:
   - Toda vegetação densa (árvores, arbustos, tufos de grama) deve ser instanciada obrigatoriamente via `MultiMeshInstance3D`.

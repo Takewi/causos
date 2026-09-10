@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://scripts/Player.gd" id="1_rvslj"]
-[ext_resource type="Script" path="res://scripts/ForestManager.gd" id="2_0bbpv"]
+[ext_resource type="Script" path="res://scripts/player/Player.gd" id="1_rvslj"]
+[ext_resource type="Script" path="res://scripts/world/ForestManager.gd" id="2_0bbpv"]
 [ext_resource type="PackedScene" path="res://scenes/HUD.tscn" id="3_hud"]
 [ext_resource type="PackedScene" path="res://scenes/PauseMenu.tscn" id="4_pause"]
 
