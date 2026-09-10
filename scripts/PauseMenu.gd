@@ -1,17 +1,35 @@
 extends CanvasLayer
 
 ## In-Game Pause Menu & Settings Controller
-## Manages game pause state, cursor capture, FPS limits, and scene navigation.
+## Manages game pause state, cursor capture, FPS limits, scene navigation, and Language Selection.
+
+const LANGUAGES: Array[Dictionary] = [
+	{"code": "pt_BR", "label": "Português (Brasil)"},
+	{"code": "en", "label": "English"},
+	{"code": "es", "label": "Español"}
+]
 
 @onready var backdrop: ColorRect = $Backdrop
 @onready var main_pause_container: VBoxContainer = $CenterContainer/MainPauseVBox
 @onready var settings_panel: PanelContainer = $CenterContainer/SettingsPanel
 
+# Main Pause Controls
+@onready var pause_title: Label = $CenterContainer/MainPauseVBox/PauseTitle
+@onready var resume_btn: Button = $CenterContainer/MainPauseVBox/ResumeBtn
+@onready var settings_btn: Button = $CenterContainer/MainPauseVBox/SettingsBtn
+@onready var main_menu_btn: Button = $CenterContainer/MainPauseVBox/MainMenuBtn
+@onready var quit_btn: Button = $CenterContainer/MainPauseVBox/QuitBtn
+
 # Settings Controls
+@onready var settings_title: Label = $CenterContainer/SettingsPanel/VBox/SettingsTitle
+@onready var language_label: Label = $CenterContainer/SettingsPanel/VBox/LanguageLabel
+@onready var language_option: OptionButton = $CenterContainer/SettingsPanel/VBox/LanguageHBox/LanguageOption
+@onready var fps_label: Label = $CenterContainer/SettingsPanel/VBox/FPSLabel
 @onready var fps_option: OptionButton = $CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption
 @onready var fullscreen_check: CheckBox = $CenterContainer/SettingsPanel/VBox/FullscreenCheck
 @onready var vsync_check: CheckBox = $CenterContainer/SettingsPanel/VBox/VSyncCheck
 @onready var fps_counter_check: CheckBox = $CenterContainer/SettingsPanel/VBox/FPSCounterCheck
+@onready var settings_back_btn: Button = $CenterContainer/SettingsPanel/VBox/SettingsBackBtn
 
 var _is_paused: bool = false
 var _gm_cache: Node = null
@@ -27,9 +45,16 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	visible = false
 	_populate_settings()
+	_update_localized_texts()
 	var gm = _get_gm()
 	if gm and gm.has_signal("settings_changed"):
 		gm.settings_changed.connect(_on_settings_changed)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_TRANSLATION_CHANGED:
+		if is_node_ready():
+			_update_localized_texts()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -60,16 +85,41 @@ func _show_main_pause_view() -> void:
 	settings_panel.visible = false
 
 
-func _populate_settings() -> void:
-	fps_option.clear()
-	fps_option.add_item("30 FPS (Econômico)", 30)
-	fps_option.add_item("60 FPS (Recomendado)", 60)
-	fps_option.add_item("120 FPS (Alto Desempenho)", 120)
-	fps_option.add_item("144 FPS", 144)
-	fps_option.add_item("Ilimitado (Sem Trava)", 0)
+func _update_localized_texts() -> void:
+	if not is_node_ready():
+		return
 
+	# Main Pause Controls
+	pause_title.text = tr("PAUSE_TITLE")
+	resume_btn.text = tr("BTN_RESUME")
+	settings_btn.text = tr("BTN_SETTINGS")
+	main_menu_btn.text = tr("BTN_MAIN_MENU")
+	quit_btn.text = tr("BTN_QUIT_GAME")
+
+	# Settings Panel
+	settings_title.text = tr("PANEL_SETTINGS_TITLE")
+	language_label.text = tr("LABEL_LANGUAGE")
+	fps_label.text = tr("LABEL_FPS")
+	fullscreen_check.text = tr("CHECK_FULLSCREEN")
+	vsync_check.text = tr("CHECK_VSYNC")
+	fps_counter_check.text = tr("CHECK_FPS_COUNTER")
+	settings_back_btn.text = tr("BTN_BACK")
+
+	_refresh_fps_options()
+	_refresh_language_options()
+
+
+func _refresh_fps_options() -> void:
 	var gm = _get_gm()
 	var current_fps = gm.fps_limit if gm else 60
+
+	fps_option.clear()
+	fps_option.add_item(tr("OPT_FPS_30"), 30)
+	fps_option.add_item(tr("OPT_FPS_60"), 60)
+	fps_option.add_item(tr("OPT_FPS_120"), 120)
+	fps_option.add_item(tr("OPT_FPS_144"), 144)
+	fps_option.add_item(tr("OPT_FPS_UNCAPPED"), 0)
+
 	match current_fps:
 		30: fps_option.select(0)
 		60: fps_option.select(1)
@@ -80,6 +130,26 @@ func _populate_settings() -> void:
 			fps_option.add_item("%d FPS" % current_fps, current_fps)
 			fps_option.select(fps_option.item_count - 1)
 
+
+func _refresh_language_options() -> void:
+	var gm = _get_gm()
+	var cur_code = gm.current_locale if gm else TranslationServer.get_locale()
+
+	language_option.clear()
+	var selected_idx = 0
+	for i in range(LANGUAGES.size()):
+		var lang = LANGUAGES[i]
+		language_option.add_item(lang["label"], i)
+		if cur_code == lang["code"] or (cur_code.begins_with("pt") and lang["code"] == "pt_BR") or (cur_code.begins_with("es") and lang["code"] == "es") or (cur_code.begins_with("en") and lang["code"] == "en"):
+			selected_idx = i
+	language_option.select(selected_idx)
+
+
+func _populate_settings() -> void:
+	_refresh_fps_options()
+	_refresh_language_options()
+
+	var gm = _get_gm()
 	if gm:
 		fullscreen_check.button_pressed = gm.fullscreen_enabled
 		vsync_check.button_pressed = gm.vsync_enabled
@@ -109,6 +179,17 @@ func _on_quit_pressed() -> void:
 
 
 # --- Settings Actions ---
+
+func _on_language_selected(index: int) -> void:
+	if index >= 0 and index < LANGUAGES.size():
+		var code = LANGUAGES[index]["code"]
+		var gm = _get_gm()
+		if gm:
+			gm.set_locale(code)
+		else:
+			TranslationServer.set_locale(code)
+		_update_localized_texts()
+
 
 func _on_fps_selected(index: int) -> void:
 	var selected_id = fps_option.get_item_id(index)
@@ -141,6 +222,7 @@ func _on_settings_changed() -> void:
 		fullscreen_check.set_pressed_no_signal(gm.fullscreen_enabled)
 		vsync_check.set_pressed_no_signal(gm.vsync_enabled)
 		fps_counter_check.set_pressed_no_signal(gm.show_fps_counter)
+	_update_localized_texts()
 
 
 func _on_settings_back_pressed() -> void:

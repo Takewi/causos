@@ -160,11 +160,24 @@ theme_override_constants/separation = 16
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
 theme_override_font_sizes/font_size = 20
-text = "Configurações de Desempenho"
+text = "Configurações"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
+
+[node name="LanguageLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.80, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 14
+text = "Idioma / Language:"
+
+[node name="LanguageHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
+layout_mode = 2
+
+[node name="LanguageOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/LanguageHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="FPSLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
 layout_mode = 2
@@ -205,6 +218,7 @@ text = "Voltar"
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/SettingsBtn" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/MainMenuBtn" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/QuitBtn" to="." method="_on_quit_pressed"]
+[connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/LanguageHBox/LanguageOption" to="." method="_on_language_selected"]
 [connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption" to="." method="_on_fps_selected"]
 [connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/FullscreenCheck" to="." method="_on_fullscreen_toggled"]
 [connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/VSyncCheck" to="." method="_on_vsync_toggled"]

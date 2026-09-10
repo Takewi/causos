@@ -15,10 +15,12 @@ var fps_limit: int = 60
 var vsync_enabled: bool = true
 var fullscreen_enabled: bool = false
 var show_fps_counter: bool = false
+var current_locale: String = "pt_BR"
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	TranslationServer.set_locale(current_locale)
 	apply_display_settings()
 
 
@@ -64,6 +66,13 @@ func set_vsync(enabled: bool) -> void:
 ## Toggles FPS counter on HUD
 func set_show_fps_counter(enabled: bool) -> void:
 	show_fps_counter = enabled
+	settings_changed.emit()
+
+
+## Sets current locale (e.g. "pt_BR", "en", "es")
+func set_locale(code: String) -> void:
+	current_locale = code
+	TranslationServer.set_locale(code)
 	settings_changed.emit()
 
 
