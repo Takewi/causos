@@ -142,7 +142,7 @@ theme_override_colors/font_color = Color(0.92, 0.84, 0.68, 1)
 theme_override_font_sizes/font_size = 18
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
-text = "🌲  Criar Floresta"
+text = "Criar Floresta"
 
 [node name="SettingsBtn" type="Button" parent="CenterContainer/MainButtons"]
 custom_minimum_size = Vector2(0, 44)
@@ -152,7 +152,7 @@ theme_override_colors/font_color = Color(0.85, 0.80, 0.70, 1)
 theme_override_font_sizes/font_size = 16
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-text = "⚙️  Configurações"
+text = "Configurações"
 
 [node name="QuitBtn" type="Button" parent="CenterContainer/MainButtons"]
 custom_minimum_size = Vector2(0, 44)
@@ -205,7 +205,7 @@ custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-text = "🎲 Aleatório"
+text = "Aleatório"
 
 [node name="ReliefLabel" type="Label" parent="CenterContainer/MapCreationPanel/VBox"]
 layout_mode = 2
@@ -251,7 +251,7 @@ size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.98, 0.90, 0.72, 1)
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_primary")
-text = "🌲  Gerar e Iniciar"
+text = "Gerar e Iniciar"
 
 [node name="SettingsPanel" type="PanelContainer" parent="CenterContainer"]
 visible = false

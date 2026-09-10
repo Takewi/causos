@@ -2,12 +2,12 @@
 
 Um protótipo de jogo de terror atmosférico e exploração em floresta densa com relevo orgânico contínuo e estética retrô dos anos 90 (*Low Poly*), desenvolvido com **Godot 4.x**.
 
-> 👁️ **A Premissa & Inspiração:**  
+> **A Premissa & Inspiração:**  
 > A ideia central do projeto é ser um **jogo de terror e isolamento psicológico**, concebido a partir de uma **experiência pessoal real vivida pelo autor na mata fechada no Rio Grande do Sul**. O objetivo é recriar a atmosfera pesada, o suspense e a desorientação de estar sozinho na mata nativa do interior gaúcho, resgatando a essência dos tradicionais "causos" — narrativas misteriosas passadas de boca em boca onde o folclore, a solidão e o medo do desconhecido na escuridão da floresta se entrelaçam.
 
 ---
 
-## 🌲 Destaques Técnicos e Funcionalidades
+## Destaques Técnicos e Funcionalidades
 
 - **Relevo Contínuo Procedural:**
   - Terreno modulado via `FastNoiseLite` com amostragem em coordenadas globais de mundo, garantindo emendas perfeitamente contínuas e sem quebras entre blocos.
@@ -41,7 +41,7 @@ Um protótipo de jogo de terror atmosférico e exploração em floresta densa co
 
 ---
 
-## 🎮 Controles
+## Controles
 
 | Comando | Ação |
 | :--- | :--- |
@@ -52,7 +52,7 @@ Um protótipo de jogo de terror atmosférico e exploração em floresta densa co
 
 ---
 
-## 🛠️ Como Executar
+## Como Executar
 
 1. Tenha instalado o **Godot 4.x** (testado na versão 4.3 / 4.7+).
 2. Clone o repositório:
@@ -64,7 +64,7 @@ Um protótipo de jogo de terror atmosférico e exploração em floresta densa co
 
 ---
 
-## 📜 Licença (Proprietary / Source-Available)
+## Licença (Proprietary / Source-Available)
 
 Este projeto é disponibilizado publicamente sob uma **Licença Proprietária de Uso Não Comercial (Source-Available)**:
 - **Permitido:** Leitura do código-fonte, estudo pessoal, pesquisa e execução local para fins de aprendizado e avaliação técnica.

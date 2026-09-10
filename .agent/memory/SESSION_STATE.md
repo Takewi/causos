@@ -47,9 +47,10 @@
   - Limite de FPS (30, 60, 120, 144, Ilimitado), Tela Cheia (F11/Alt+Enter), V-Sync e contador de FPS no HUD.
 - [x] **Skill de Internacionalização (`causos-translations`)**:
   - Skill encapsulada em `.agent/skills/causos-translations/SKILL.md` documentando a arquitetura de i18n, fluxo de compilação via CLI, consulta com `tr()` e reação a eventos de troca de idioma.
-- [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`)**:
+- [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`) e Remoção de Emojis**:
   - Fonte organizada em `assets/fonts/m5x7.ttf` com antialiasing desativado (`antialiasing=0`) para máxima nitidez pixel-art.
   - Aplicada globalmente no projeto via `gui/theme/custom_font="res://assets/fonts/m5x7.ttf"` no `project.godot`, herdada automaticamente por todos os nós de UI (`MainMenu`, `PauseMenu`, `HUD`).
+  - Remoção completa de emojis e caracteres especiais sem glifos em `m5x7` nos menus, botões, arquivos `.tscn` e no catálogo de localização (`translations.csv` / `.translation`).
 
 ### CI/CD & Automação de Releases
 - [x] **Automação Contínua de Releases Multiplataforma (`build-release.yml`)**:
