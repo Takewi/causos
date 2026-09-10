@@ -62,6 +62,17 @@ Um protótipo de jogo de terror atmosférico e exploração em floresta densa co
 3. Abra o Godot Engine, selecione **Importar**, aponte para a pasta do projeto e abra o arquivo `project.godot`.
 4. Pressione `F5` para executar o projeto a partir da cena principal (`scenes/Main.tscn`).
 
+### Build de release no macOS
+
+O bundle publicado nas *releases* é assinado apenas em modo *adhoc* (sem Apple Developer ID e sem notarização), então o Gatekeeper bloqueia o duplo-clique após o download. Para liberar:
+
+```bash
+xattr -dr com.apple.quarantine causos.app
+open causos.app
+```
+
+Alternativamente, clique com o botão direito no app e escolha **Abrir**.
+
 ---
 
 ## Licença (Proprietary / Source-Available)
