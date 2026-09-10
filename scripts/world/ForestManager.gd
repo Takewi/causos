@@ -11,7 +11,12 @@ var tree_factory: TreeMeshFactory
 
 var loaded_chunks: Dictionary = {} # Vector2i -> ForestChunk
 var spawn_queue: Array[Vector2i] = []
+var generating_tasks: Dictionary = {} # Vector2i -> int (WorkerThreadPool task_id)
+var completed_chunk_data: Dictionary = {} # Vector2i -> Dictionary
+var unloading_queue: Array[ForestChunk] = [] # Queue for staggered time-sliced freeing
 var last_player_chunk: Vector2i = Vector2i(999999, 999999)
+
+const MAX_CONCURRENT_WORKER_TASKS: int = 4
 
 
 func _ready() -> void:
@@ -71,13 +76,32 @@ func _ready() -> void:
 		_position_player_on_ground()
 
 
-func _process(_delta: float) -> void:
-	# Process 1 chunk per frame from spawn queue to prevent frame drops
-	if not spawn_queue.is_empty():
-		var next_coord = spawn_queue.pop_front()
-		if is_coord_in_grid(next_coord) and not loaded_chunks.has(next_coord):
-			_spawn_chunk(next_coord)
+func _exit_tree() -> void:
+	# Ensure all active background tasks finish cleanly before exit
+	for coord in generating_tasks.keys():
+		var tid = generating_tasks[coord]
+		WorkerThreadPool.wait_for_task_completion(tid)
+	generating_tasks.clear()
+	completed_chunk_data.clear()
 
+	for chunk_node in unloading_queue:
+		if is_instance_valid(chunk_node):
+			chunk_node.queue_free()
+	unloading_queue.clear()
+
+
+func _process(_delta: float) -> void:
+	# 1. Process at most 1 completed background task per frame (budget: ~2.8 ms)
+	var chunk_assembled = _process_completed_tasks()
+
+	# 2. Dispatch pending chunks from spawn_queue to WorkerThreadPool
+	_dispatch_worker_tasks()
+
+	# 3. Time-sliced chunk unloading: only free if we didn't assemble a chunk on this frame
+	if not chunk_assembled:
+		_process_unloading_queue()
+
+	# 4. Check player movement across chunk boundaries
 	if player == null:
 		player = _find_player_in_tree()
 		if player == null:
@@ -88,6 +112,57 @@ func _process(_delta: float) -> void:
 	if current_chunk != last_player_chunk:
 		last_player_chunk = current_chunk
 		_update_streaming(current_chunk)
+
+
+func _process_completed_tasks() -> bool:
+	var completed_coord: Vector2i = Vector2i(999999, 999999)
+	for coord in generating_tasks.keys():
+		var tid = generating_tasks[coord]
+		if WorkerThreadPool.is_task_completed(tid):
+			WorkerThreadPool.wait_for_task_completion(tid)
+			completed_coord = coord
+			break
+
+	if completed_coord != Vector2i(999999, 999999):
+		generating_tasks.erase(completed_coord)
+		if completed_chunk_data.has(completed_coord):
+			var data = completed_chunk_data[completed_coord]
+			completed_chunk_data.erase(completed_coord)
+
+			# Verify chunk is still within active streaming distance (player didn't walk away)
+			var radius = config.active_radius if config else 1
+			var dist = (completed_coord - last_player_chunk).abs()
+			if dist.x <= radius and dist.y <= radius and is_coord_in_grid(completed_coord) and not loaded_chunks.has(completed_coord):
+				var chunk = chunk_scene.instantiate() as ForestChunk
+				chunk.name = "Chunk_%d_%d" % [completed_coord.x, completed_coord.y]
+				chunk.position = chunk_coord_to_world(completed_coord)
+				chunk.apply_chunk_data(data, config, terrain_module, tree_factory)
+				add_child(chunk)
+				loaded_chunks[completed_coord] = chunk
+				return true
+	return false
+
+
+func _dispatch_worker_tasks() -> void:
+	while not spawn_queue.is_empty() and generating_tasks.size() < MAX_CONCURRENT_WORKER_TASKS:
+		var next_coord = spawn_queue.pop_front()
+		if not is_coord_in_grid(next_coord) or loaded_chunks.has(next_coord) or generating_tasks.has(next_coord):
+			continue
+
+		var num_variations = tree_factory.get_living_tree_variations().size()
+		var c = next_coord
+		var tid = WorkerThreadPool.add_task(func():
+			var data = ForestChunk.generate_chunk_data(c, config, terrain_module, num_variations)
+			completed_chunk_data[c] = data
+		)
+		generating_tasks[next_coord] = tid
+
+
+func _process_unloading_queue() -> void:
+	if not unloading_queue.is_empty():
+		var chunk_node = unloading_queue.pop_front()
+		if is_instance_valid(chunk_node):
+			chunk_node.queue_free()
 
 
 ## Converts a 3D world position into a chunk 2D grid coordinate.
@@ -125,7 +200,7 @@ func _update_streaming(center_coord: Vector2i) -> void:
 			if is_coord_in_grid(coord):
 				active_coords.append(coord)
 
-	# 1. Unload distant chunks outside active window
+	# 1. Unload distant chunks outside active window (staggered via unloading_queue)
 	var coords_to_unload: Array[Vector2i] = []
 	for coord in loaded_chunks.keys():
 		if coord not in active_coords:
@@ -135,7 +210,7 @@ func _update_streaming(center_coord: Vector2i) -> void:
 		var chunk_node = loaded_chunks[coord]
 		loaded_chunks.erase(coord)
 		if is_instance_valid(chunk_node):
-			chunk_node.queue_free()
+			unloading_queue.append(chunk_node)
 
 	# Remove pending coords that are no longer in active radius
 	var filtered_queue: Array[Vector2i] = []
@@ -146,7 +221,7 @@ func _update_streaming(center_coord: Vector2i) -> void:
 
 	# 2. Enqueue new chunks (sorted by proximity to center)
 	for coord in active_coords:
-		if not loaded_chunks.has(coord) and coord not in spawn_queue:
+		if not loaded_chunks.has(coord) and not generating_tasks.has(coord) and coord not in spawn_queue:
 			spawn_queue.append(coord)
 
 	spawn_queue.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
