@@ -14,6 +14,7 @@
   - 5 variações de estrato baixo (1/3 da altura: ~3m a 4.5m).
   - Troncos sólidos com rotação e inclinação orgânicas (sem artefatos de corte vertical).
   - Variação 13 com maior densidade de ramificação e folhagens adicionais.
+  - Eliminação de modelos e texturas duplicados: remoção de `lowpoly_tree.tres` (idêntico a `tree_variation_1.tres`) e `canopy_leaves.png` (cópia binária idêntica de `branch_leaves.png`), padronizando o pipeline para carregar `branch_leaves.png` e as 15 variações limpas.
 - [x] **Vegetação Rasteira / Folhagem Otimizada**:
   - Particionamento espacial em **16 subcélulas** (4x4 de 25x25m) por chunk com AABBs individuais.
   - Culling de distância GPU (`visibility_range_end = 60m`, além da névoa de 45m), eliminando qualquer popping visual ou clareiras estéreis.

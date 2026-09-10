@@ -159,9 +159,6 @@ func compile_and_cache_variations() -> Array[Mesh]:
 	ResourceSaver.save(m15, "res://assets/models/tree_variation_15.tres")
 	cached_living_variations.append(m15)
 
-	# Update fallback lowpoly_tree.tres
-	ResourceSaver.save(m1, "res://assets/models/lowpoly_tree.tres")
-
 	return cached_living_variations
 
 
@@ -1204,8 +1201,6 @@ func _finalize_tree_mesh(st_bark: SurfaceTool, st_foliage: SurfaceTool, bark_col
 
 	var foliage_mat = StandardMaterial3D.new()
 	var tex = load("res://assets/textures/branch_leaves.png")
-	if tex == null:
-		tex = load("res://assets/textures/canopy_leaves.png")
 	foliage_mat.albedo_texture = tex
 	foliage_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR
 	foliage_mat.alpha_scissor_threshold = 0.5
