@@ -508,22 +508,22 @@ func _build_continuous_branch(
 		var next_v_uv = current_v_uv + seg_len * 0.5
 
 		if radii[i + 1] < 0.01:
-			# Ápice cônico fechado na ponta
+			# Ápice cônico fechado na ponta (normais voltadas para fora)
 			var apex = points[i + 1]
 			for j in range(sides):
 				var j_next = (j + 1) % sides
 				var p0 = r_curr[j]
 				var p1 = r_curr[j_next]
-				var norm = (p1 - p0).cross(apex - p0).normalized()
+				var norm = (apex - p0).cross(p1 - p0).normalized()
 				st.set_normal(norm)
 				st.set_uv(Vector2(float(j) / float(sides), current_v_uv))
 				st.add_vertex(p0)
 				st.set_normal(norm)
-				st.set_uv(Vector2(float(j + 1) / float(sides), current_v_uv))
-				st.add_vertex(p1)
-				st.set_normal(norm)
 				st.set_uv(Vector2((float(j) + 0.5) / float(sides), next_v_uv))
 				st.add_vertex(apex)
+				st.set_normal(norm)
+				st.set_uv(Vector2(float(j + 1) / float(sides), current_v_uv))
+				st.add_vertex(p1)
 		else:
 			for j in range(sides):
 				var j_next = (j + 1) % sides
@@ -535,31 +535,32 @@ func _build_continuous_branch(
 				var u_left = float(j) / float(sides)
 				var u_right = float(j + 1) / float(sides)
 
-				var n1 = (p1 - p0).cross(p2 - p0).normalized()
+				# Winding counter-clockwise voltado para fora (front-facing outward)
+				var n1 = (p2 - p0).cross(p1 - p0).normalized()
 				st.set_normal(n1)
 				st.set_uv(Vector2(u_left, current_v_uv))
 				st.add_vertex(p0)
+				st.set_normal(n1)
+				st.set_uv(Vector2(u_right, next_v_uv))
+				st.add_vertex(p2)
 				st.set_normal(n1)
 				st.set_uv(Vector2(u_right, current_v_uv))
 				st.add_vertex(p1)
-				st.set_normal(n1)
-				st.set_uv(Vector2(u_right, next_v_uv))
-				st.add_vertex(p2)
 
-				var n2 = (p2 - p0).cross(p3 - p0).normalized()
+				var n2 = (p3 - p0).cross(p2 - p0).normalized()
 				st.set_normal(n2)
 				st.set_uv(Vector2(u_left, current_v_uv))
 				st.add_vertex(p0)
 				st.set_normal(n2)
-				st.set_uv(Vector2(u_right, next_v_uv))
-				st.add_vertex(p2)
-				st.set_normal(n2)
 				st.set_uv(Vector2(u_left, next_v_uv))
 				st.add_vertex(p3)
+				st.set_normal(n2)
+				st.set_uv(Vector2(u_right, next_v_uv))
+				st.add_vertex(p2)
 
 		current_v_uv = next_v_uv
 
-	# 5. Tampas (Caps) para vedar pontas abertas
+	# 5. Tampas (Caps) para vedar pontas abertas com normais voltadas para fora
 	if close_start and radii[0] > 0.005:
 		var center_start = points[0]
 		var cap_norm = -ring_normals[0]
@@ -570,11 +571,11 @@ func _build_continuous_branch(
 			st.set_uv(Vector2(0.5, 0.5))
 			st.add_vertex(center_start)
 			st.set_normal(cap_norm)
-			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j_next) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j_next) * TAU / float(sides))))
-			st.add_vertex(r0_ring[j_next])
-			st.set_normal(cap_norm)
 			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j) * TAU / float(sides))))
 			st.add_vertex(r0_ring[j])
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j_next) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j_next) * TAU / float(sides))))
+			st.add_vertex(r0_ring[j_next])
 
 	if close_end and radii[n_pts - 1] >= 0.01:
 		var center_end = points[n_pts - 1]
@@ -586,11 +587,11 @@ func _build_continuous_branch(
 			st.set_uv(Vector2(0.5, 0.5))
 			st.add_vertex(center_end)
 			st.set_normal(cap_norm)
-			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j) * TAU / float(sides))))
-			st.add_vertex(rend_ring[j])
-			st.set_normal(cap_norm)
 			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j_next) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j_next) * TAU / float(sides))))
 			st.add_vertex(rend_ring[j_next])
+			st.set_normal(cap_norm)
+			st.set_uv(Vector2(0.5 + 0.5 * cos(float(j) * TAU / float(sides)), 0.5 + 0.5 * sin(float(j) * TAU / float(sides))))
+			st.add_vertex(rend_ring[j])
 
 
 ## Constrói segmento cilíndrico selado e seguro
