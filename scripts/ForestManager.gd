@@ -32,6 +32,22 @@ func _ready() -> void:
 	tree_factory = TreeMeshFactory.new()
 	tree_factory.get_living_tree_variations()
 
+	# Synchronize lighting and fog atmosphere with config
+	var world_env = get_node_or_null("../WorldEnvironment") as WorldEnvironment
+	if world_env and world_env.environment and config:
+		world_env.environment.fog_light_color = config.fog_color
+		world_env.environment.fog_depth_begin = config.fog_depth_begin
+		world_env.environment.fog_depth_end = config.fog_depth_end
+		world_env.environment.background_color = config.fog_color
+		world_env.environment.ambient_light_color = config.ambient_light_color
+		world_env.environment.ambient_light_energy = config.ambient_light_energy
+
+	var dir_light = get_node_or_null("../DirectionalLight3D") as DirectionalLight3D
+	if dir_light and config:
+		dir_light.directional_shadow_max_distance = config.max_shadow_distance
+		dir_light.light_energy = config.sun_light_energy
+		dir_light.light_color = config.sun_light_color
+
 	if player == null:
 		player = _find_player_in_tree()
 

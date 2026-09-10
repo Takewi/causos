@@ -696,6 +696,8 @@ func _finalize_tree_mesh(st_bark: SurfaceTool, st_foliage: SurfaceTool, bark_col
 	foliage_mat.roughness = 1.0
 	foliage_mat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	foliage_mat.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT
+	foliage_mat.backlight_enabled = true
+	foliage_mat.backlight = Color(0.24, 0.32, 0.18)
 
 	st_bark.set_material(bark_mat)
 	var mesh = st_bark.commit()

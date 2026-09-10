@@ -86,6 +86,7 @@ func _populate_foliage(rng: RandomNumberGenerator, config: ForestConfig, terrain
 
 		mm.set_instance_transform(i, t)
 
+	mm.custom_aabb = AABB(Vector3(-half_size, -config.terrain_amplitude - 2.0, -half_size), Vector3(config.chunk_size, config.terrain_amplitude * 2.0 + 6.0, config.chunk_size))
 	foliage_multimesh.multimesh = mm
 
 
@@ -254,9 +255,19 @@ func _create_tree_multimesh(mesh: Mesh, transforms: Array, node_name: String, co
 	for i in range(transforms.size()):
 		mm.set_instance_transform(i, transforms[i])
 
+	# Compute exact combined AABB for accurate frustum and shadow culling
+	var mesh_aabb = mesh.get_aabb()
+	var combined_aabb = (transforms[0] as Transform3D) * mesh_aabb
+	for i in range(1, transforms.size()):
+		combined_aabb = combined_aabb.merge((transforms[i] as Transform3D) * mesh_aabb)
+	mm.custom_aabb = combined_aabb
+
 	var mm_inst = MultiMeshInstance3D.new()
 	mm_inst.name = node_name
 	mm_inst.multimesh = mm
+	# Expand cull margin so trees outside camera view continue casting shadows into view (prevents shadow popping)
+	mm_inst.extra_cull_margin = 16.0
+
 	if config:
 		mm_inst.visibility_range_end = config.tree_visibility_range_end
 		mm_inst.visibility_range_end_margin = config.tree_fade_margin

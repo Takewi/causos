@@ -20,23 +20,23 @@ extends Resource
 @export var min_tree_distance: float = 3.0 # Poisson minimum distance (reduces density by ~30%, opens clearings)
 @export var tree_margin: float = 0.0 # Zero margin so trees spawn right up to chunk borders, eliminating corridors
 @export var max_canopy_planes_per_tree: int = 7 # 6 to 8 large planes for minimal overdraw
-@export var tree_visibility_range_end: float = 65.0 # GPU distance culling matching fog distance
-@export var tree_fade_margin: float = 10.0 # Smooth fading for tree distance culling
+@export var tree_visibility_range_end: float = 40.0 # GPU distance culling matching fog distance
+@export var tree_fade_margin: float = 6.0 # Smooth fading for tree distance culling
 
 ## Ground Foliage
 @export_group("Foliage")
 @export var foliage_count: int = 1200
-@export var foliage_visibility_range_end: float = 35.0 # Culling distance for GPU
+@export var foliage_visibility_range_end: float = 30.0 # Culling distance for GPU
 @export var foliage_fade_margin: float = 6.0
 
-## Lighting & Atmosphere (Sunny Afternoon Forest)
+## Lighting & Atmosphere (Atmospheric Green Mist Forest)
 @export_group("Atmosphere & Lighting")
-@export var max_shadow_distance: float = 50.0 # Focused shadow cascades around player
-@export var sun_light_energy: float = 2.2 # Strong sun energy for vivid sunlit ground patches
-@export var sun_light_color: Color = Color(1.0, 0.85, 0.55) # Warm golden sunset
-@export var ambient_light_color: Color = Color(0.42, 0.46, 0.34) # Light olive-green ambient penumbra
+@export var max_shadow_distance: float = 38.0 # Focused shadow cascades covering up to fog limit
+@export var sun_light_energy: float = 2.0 # Vivid sun light penetrating canopy
+@export var sun_light_color: Color = Color(1.0, 0.88, 0.65) # Warm sun rays
+@export var ambient_light_color: Color = Color(0.32, 0.40, 0.28) # Canopy green ambient penumbra
 @export var ambient_light_energy: float = 0.85 # High ambient energy (no pitch black)
-@export var fog_color: Color = Color(0.72, 0.64, 0.50) # Luminous golden/beige haze
-@export var fog_depth_begin: float = 20.0 # Pushed forward for crystal clear foreground (20m)
-@export var fog_depth_end: float = 55.0 # Soft progressive cutoff (55m)
-@export var fog_density: float = 0.02 # Reduced density
+@export var fog_color: Color = Color(0.24, 0.35, 0.22) # Atmospheric greenish mist
+@export var fog_depth_begin: float = 6.0 # Begins close to player (6m) for dense jungle atmosphere
+@export var fog_depth_end: float = 36.0 # Soft progressive cutoff (36m)
+@export var fog_density: float = 0.03 # Natural depth fog density
