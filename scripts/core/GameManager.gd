@@ -5,6 +5,15 @@ extends Node
 
 signal settings_changed
 
+const RESOLUTIONS: Array[Vector2i] = [
+	Vector2i(1280, 720),
+	Vector2i(1366, 768),
+	Vector2i(1600, 900),
+	Vector2i(1920, 1080),
+	Vector2i(2560, 1440),
+	Vector2i(3840, 2160)
+]
+
 var world_seed: int = 0
 var seed_string: String = ""
 
@@ -14,6 +23,7 @@ var min_tree_distance: float = 3.0
 var fps_limit: int = 60
 var vsync_enabled: bool = true
 var fullscreen_enabled: bool = false
+var current_resolution_index: int = 0
 var show_fps_counter: bool = false
 var current_locale: String = "pt_BR"
 
@@ -26,6 +36,11 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if seed_string.is_empty():
 		randomize_seed()
+	var current_size = DisplayServer.window_get_size()
+	for i in range(RESOLUTIONS.size()):
+		if RESOLUTIONS[i] == current_size:
+			current_resolution_index = i
+			break
 	TranslationServer.set_locale(current_locale)
 	apply_display_settings()
 
@@ -42,16 +57,70 @@ func apply_display_settings() -> void:
 	Engine.max_fps = fps_limit
 	var vsync_mode = DisplayServer.VSYNC_ENABLED if vsync_enabled else DisplayServer.VSYNC_DISABLED
 	DisplayServer.window_set_vsync_mode(vsync_mode)
-	var win_mode = DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN if fullscreen_enabled else DisplayServer.WINDOW_MODE_WINDOWED
-	DisplayServer.window_set_mode(win_mode)
+	if fullscreen_enabled:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		apply_resolution()
 
 
 ## Sets Fullscreen mode
 func set_fullscreen(enabled: bool) -> void:
 	fullscreen_enabled = enabled
-	var mode = DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED
-	DisplayServer.window_set_mode(mode)
+	if enabled:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_EXCLUSIVE_FULLSCREEN)
+	else:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
+		apply_resolution()
 	settings_changed.emit()
+
+
+## Applies the current resolution to the window if in windowed mode
+func apply_resolution() -> void:
+	if fullscreen_enabled:
+		return
+	if current_resolution_index >= 0 and current_resolution_index < RESOLUTIONS.size():
+		var res = RESOLUTIONS[current_resolution_index]
+		DisplayServer.window_set_size(res)
+		center_window(res)
+
+
+## Centers the window on the current screen
+func center_window(target_size: Vector2i) -> void:
+	var screen = DisplayServer.window_get_current_screen()
+	var screen_rect = DisplayServer.screen_get_usable_rect(screen)
+	var pos = screen_rect.position + (screen_rect.size - target_size) / 2
+	DisplayServer.window_set_position(pos)
+
+
+## Sets resolution by index from RESOLUTIONS array
+func set_resolution_index(index: int) -> void:
+	if index >= 0 and index < RESOLUTIONS.size():
+		current_resolution_index = index
+		apply_resolution()
+		settings_changed.emit()
+
+
+## Returns a display string for the resolution at given index
+static func get_resolution_label(index: int) -> String:
+	if index >= 0 and index < RESOLUTIONS.size():
+		var res = RESOLUTIONS[index]
+		match res:
+			Vector2i(1280, 720):
+				return "1280 x 720 (720p)"
+			Vector2i(1366, 768):
+				return "1366 x 768"
+			Vector2i(1600, 900):
+				return "1600 x 900 (900p)"
+			Vector2i(1920, 1080):
+				return "1920 x 1080 (1080p)"
+			Vector2i(2560, 1440):
+				return "2560 x 1440 (2K)"
+			Vector2i(3840, 2160):
+				return "3840 x 2160 (4K)"
+			_:
+				return "%d x %d" % [res.x, res.y]
+	return ""
 
 
 ## Sets FPS limit: 30, 60, 120, 144, 0 (uncapped)

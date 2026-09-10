@@ -45,8 +45,14 @@
   - Seletor de idioma interativo em tempo real tanto no `MainMenu` quanto no `PauseMenu`.
 - [x] **Semente Procedural Dinâmica**:
   - Semente gerada aleatoriamente a cada inicialização pelo `GameManager` (substituindo o antigo valor fixo 1337).
-- [x] **Painel de Configurações**:
+- [x] **Painel de Configurações e Seletor de Resolução de Tela**:
+  - Seletor de resoluções 16:9 (`1280x720`, `1366x768`, `1600x900`, `1920x1080`, `2560x1440`, `3840x2160`) integrado ao `GameManager`, redimensionando e centralizando a janela automaticamente no monitor atual.
+  - Desativação dinâmica do seletor de resolução quando a opção Tela Cheia (*Fullscreen*) está ativa.
   - Limite de FPS (30, 60, 120, 144, Ilimitado), Tela Cheia (F11/Alt+Enter), V-Sync e contador de FPS no HUD.
+- [x] **Suporte Completo a Controles de Videogame (Gamepad)**:
+  - InputMap configurado em `project.godot` com suporte nativo a controle para movimentação (`move_*` com analógico esquerdo e D-pad), corrida (`sprint` com L3 / clique analógico e RB / R1), olhar/câmera (`look_*` com analógico direito) e pausa (`pause` com botão Start / Menu).
+  - Controle de câmera no `Player.gd` com rotação analógica contínua, clamp vertical (-85° a 85°) e sensibilidade ajustável (`gamepad_sensitivity = 2.5`).
+  - Acessibilidade e navegação completa por controle nos menus (`MainMenu` e `PauseMenu`), com foco programático automático (`grab_focus`) nos botões principais e suporte ao botão B / cancel para retornar telas.
 - [x] **Skill de Internacionalização (`causos-translations`)**:
   - Skill encapsulada em `.agent/skills/causos-translations/SKILL.md` documentando a arquitetura de i18n, fluxo de compilação via CLI, consulta com `tr()` e reação a eventos de troca de idioma.
 - [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`) e Remoção de Emojis**:

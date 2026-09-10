@@ -4,6 +4,7 @@ extends CharacterBody3D
 @export var move_speed: float = 2.2
 @export var sprint_speed: float = 3.6
 @export var mouse_sensitivity: float = 0.003
+@export var gamepad_sensitivity: float = 2.5
 @export var gravity: float = 20.0
 
 @onready var head: Node3D = $Head
@@ -29,6 +30,13 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	# Gamepad camera look
+	var look_dir = _get_look_input()
+	if look_dir != Vector2.ZERO:
+		rotate_y(-look_dir.x * gamepad_sensitivity * delta)
+		camera_pitch = clamp(camera_pitch - look_dir.y * gamepad_sensitivity * delta, -deg_to_rad(85), deg_to_rad(85))
+		head.rotation.x = camera_pitch
+
 	# Gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
@@ -77,3 +85,10 @@ func _is_sprint_active() -> bool:
 	if InputMap.has_action("sprint"):
 		return Input.is_action_pressed("sprint")
 	return Input.is_key_pressed(KEY_SHIFT)
+
+
+## Gamepad look vector querying with InputMap actions support
+func _get_look_input() -> Vector2:
+	if InputMap.has_action("look_left") and InputMap.has_action("look_right") and InputMap.has_action("look_up") and InputMap.has_action("look_down"):
+		return Input.get_vector("look_left", "look_right", "look_up", "look_down")
+	return Vector2.ZERO

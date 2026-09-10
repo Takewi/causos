@@ -43,12 +43,26 @@ Um protótipo de jogo de terror atmosférico e exploração em floresta densa co
 
 ## Controles
 
+### Teclado e Mouse
+
 | Comando | Ação |
 | :--- | :--- |
 | **W, A, S, D** ou **Setas** | Movimentação do personagem |
 | **Shift** | Correr (*Sprint*) |
 | **Mouse** | Olhar / Rotação da câmera |
-| **Esc** | Liberar / Capturar cursor do mouse |
+| **Esc** | Pausar o jogo / Liberar cursor |
+| **F11** ou **Alt + Enter** | Alternar Tela Cheia (*Fullscreen*) |
+
+### Controle (Gamepad)
+
+| Botão / Eixo | Ação |
+| :--- | :--- |
+| **Analógico Esquerdo** ou **D-Pad** | Movimentação do personagem / Navegação nos menus |
+| **Analógico Direito** | Olhar / Rotação da câmera |
+| **L3 (Click Esquerdo)** ou **RB / R1** | Correr (*Sprint*) |
+| **Botão A / Cruz** | Confirmar / Selecionar no menu |
+| **Botão B / Círculo** | Voltar no menu |
+| **Start / Menu** | Pausar / Continuar jogo |
 
 ---
 

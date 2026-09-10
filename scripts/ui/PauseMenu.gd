@@ -24,6 +24,8 @@ const LANGUAGES: Array[Dictionary] = [
 @onready var settings_title: Label = $CenterContainer/SettingsPanel/VBox/SettingsTitle
 @onready var language_label: Label = $CenterContainer/SettingsPanel/VBox/LanguageLabel
 @onready var language_option: OptionButton = $CenterContainer/SettingsPanel/VBox/LanguageHBox/LanguageOption
+@onready var resolution_label: Label = $CenterContainer/SettingsPanel/VBox/ResolutionLabel
+@onready var resolution_option: OptionButton = $CenterContainer/SettingsPanel/VBox/ResolutionHBox/ResolutionOption
 @onready var fps_label: Label = $CenterContainer/SettingsPanel/VBox/FPSLabel
 @onready var fps_option: OptionButton = $CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption
 @onready var fullscreen_check: CheckBox = $CenterContainer/SettingsPanel/VBox/FullscreenCheck
@@ -36,7 +38,7 @@ var _gm_cache: Node = null
 
 
 func _get_gm() -> Node:
-	if _gm_cache == null:
+	if _gm_cache == null and is_inside_tree():
 		_gm_cache = get_node_or_null("/root/GameManager")
 	return _gm_cache
 
@@ -58,9 +60,18 @@ func _notification(what: int) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
-		toggle_pause()
-		get_viewport().set_input_as_handled()
+	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE):
+		if not _is_paused:
+			toggle_pause()
+			get_viewport().set_input_as_handled()
+		else:
+			if settings_panel.visible:
+				_show_main_pause_view()
+				settings_btn.grab_focus()
+				get_viewport().set_input_as_handled()
+			else:
+				toggle_pause()
+				get_viewport().set_input_as_handled()
 
 
 func toggle_pause() -> void:
@@ -83,6 +94,8 @@ func set_paused(paused: bool) -> void:
 func _show_main_pause_view() -> void:
 	main_pause_container.visible = true
 	settings_panel.visible = false
+	if is_inside_tree():
+		resume_btn.call_deferred("grab_focus")
 
 
 func _update_localized_texts() -> void:
@@ -99,6 +112,7 @@ func _update_localized_texts() -> void:
 	# Settings Panel
 	settings_title.text = tr("PANEL_SETTINGS_TITLE")
 	language_label.text = tr("LABEL_LANGUAGE")
+	resolution_label.text = tr("LABEL_RESOLUTION")
 	fps_label.text = tr("LABEL_FPS")
 	fullscreen_check.text = tr("CHECK_FULLSCREEN")
 	vsync_check.text = tr("CHECK_VSYNC")
@@ -107,6 +121,7 @@ func _update_localized_texts() -> void:
 
 	_refresh_fps_options()
 	_refresh_language_options()
+	_refresh_resolution_options()
 
 
 func _refresh_fps_options() -> void:
@@ -148,12 +163,34 @@ func _refresh_language_options() -> void:
 func _populate_settings() -> void:
 	_refresh_fps_options()
 	_refresh_language_options()
+	_refresh_resolution_options()
 
 	var gm = _get_gm()
 	if gm:
 		fullscreen_check.button_pressed = gm.fullscreen_enabled
 		vsync_check.button_pressed = gm.vsync_enabled
 		fps_counter_check.button_pressed = gm.show_fps_counter
+
+
+func _refresh_resolution_options() -> void:
+	var gm = _get_gm()
+	var cur_idx = gm.current_resolution_index if gm else 0
+	var is_fs = gm.fullscreen_enabled if gm else false
+	var res_list = gm.RESOLUTIONS if (gm and "RESOLUTIONS" in gm) else [
+		Vector2i(1280, 720),
+		Vector2i(1366, 768),
+		Vector2i(1600, 900),
+		Vector2i(1920, 1080),
+		Vector2i(2560, 1440),
+		Vector2i(3840, 2160)
+	]
+
+	resolution_option.clear()
+	for i in range(res_list.size()):
+		var label = gm.get_resolution_label(i) if (gm and gm.has_method("get_resolution_label")) else "%d x %d" % [res_list[i].x, res_list[i].y]
+		resolution_option.add_item(label, i)
+	resolution_option.select(cur_idx)
+	resolution_option.disabled = is_fs
 
 
 # --- Pause Button Actions ---
@@ -165,6 +202,8 @@ func _on_resume_pressed() -> void:
 func _on_settings_pressed() -> void:
 	main_pause_container.visible = false
 	settings_panel.visible = true
+	if is_inside_tree():
+		language_option.call_deferred("grab_focus")
 
 
 func _on_main_menu_pressed() -> void:
@@ -189,6 +228,12 @@ func _on_language_selected(index: int) -> void:
 		else:
 			TranslationServer.set_locale(code)
 		_update_localized_texts()
+
+
+func _on_resolution_selected(index: int) -> void:
+	var gm = _get_gm()
+	if gm:
+		gm.set_resolution_index(index)
 
 
 func _on_fps_selected(index: int) -> void:
@@ -222,8 +267,11 @@ func _on_settings_changed() -> void:
 		fullscreen_check.set_pressed_no_signal(gm.fullscreen_enabled)
 		vsync_check.set_pressed_no_signal(gm.vsync_enabled)
 		fps_counter_check.set_pressed_no_signal(gm.show_fps_counter)
+	_refresh_resolution_options()
 	_update_localized_texts()
 
 
 func _on_settings_back_pressed() -> void:
 	_show_main_pause_view()
+	if is_inside_tree():
+		settings_btn.call_deferred("grab_focus")
