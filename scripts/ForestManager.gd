@@ -200,4 +200,3 @@ func _position_player_on_ground() -> void:
 
 	if player is CharacterBody3D:
 		player.velocity = Vector3.ZERO
-

@@ -52,6 +52,9 @@
   - Fonte organizada em `assets/fonts/m5x7.ttf` com antialiasing desativado (`antialiasing=0`) para máxima nitidez pixel-art.
   - Aplicada globalmente no projeto via `gui/theme/custom_font="res://assets/fonts/m5x7.ttf"` no `project.godot`, herdada automaticamente por todos os nós de UI (`MainMenu`, `PauseMenu`, `HUD`).
   - Remoção completa de emojis e caracteres especiais sem glifos em `m5x7` nos menus, botões, arquivos `.tscn` e no catálogo de localização (`translations.csv` / `.translation`).
+- [x] **Compatibilidade com Godot 4.7 (`project.godot` e Metadados)**:
+  - Atualização da flag de engine em `config/features` para `4.7` e inclusão de `compatibility/default_parent_skeleton_in_mesh_instance_3d=true`.
+  - Metadados de compressão VRAM etc2/astc sincronizados nos arquivos `.import` de texturas (`branch_leaves` e `foliage`), eliminando alterações residuais automáticas do editor.
 
 ### CI/CD & Automação de Releases
 - [x] **Automação Contínua de Releases Multiplataforma (`build-release.yml`)**:
