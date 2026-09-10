@@ -27,7 +27,6 @@ func _init() -> void:
 @export_group("Trees")
 @export var min_tree_distance: float = 3.0 # Poisson minimum distance (reduces density by ~30%, opens clearings)
 @export var tree_margin: float = 0.0 # Zero margin so trees spawn right up to chunk borders, eliminating corridors
-@export var max_canopy_planes_per_tree: int = 7 # 6 to 8 large planes for minimal overdraw
 @export var tree_visibility_range_end: float = 75.0 # Extended beyond fog (45m) so no tree popping is ever visible
 @export var tree_fade_margin: float = 0.0 # Disabled fade margin to eliminate any semi-transparent trees
 
