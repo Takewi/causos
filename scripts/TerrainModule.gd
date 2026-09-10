@@ -18,7 +18,9 @@ func _init(config: ForestConfig = null) -> void:
 		noise.fractal_octaves = config.noise_octaves
 		amplitude = config.terrain_amplitude
 	else:
-		noise.seed = 1337
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		noise.seed = rng.randi_range(10000, 99999999)
 		noise.frequency = 0.011
 		noise.fractal_octaves = 3
 		amplitude = 5.0

@@ -5,8 +5,8 @@ extends Node
 
 signal settings_changed
 
-var world_seed: int = 1337
-var seed_string: String = "1337"
+var world_seed: int = 0
+var seed_string: String = ""
 
 var terrain_amplitude: float = 5.0
 var min_tree_distance: float = 3.0
@@ -18,8 +18,14 @@ var show_fps_counter: bool = false
 var current_locale: String = "pt_BR"
 
 
+func _init() -> void:
+	randomize_seed()
+
+
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	if seed_string.is_empty():
+		randomize_seed()
 	TranslationServer.set_locale(current_locale)
 	apply_display_settings()
 

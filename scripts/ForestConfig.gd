@@ -5,9 +5,17 @@ extends Resource
 @export_group("Chunk Settings")
 @export var chunk_size: float = 100.0
 @export var terrain_segments: int = 32
-@export var world_seed: int = 1337
+@export var world_seed: int = 0
 @export var grid_size: Vector2i = Vector2i(16, 16) # 16x16 chunks = 1600x1600m (~2.56 km²)
 @export var active_radius: int = 1 # 1 = 3x3 active grid (9 chunks)
+
+
+func _init() -> void:
+	if world_seed == 0:
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		world_seed = rng.randi_range(10000, 99999999)
+
 
 ## Terrain Generation
 @export_group("Terrain")

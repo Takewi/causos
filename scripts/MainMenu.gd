@@ -175,7 +175,9 @@ func _populate_map_ui() -> void:
 	if gm:
 		seed_input.text = gm.seed_string
 	else:
-		seed_input.text = "1337"
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		seed_input.text = str(rng.randi_range(10000, 99999999))
 	_refresh_relief_options()
 	_refresh_density_options()
 
