@@ -7,12 +7,9 @@ extends RefCounted
 ## - Archetype 3: Old Gnarled Crooked Tree (tronco grosso inclinado, bacias assimétricas retorcidas e galho seco inferior)
 ## - Archetype 4: Young Slender Tree (tronco fino, copa alta e compacta para preenchimento vertical)
 ## - Archetype 5: Tall Multi-Tier Dense Tree (tronco alto com andares horizontais de galhos e copa emergente)
-## - Archetype 6: Dead Standing Tree (esquelética bare wood, galhos quebrados pontiagudos, casca cinzenta, 0 folhas)
-## - Archetype 7: Dead Broken Trunk (tronco partido ao meio a ~4.8m com lascas e pontas pontiagudas, casca cinzenta, 0 folhas)
 ## - Volumetric 3D leaf cards: clusters com rotações completas em Roll, Pitch e Yaw, incluindo planos inclinados para cima e para baixo.
 
 var cached_living_variations: Array[Mesh] = []
-var cached_dead_variations: Array[Mesh] = []
 
 
 func get_living_tree_variations() -> Array[Mesh]:
@@ -22,19 +19,12 @@ func get_living_tree_variations() -> Array[Mesh]:
 	return cached_living_variations
 
 
-func get_dead_tree_variations() -> Array[Mesh]:
-	if not cached_dead_variations.is_empty():
-		return cached_dead_variations
-	_load_or_compile_all()
-	return cached_dead_variations
-
-
 func get_tree_variations() -> Array[Mesh]:
 	return get_living_tree_variations()
 
 
 func _load_or_compile_all() -> void:
-	if not cached_living_variations.is_empty() and not cached_dead_variations.is_empty():
+	if not cached_living_variations.is_empty():
 		return
 
 	var live_paths = [
@@ -43,10 +33,6 @@ func _load_or_compile_all() -> void:
 		"res://assets/models/tree_variation_3.tres",
 		"res://assets/models/tree_variation_4.tres",
 		"res://assets/models/tree_variation_5.tres"
-	]
-	var dead_paths = [
-		"res://assets/models/tree_dead_1.tres",
-		"res://assets/models/tree_dead_2.tres"
 	]
 
 	var all_loaded = true
@@ -61,20 +47,8 @@ func _load_or_compile_all() -> void:
 		else:
 			all_loaded = false
 
-	var loaded_dead: Array[Mesh] = []
-	for p in dead_paths:
-		if ResourceLoader.exists(p):
-			var m = load(p) as Mesh
-			if m != null:
-				loaded_dead.append(m)
-			else:
-				all_loaded = false
-		else:
-			all_loaded = false
-
-	if all_loaded and loaded_live.size() == 5 and loaded_dead.size() == 2:
+	if all_loaded and loaded_live.size() == 5:
 		cached_living_variations = loaded_live
-		cached_dead_variations = loaded_dead
 		return
 
 	compile_and_cache_variations()
@@ -82,7 +56,6 @@ func _load_or_compile_all() -> void:
 
 func compile_and_cache_variations() -> Array[Mesh]:
 	cached_living_variations.clear()
-	cached_dead_variations.clear()
 
 	# Variation 1: Classic Umbrella Canopy Tree (dossel aberto, galhos espalhados lateralmente)
 	var m1 = _build_umbrella_canopy_tree(101)
@@ -108,16 +81,6 @@ func compile_and_cache_variations() -> Array[Mesh]:
 	var m5 = _build_tall_multitier_tree(505)
 	ResourceSaver.save(m5, "res://assets/models/tree_variation_5.tres")
 	cached_living_variations.append(m5)
-
-	# Dead 1: Dead Standing Tree (esquelética, galhos quebrados, casca cinzenta)
-	var d1 = _build_dead_standing_tree(606)
-	ResourceSaver.save(d1, "res://assets/models/tree_dead_1.tres")
-	cached_dead_variations.append(d1)
-
-	# Dead 2: Dead Broken Trunk (tronco partido ao meio com lascas visíveis)
-	var d2 = _build_dead_broken_trunk(707)
-	ResourceSaver.save(d2, "res://assets/models/tree_dead_2.tres")
-	cached_dead_variations.append(d2)
 
 	# Update fallback lowpoly_tree.tres
 	ResourceSaver.save(m1, "res://assets/models/lowpoly_tree.tres")
@@ -442,108 +405,6 @@ func _build_tall_multitier_tree(seed_val: int) -> ArrayMesh:
 	return _finalize_tree_mesh(st_bark, st_foliage, Color(0.20, 0.15, 0.10))
 
 
-## -----------------------------------------------------------------------------
-## ARQUÉTIPO 6: Árvore Seca / Esquelética (Dead Standing Tree)
-## Sem folhas (1 superfície), galhos pontiagudos quebrados e casca cinzenta desbotada
-## -----------------------------------------------------------------------------
-func _build_dead_standing_tree(seed_val: int) -> ArrayMesh:
-	var rng = RandomNumberGenerator.new()
-	rng.seed = seed_val
-
-	var st_bark = SurfaceTool.new()
-	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
-
-	var sides = 6
-	var r_base = 0.42
-
-	# Tronco seco sinuoso contínuo até o topo esquelético (~11.4m)
-	var p0 = Vector3.ZERO
-	var p1 = Vector3(rng.randf_range(-0.2, 0.2), 3.0, rng.randf_range(-0.2, 0.2))
-	var p2 = Vector3(rng.randf_range(-0.35, 0.35), 6.5, rng.randf_range(-0.35, 0.35))
-	var p3 = Vector3(rng.randf_range(-0.25, 0.25), 9.2, rng.randf_range(-0.25, 0.25))
-	var p_top = p3 + Vector3(rng.randf_range(-0.2, 0.2), 2.2, rng.randf_range(-0.2, 0.2))
-
-	_build_continuous_branch(st_bark, [p0, p1, p2, p3, p_top], [r_base, r_base * 0.85, r_base * 0.70, r_base * 0.50, 0.005], sides, true, true)
-
-	# Galho quebrado baixo a 3.5m
-	var stub_dir = Vector3(rng.randf_range(0.7, 0.9), rng.randf_range(-0.2, 0.1), rng.randf_range(-0.4, 0.4)).normalized()
-	_build_cylinder_segment(st_bark, p1 + Vector3(0, 0.5, 0), p1 + Vector3(0, 0.5, 0) + stub_dir * 1.5, 0.16, 0.04, 4)
-
-	# 5 Galhos esqueléticos quebrados
-	var b_heights = [5.5, 7.2, 8.5, 9.8, 10.4]
-	for idx in range(b_heights.size()):
-		var h = b_heights[idx]
-		var t_pos = p1.lerp(p3, (h - 3.0) / 6.2) if h <= 9.2 else p3.lerp(p_top, (h - 9.2) / 2.2)
-		var ang = float(idx) * 1.4 + rng.randf_range(-0.25, 0.25)
-		var b_len = rng.randf_range(2.4, 4.2)
-		var b_dir = Vector3(cos(ang) * 0.8, rng.randf_range(0.2, 0.6), sin(ang) * 0.8).normalized()
-		var b_tip = t_pos + b_dir * b_len
-
-		_build_cylinder_segment(st_bark, t_pos, b_tip, 0.18, 0.005, 4)
-
-		# Galho secundário quebrado
-		if rng.randf() > 0.3:
-			var twig_ang = ang + rng.randf_range(0.5, 1.2)
-			var twig_dir = Vector3(cos(twig_ang) * 0.7, rng.randf_range(0.2, 0.7), sin(twig_ang) * 0.7).normalized()
-			var twig_tip = b_tip.lerp(t_pos, 0.4) + twig_dir * rng.randf_range(1.2, 2.0)
-			_build_cylinder_segment(st_bark, b_tip.lerp(t_pos, 0.4), twig_tip, 0.07, 0.005, 4)
-
-	return _finalize_dead_tree_mesh(st_bark, Color(0.38, 0.36, 0.33))
-
-
-## -----------------------------------------------------------------------------
-## ARQUÉTIPO 7: Tronco Quebrado / Partido (Dead Broken Trunk)
-## Sem folhas (1 superfície), tronco quebrado no meio (~4.8m) com lascas visíveis e casca cinzenta
-## -----------------------------------------------------------------------------
-func _build_dead_broken_trunk(seed_val: int) -> ArrayMesh:
-	var rng = RandomNumberGenerator.new()
-	rng.seed = seed_val
-
-	var st_bark = SurfaceTool.new()
-	st_bark.begin(Mesh.PRIMITIVE_TRIANGLES)
-
-	var sides = 6
-	var r_base = 0.54
-
-	# Tronco grosso contínuo até a altura da quebra (~4.8m)
-	var p0 = Vector3.ZERO
-	var p1 = Vector3(rng.randf_range(-0.15, 0.15), 2.4, rng.randf_range(-0.15, 0.15))
-	var p_snap = Vector3(rng.randf_range(-0.25, 0.25), 4.8, rng.randf_range(-0.25, 0.25))
-
-	_build_continuous_branch(st_bark, [p0, p1, p_snap], [r_base, r_base * 0.88, r_base * 0.78], sides, true, true)
-
-	# 2 Galhos quebrados remanescentes na lateral
-	var stub1_dir = Vector3(rng.randf_range(-0.8, -0.6), rng.randf_range(-0.1, 0.2), rng.randf_range(0.4, 0.7)).normalized()
-	_build_cylinder_segment(st_bark, p1, p1 + stub1_dir * 1.5, 0.18, 0.05, 4)
-
-	var stub2_dir = Vector3(rng.randf_range(0.5, 0.8), rng.randf_range(0.1, 0.3), rng.randf_range(-0.7, -0.4)).normalized()
-	_build_cylinder_segment(st_bark, p1 + Vector3(0, 1.2, 0), p1 + Vector3(0, 1.2, 0) + stub2_dir * 1.2, 0.14, 0.04, 4)
-
-	# Lascas pontiagudas (wood splinters) projetando-se para cima da quebra
-	var r_snap = r_base * 0.78
-	var num_splinters = 7
-	for i in range(num_splinters):
-		var sp_ang = float(i) * (TAU / float(num_splinters)) + rng.randf_range(-0.2, 0.2)
-		var rim_dist = r_snap * rng.randf_range(0.55, 0.95)
-		var rim_pos = p_snap + Vector3(cos(sp_ang) * rim_dist, 0, sin(sp_ang) * rim_dist)
-
-		var sp_height = rng.randf_range(1.4, 2.0) if i == 0 else rng.randf_range(0.5, 1.2)
-		var sp_lean = Vector3(cos(sp_ang) * rng.randf_range(0.05, 0.25), 1.0, sin(sp_ang) * rng.randf_range(0.05, 0.25)).normalized()
-		var sp_tip = rim_pos + sp_lean * sp_height
-		var sp_base_r = rng.randf_range(0.06, 0.12)
-
-		# Lasca piramidal afunilando até o ápice pontiagudo
-		_build_cylinder_segment(st_bark, rim_pos, sp_tip, sp_base_r, 0.002, 4)
-
-	# Lascas centrais internas
-	for c in range(2):
-		var c_pos = p_snap + Vector3(rng.randf_range(-0.15, 0.15), 0, rng.randf_range(-0.15, 0.15))
-		var c_tip = c_pos + Vector3(rng.randf_range(-0.1, 0.1), rng.randf_range(0.7, 1.4), rng.randf_range(-0.1, 0.1))
-		_build_cylinder_segment(st_bark, c_pos, c_tip, 0.08, 0.002, 4)
-
-	return _finalize_dead_tree_mesh(st_bark, Color(0.36, 0.34, 0.31))
-
-
 ## Constrói uma cadeia/galho contínuo de segmentos unidos sem fendas, furos ou quinas cortadas
 func _build_continuous_branch(
 	st: SurfaceTool,
@@ -843,17 +704,3 @@ func _finalize_tree_mesh(st_bark: SurfaceTool, st_foliage: SurfaceTool, bark_col
 	mesh = st_foliage.commit(mesh)
 
 	return mesh
-
-
-## Finaliza malha de árvore morta (1 superfície única de casca cinzenta/desbotada, 0 superfícies de folhas)
-func _finalize_dead_tree_mesh(st_bark: SurfaceTool, bark_col: Color) -> ArrayMesh:
-	var bark_mat = StandardMaterial3D.new()
-	bark_mat.albedo_color = bark_col
-	bark_mat.roughness = 1.0
-	bark_mat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
-	bark_mat.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
-	bark_mat.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT
-	bark_mat.shading_mode = BaseMaterial3D.SHADING_MODE_PER_VERTEX
-
-	st_bark.set_material(bark_mat)
-	return st_bark.commit()

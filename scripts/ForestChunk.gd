@@ -98,7 +98,6 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 		child.queue_free()
 
 	var live_variations = tree_factory.get_living_tree_variations()
-	var dead_variations = tree_factory.get_dead_tree_variations()
 
 	var half_size = config.chunk_size * 0.5
 	var world_origin_x = float(chunk_coordinate.x) * config.chunk_size
@@ -120,18 +119,9 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 			q_list.append([])
 		live_transforms.append(q_list)
 
-	var dead_transforms: Array = []
-	for _q in range(4):
-		var q_list: Array = []
-		for _v in range(dead_variations.size()):
-			q_list.append([])
-		dead_transforms.append(q_list)
-
 	var trunk_shape = CylinderShape3D.new()
 	trunk_shape.radius = 0.25
 	trunk_shape.height = 4.0
-
-	var dead_ratio = config.dead_tree_ratio if "dead_tree_ratio" in config else 0.02
 
 	for i in range(tree_points.size()):
 		var pt = tree_points[i]
@@ -156,14 +146,8 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 		var t = Transform3D(b.scaled(Vector3(scale_u, scale_y, scale_u)), Vector3(tx, h, tz))
 
 		var q_idx = (0 if tx < 0.0 else 1) + (0 if tz < 0.0 else 2)
-
-		var is_dead = rng.randf() < dead_ratio and not dead_variations.is_empty()
-		if is_dead:
-			var d_idx = rng.randi() % dead_variations.size()
-			dead_transforms[q_idx][d_idx].append(t)
-		else:
-			var l_idx = rng.randi() % live_variations.size()
-			live_transforms[q_idx][l_idx].append(t)
+		var l_idx = rng.randi() % live_variations.size()
+		live_transforms[q_idx][l_idx].append(t)
 
 		# Trunk collider at base (pass readable_name=false to avoid string formatting overhead)
 		var col = CollisionShape3D.new()
@@ -173,10 +157,7 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 
 	for q in range(4):
 		for v in range(live_variations.size()):
-			_create_tree_multimesh(live_variations[v], live_transforms[q][v], "Trees_Live_Q%d_%d" % [q + 1, v + 1], config)
-
-		for v in range(dead_variations.size()):
-			_create_tree_multimesh(dead_variations[v], dead_transforms[q][v], "Trees_Dead_Q%d_%d" % [q + 1, v + 1], config)
+			_create_tree_multimesh(live_variations[v], live_transforms[q][v], "Trees_Q%d_%d" % [q + 1, v + 1], config)
 
 
 ## Fast Bridson Poisson Disc Sampling in 2D bounded space with O(1) swap-and-pop

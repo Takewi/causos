@@ -31,7 +31,6 @@ func _ready() -> void:
 	terrain_module = TerrainModule.new(config)
 	tree_factory = TreeMeshFactory.new()
 	tree_factory.get_living_tree_variations()
-	tree_factory.get_dead_tree_variations()
 
 	if player == null:
 		player = _find_player_in_tree()
