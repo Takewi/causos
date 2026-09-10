@@ -48,6 +48,12 @@
 - [x] **Skill de Internacionalização (`causos-translations`)**:
   - Skill encapsulada em `.agent/skills/causos-translations/SKILL.md` documentando a arquitetura de i18n, fluxo de compilação via CLI, consulta com `tr()` e reação a eventos de troca de idioma.
 
+### CI/CD & Automação de Releases
+- [x] **Automação Contínua de Releases Multiplataforma (`build-release.yml`)**:
+  - Qualquer alteração que entrar na branch `main` (push direto ou merge de PR/branch `dev`) dispara compilação para Windows, Linux e macOS e publicação automática da Release.
+  - Cálculo semântico de tag no próprio workflow: busca a última tag `vX.Y.Z`, detecta alterações (`feat` incrementa versão minor, caso contrário incrementa patch), garantindo unicidade de tag e publicação sem pular etapas.
+  - Geração automática de notas de lançamento (`generate_release_notes: true`) com pacotes `.zip` e `.tar.gz` empacotados e assinados pelo commit sha de destino.
+
 ---
 
 ## 2. Débitos Técnicos e Gargalos em Aberto

@@ -86,12 +86,56 @@ jobs:
   release:
     name: Publish GitHub Release
     needs: [build]
-    if: startsWith(github.ref, 'refs/tags/')
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     permissions:
       contents: write
 
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Determine Release Version & Tag
+        id: versioning
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            TAG="${{ github.ref_name }}"
+          else
+            git fetch --tags --force 2>/dev/null || true
+            LATEST_TAG=$(git tag -l "v*" --sort=-v:refname | head -n 1)
+            if [ -z "$LATEST_TAG" ]; then
+              LATEST_TAG="v0.3.0"
+            fi
+
+            RAW_VER="${LATEST_TAG#v}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$RAW_VER"
+            MAJOR=${MAJOR:-0}
+            MINOR=${MINOR:-3}
+            PATCH=${PATCH:-0}
+
+            # If any commit since latest tag is a feature or breaking change, bump minor; otherwise bump patch
+            COMMITS_LOG=$(git log "${LATEST_TAG}..HEAD" --oneline 2>/dev/null || git log -n 10 --oneline)
+            if echo "$COMMITS_LOG" | grep -iqE '(^| )feat(\(.*\))?:|breaking'; then
+              MINOR=$((MINOR + 1))
+              PATCH=0
+            else
+              PATCH=$((PATCH + 1))
+            fi
+
+            TAG="v${MAJOR}.${MINOR}.${PATCH}"
+
+            # Guarantee tag uniqueness in case of race or existing tag
+            while git rev-parse "$TAG" >/dev/null 2>&1; do
+              PATCH=$((PATCH + 1))
+              TAG="v${MAJOR}.${MINOR}.${PATCH}"
+            done
+          fi
+
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Determined release tag: $TAG"
+
       - name: Download Windows Artifact
         uses: actions/download-artifact@v4
         with:
@@ -137,6 +181,9 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ steps.versioning.outputs.tag }}
+          name: ${{ steps.versioning.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           files: release-files/*
           generate_release_notes: true
         env:
