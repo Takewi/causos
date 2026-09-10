@@ -45,6 +45,8 @@
   - Semente gerada aleatoriamente a cada inicialização pelo `GameManager` (substituindo o antigo valor fixo 1337).
 - [x] **Painel de Configurações**:
   - Limite de FPS (30, 60, 120, 144, Ilimitado), Tela Cheia (F11/Alt+Enter), V-Sync e contador de FPS no HUD.
+- [x] **Skill de Internacionalização (`causos-translations`)**:
+  - Skill encapsulada em `.agent/skills/causos-translations/SKILL.md` documentando a arquitetura de i18n, fluxo de compilação via CLI, consulta com `tr()` e reação a eventos de troca de idioma.
 
 ---
 
