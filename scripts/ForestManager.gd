@@ -66,6 +66,10 @@ func _ready() -> void:
 		var center_chunk = spawn_queue.pop_front()
 		_spawn_chunk(center_chunk)
 
+	# Position player on the ground surface immediately so they don't fall from the sky or spawn below ground
+	if player:
+		_position_player_on_ground()
+
 
 func _process(_delta: float) -> void:
 	# Process 1 chunk per frame from spawn queue to prevent frame drops
@@ -176,3 +180,24 @@ func _find_player_in_tree() -> Node3D:
 		if candidate is Node3D:
 			return candidate
 	return null
+
+
+## Positions player at the exact terrain mesh height at their current X/Z coordinates
+func _position_player_on_ground() -> void:
+	if player == null or terrain_module == null:
+		return
+
+	var px: float = player.global_position.x if player.is_inside_tree() else player.position.x
+	var pz: float = player.global_position.z if player.is_inside_tree() else player.position.z
+	var ground_y: float = terrain_module.get_mesh_height(px, pz, config)
+
+	# Place player capsule base right at ground level (with a 0.05m clearance)
+	var spawn_y = ground_y + 0.05
+	if player.is_inside_tree():
+		player.global_position.y = spawn_y
+	else:
+		player.position.y = spawn_y
+
+	if player is CharacterBody3D:
+		player.velocity = Vector3.ZERO
+

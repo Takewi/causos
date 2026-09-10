@@ -214,7 +214,12 @@ func _populate_trees_poisson(rng: RandomNumberGenerator, config: ForestConfig, t
 
 		var wx = world_origin_x + tx
 		var wz = world_origin_z + tz
-		var h = terrain_module.get_height(wx, wz)
+
+		# Keep player spawn clearing: prevent tree trunks from spawning right on the player
+		if chunk_coordinate == Vector2i(0, 0) and Vector2(wx, wz).length() < 2.5:
+			continue
+
+		var h = terrain_module.get_mesh_height(wx, wz, config)
 
 		# 0 to 360 degree completely random Y rotation
 		var rot_y = rng.randf_range(0.0, TAU)

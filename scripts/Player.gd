@@ -46,6 +46,14 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Safeguard: Reposition on ground if player falls into the void below terrain
+	if global_position.y < -30.0:
+		var fm = get_node_or_null("../ForestManager")
+		if fm and fm.terrain_module:
+			var gy = fm.terrain_module.get_mesh_height(global_position.x, global_position.z, fm.config)
+			global_position.y = gy + 0.1
+			velocity = Vector3.ZERO
+
 
 ## Movement vector querying with InputMap actions support and keyboard fallback
 func _get_movement_input() -> Vector2:
