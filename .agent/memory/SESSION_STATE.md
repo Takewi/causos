@@ -62,13 +62,34 @@
 - [x] **Fonte Pixel Retrô da Interface (`m5x7.ttf`), Resolução Nativa e Remoção de Emojis**:
   - Resolução base de viewport atualizada para 1920x1080 com `textures/canvas_textures/default_texture_filter=0` (Nearest), eliminando interpolação bilinear e desfoque da UI em 1080p ou tela cheia.
   - Configuração do `.import` da fonte `m5x7.ttf` ajustada para `hinting=0` e `subpixel_positioning=0`, garantindo alinhamento estrito aos pixels físicos.
-  - Escalas de fonte generosas e layout expandido sem economia de tela (Título 80px, Títulos de Painel 36px, Botões Principais 32px, Seletores OptionButton e Popups 28px, Rótulos e CheckBoxes 26px, painéis expandidos para 700px de largura).
+  - Escalas de fonte generosas e layout expandido sem economia de tela (Título 80px, Títulos de Painel 36px, Botões Principais 32px, Seletores OptionButton e Popups 28px, Rótulos e CheckBoxes 26px, painéis expandidos para 760px de largura).
   - Popups de seletores estilizados com fonte 28px e separação vertical de 12px, garantindo legibilidade e espaço amplo nas opções.
-  - Inputs do tipo checkmark (`CheckBox`) totalmente sem bordas ou animações: `flat = true` com `StyleBoxEmpty` em todos os estados (`normal`, `hover`, `pressed`, `hover_pressed`, `focus`, `disabled`) no tema global e nas cenas, e remoção do gatilho de foco no `mouse_entered`.
+  - Inputs do tipo checkmark (`CheckBox`) sem bordas invasivas em repouso (`normal`, `hover`, `pressed`), mas com contorno de foco dourado de 2px (`#d8b86c`) em `CheckBox/styles/focus` (`StyleBoxFlat_checkbox_focus`) para navegação cristalina via controle/gamepad e teclado.
   - Remoção da borda branca externa padrão do Godot ao clicar em botões: criação do tema global `assets/ui_theme.tres` e styleboxes customizados de `focus` e `pressed` com borda dourada idêntica ao `hover` (`corner_radius = 6`, `expand_margin = 0`).
   - Suporte contínuo a seleção de resolução no modo tela cheia (`win.content_scale_size`), permitindo alternar resoluções de renderização sem bloqueio do dropdown.
   - Rastreamento de foco dinâmico via mouse (`mouse_entered`), garantindo transições suaves entre foco por controle/teclado e interação por ponteiro.
   - Ausência total de emojis em qualquer elemento visual ou textual.
+- [x] **Menu de Configurações Modular em 3 Abas (`scenes/SettingsMenu.tscn`, `scripts/ui/SettingsMenu.gd`)**:
+  - Unificação completa das preferências do usuário em um único componente reutilizável (`SettingsMenu.tscn`), eliminando código duplicado em `MainMenu` e `PauseMenu`.
+  - Estruturação em 3 abas principais:
+    - **Geral**: Seletor de idioma multilíngue (`pt_BR`, `en`, `es`).
+    - **Gráficos**: Resolução de tela, limite de FPS (30, 60, 120, 144, ilimitado), modo tela cheia, V-Sync e contador de FPS na tela.
+    - **Controles**: Sub-abas com alternância fluida entre "Teclado & Mouse" e "Controle (Layout Xbox)".
+  - Suporte nativo a navegação por botões de ombro/bumpers do gamepad (`LB` / `RB`) e teclas de atalho (`PageUp` / `PageDown`).
+- [x] **Customização de Controles, Sensibilidades e Modo Alternar Corrida**:
+  - Sliders de sensibilidade para mouse (`0.5x` a `3.0x` sobre base 0.003) e analógico de câmera do controle (`0.5x` a `3.0x` sobre base 2.5) com rótulo numérico em tempo real.
+  - Modo Alternar Corrida (*Toggle Sprint*): checkbox compartilhada entre teclado e controle que permite alternar entre modo clássico de segurar tecla/botão e clique único (com auto-cancelamento ao interromper movimento).
+  - Remapeamento interativo de teclas de movimentação (`move_forward`, `move_back`, `move_left`, `move_right`, `sprint`) com escuta de teclas (*listening mode*) e botão para restaurar comandos padrão.
+  - Legenda informativa detalhada dos comandos do controle Xbox (`LS`, `RS`, `L3 / RB`, `A`, `B`, `Menu / Start`, `D-Pad`).
+  - Tipografia ampliada para 26px e dimensões confortáveis em todos os botões e rótulos dos submenus de controles.
+- [x] **Persistência Multiplataforma Confiável com `user://settings.cfg`**:
+  - Salvamento e carregamento via `ConfigFile` persistindo idioma, resolução, fullscreen, vsync, fps_limit, contador de fps, sensibilidades, toggle sprint e custom_keybinds.
+  - Ciclo de inicialização seguro em `GameManager.gd`: configurações salvas são sempre priorizadas e auto-detecção de resolução ocorre apenas no primeiro boot, evitando que a janela inicial sobrescreva as preferências do jogador.
+  - Chamadas de salvamento imediato a cada alteração em qualquer opção das abas.
+- [x] **Skill de Controles e Entradas (`causos-controls`)**:
+  - Criada a skill `.agent/skills/causos-controls/SKILL.md` documentando a arquitetura de inputs e passo a passo para registrar novas interações do jogador (`interact`, `flashlight`, etc.).
+- [x] **Suíte de Testes Automatizada (`tests/test_settings_and_controls.gd`)**:
+  - Teste automatizado cobrindo integridade de defaults, setters, persistência, remapeamento de teclas, restauração, estilo de foco de checkboxes e consistência de traduções em `pt_BR`, `en` e `es`.
 - [x] **Compatibilidade com Godot 4.7 (`project.godot` e Metadados)**:
   - Atualização da flag de engine em `config/features` para `4.7` e inclusão de `compatibility/default_parent_skeleton_in_mesh_instance_3d=true`.
   - Metadados de compressão VRAM etc2/astc sincronizados nos arquivos `.import` de texturas (`branch_leaves` e `foliage`), eliminando alterações residuais automáticas do editor.

@@ -49,3 +49,27 @@
 - **Folhagem Volumétrica**:
   - Cards 2D e planos angulados cruzados, sem normais invertidas ou troncos cortados.
   - Tufos de vegetação rasteira distribuídos em 16 subcélulas espaciais por chunk com alturas baricêntricas precisas nos triângulos do terreno.
+
+---
+
+## 5. Interface, Controles e Persistência Multiplataforma
+- **Componente Unificado de Configurações (`SettingsMenu`)**:
+  - Toda a lógica e interface de preferências do usuário está centralizada no componente reutilizável `scenes/SettingsMenu.tscn` (`scripts/ui/SettingsMenu.gd`).
+  - Instanciado no `MainMenu` e no `PauseMenu`, garantindo comportamento idêntico e eliminando duplicação de nós ou scripts.
+  - Dividido em 3 abas principais:
+    - **Geral**: Configuração de idioma (`pt_BR`, `en`, `es`).
+    - **Gráficos**: Resolução de tela (com reescalonamento via `content_scale_size`), limite de FPS, modo tela cheia, V-Sync e contador de FPS.
+    - **Controles**: Sub-abas dedicadas para "Teclado & Mouse" (sensibilidade, alternar corrida, remapeamento interativo de teclas com reset de padrões) e "Controle (Layout Xbox)" (sensibilidade de câmera analógica, alternar corrida e legenda visual não-customizável dos botões).
+  - Suporte total a navegação por controle estilo Xbox, incluindo bumpers (`LB`/`RB`) para alternar abas e teclas `PageUp`/`PageDown`.
+- **Feedback de Foco e Tipografia em Menus**:
+  - Checkboxes sem bordas invasivas em repouso, mas com contorno dourado nítido `#d8b86c` ao receber foco (`StyleBoxFlat_checkbox_focus`) para navegação perfeita por controle e teclado.
+  - Padrão tipográfico de 26px a 28px nos controles e botões, garantindo leitura confortável em qualquer distância (sofá/TV ou monitor).
+- **Persistência de Dados com `user://` e `ConfigFile`**:
+  - Preferências gravadas em `user://settings.cfg`, padrão cross-platform nativo do Godot:
+    - Windows: `%APPDATA%\Godot\app_userdata\causos\settings.cfg`
+    - Linux: `~/.local/share/godot/app_userdata/causos/settings.cfg`
+    - macOS: `~/Library/Application Support/Godot/app_userdata/causos/settings.cfg`
+  - Ciclo de inicialização seguro no `GameManager.gd`: configurações salvas são sempre respeitadas na inicialização, com auto-detecção de resolução reservada exclusivamente para o primeiro boot da aplicação.
+  - Gravação atômica e imediata a cada alteração de propriedade gráfica ou de controle.
+- **Extensibilidade e Skill de Controles (`causos-controls`)**:
+  - Novas ações do jogador (`interact`, `flashlight`, etc.) devem ser adicionadas seguindo rigorosamente a skill `.agent/skills/causos-controls/SKILL.md` (registro no `InputMap`, traduções em `translations.csv` e inclusão nas constantes de `SettingsMenu.gd`).
