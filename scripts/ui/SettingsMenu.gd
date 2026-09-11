@@ -255,19 +255,19 @@ func _populate_keybinds_ui() -> void:
 		var label_key = item["label_key"]
 
 		var row = HBoxContainer.new()
-		row.custom_minimum_size = Vector2(0, 46)
+		row.custom_minimum_size = Vector2(0, 50)
 		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 		var label = Label.new()
 		label.text = tr(label_key)
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		label.add_theme_font_size_override("font_size", 24)
+		label.add_theme_font_size_override("font_size", 26)
 		label.add_theme_color_override("font_color", Color(0.85, 0.8, 0.7, 1))
 		row.add_child(label)
 
 		var btn = Button.new()
-		btn.custom_minimum_size = Vector2(180, 44)
-		btn.add_theme_font_size_override("font_size", 24)
+		btn.custom_minimum_size = Vector2(190, 48)
+		btn.add_theme_font_size_override("font_size", 26)
 		var current_key = gm.get_action_key_name(action) if gm else "---"
 		btn.text = current_key
 		btn.pressed.connect(_on_rebind_btn_pressed.bind(action, btn))
@@ -315,13 +315,13 @@ func _populate_gamepad_legend_ui() -> void:
 	for item in XBOX_GAMEPAD_BINDINGS:
 		var btn_badge = Label.new()
 		btn_badge.text = "[ %s ]" % item["button"]
-		btn_badge.custom_minimum_size = Vector2(120, 36)
-		btn_badge.add_theme_font_size_override("font_size", 22)
+		btn_badge.custom_minimum_size = Vector2(140, 40)
+		btn_badge.add_theme_font_size_override("font_size", 26)
 		btn_badge.add_theme_color_override("font_color", Color(0.95, 0.82, 0.48, 1))
 
 		var desc_lbl = Label.new()
 		desc_lbl.text = tr(item["desc_key"])
-		desc_lbl.add_theme_font_size_override("font_size", 22)
+		desc_lbl.add_theme_font_size_override("font_size", 26)
 		desc_lbl.add_theme_color_override("font_color", Color(0.85, 0.8, 0.7, 1))
 		desc_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 

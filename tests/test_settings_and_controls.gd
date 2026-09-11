@@ -35,13 +35,28 @@ func _initialize() -> void:
 	var settings_instance = settings_scene.instantiate()
 	root.add_child(settings_instance)
 
-	# Verify sub-nodes
+	# Verify sub-nodes and font sizes
 	assert(settings_instance.get_node("VBox/TabBar/GeneralTabBtn") != null, "GeneralTabBtn exists")
 	assert(settings_instance.get_node("VBox/TabBar/GraphicsTabBtn") != null, "GraphicsTabBtn exists")
 	assert(settings_instance.get_node("VBox/TabBar/ControlsTabBtn") != null, "ControlsTabBtn exists")
 	assert(settings_instance.get_node("VBox/TabContent/ControlsPanel/KbmPanel") != null, "KbmPanel exists")
 	assert(settings_instance.get_node("VBox/TabContent/ControlsPanel/GamepadPanel") != null, "GamepadPanel exists")
-	print("[PASS] SettingsMenu structure verified")
+
+	# Test font sizes in controls submenus
+	var kbm_subtab = settings_instance.get_node("VBox/TabContent/ControlsPanel/SubTabBar/KbmSubTabBtn")
+	var pad_subtab = settings_instance.get_node("VBox/TabContent/ControlsPanel/SubTabBar/GamepadSubTabBtn")
+	var reset_btn = settings_instance.get_node("VBox/TabContent/ControlsPanel/KbmPanel/ResetDefaultsBtn")
+	var toggle_sprint_kbm = settings_instance.get_node("VBox/TabContent/ControlsPanel/KbmPanel/ToggleSprintKbmCheck")
+	var toggle_sprint_pad = settings_instance.get_node("VBox/TabContent/ControlsPanel/GamepadPanel/ToggleSprintPadCheck")
+	var legend_title = settings_instance.get_node("VBox/TabContent/ControlsPanel/GamepadPanel/LegendTitle")
+
+	assert(kbm_subtab.get_theme_font_size("font_size") == 26, "KbmSubTabBtn font size must be 26")
+	assert(pad_subtab.get_theme_font_size("font_size") == 26, "GamepadSubTabBtn font size must be 26")
+	assert(reset_btn.get_theme_font_size("font_size") == 26, "ResetDefaultsBtn font size must be 26")
+	assert(toggle_sprint_kbm.get_theme_font_size("font_size") == 26, "ToggleSprintKbmCheck font size must be 26")
+	assert(toggle_sprint_pad.get_theme_font_size("font_size") == 26, "ToggleSprintPadCheck font size must be 26")
+	assert(legend_title.get_theme_font_size("font_size") == 26, "LegendTitle font size must be 26")
+	print("[PASS] Controls submenus font sizes verified (all 26px)")
 
 	# Test 5: Verify CheckBox focus style in ui_theme
 	var theme = preload("res://assets/ui_theme.tres")

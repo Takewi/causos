@@ -300,10 +300,10 @@ layout_mode = 2
 theme_override_constants/separation = 8
 
 [node name="KbmSubTabBtn" type="Button" parent="VBox/TabContent/ControlsPanel/SubTabBar"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
@@ -311,10 +311,10 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_tab_btn")
 text = "Teclado & Mouse"
 
 [node name="GamepadSubTabBtn" type="Button" parent="VBox/TabContent/ControlsPanel/SubTabBar"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
@@ -336,7 +336,7 @@ theme_override_constants/separation = 12
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "Sensibilidade do Mouse:"
 
 [node name="Slider" type="HSlider" parent="VBox/TabContent/ControlsPanel/KbmPanel/MouseSensHBox"]
@@ -349,22 +349,22 @@ step = 0.1
 value = 1.0
 
 [node name="Value" type="Label" parent="VBox/TabContent/ControlsPanel/KbmPanel/MouseSensHBox"]
-custom_minimum_size = Vector2(64, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "1.0x"
 horizontal_alignment = 2
 
 [node name="ToggleSprintKbmCheck" type="CheckBox" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
 theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "Alternar Corrida (Clique Único)"
 
 [node name="KeybindsList" type="VBoxContainer" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
@@ -372,9 +372,9 @@ layout_mode = 2
 theme_override_constants/separation = 6
 
 [node name="ResetDefaultsBtn" type="Button" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 26
 theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
 theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -394,7 +394,7 @@ theme_override_constants/separation = 12
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "Sensibilidade da Câmera (Analógico):"
 
 [node name="Slider" type="HSlider" parent="VBox/TabContent/ControlsPanel/GamepadPanel/PadSensHBox"]
@@ -407,28 +407,28 @@ step = 0.1
 value = 1.0
 
 [node name="Value" type="Label" parent="VBox/TabContent/ControlsPanel/GamepadPanel/PadSensHBox"]
-custom_minimum_size = Vector2(64, 0)
+custom_minimum_size = Vector2(72, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "1.0x"
 horizontal_alignment = 2
 
 [node name="ToggleSprintPadCheck" type="CheckBox" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
-custom_minimum_size = Vector2(0, 44)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
 theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
 theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "Alternar Corrida (Clique Único)"
 
 [node name="LegendTitle" type="Label" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 26
 text = "Comandos do Controle:"
 
 [node name="LegendGrid" type="GridContainer" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
