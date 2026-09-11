@@ -52,23 +52,25 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if seed_string.is_empty():
 		randomize_seed()
-	load_settings()
+	var has_saved = load_settings()
+	if not has_saved:
+		_detect_initial_resolution()
+	TranslationServer.set_locale(current_locale)
+	apply_display_settings()
+
+
+func _detect_initial_resolution() -> void:
 	var current_size = DisplayServer.window_get_size()
-	var matched = false
 	for i in range(RESOLUTIONS.size()):
 		if RESOLUTIONS[i] == current_size:
 			current_resolution_index = i
-			matched = true
-			break
-	if not matched:
-		var screen = DisplayServer.window_get_current_screen()
-		var screen_size = DisplayServer.screen_get_size(screen)
-		if screen_size.y >= 1080 or screen_size.y == 0:
-			current_resolution_index = 3
-		else:
-			current_resolution_index = 0
-	TranslationServer.set_locale(current_locale)
-	apply_display_settings()
+			return
+	var screen = DisplayServer.window_get_current_screen()
+	var screen_size = DisplayServer.screen_get_size(screen)
+	if screen_size.y >= 1080 or screen_size.y == 0:
+		current_resolution_index = 3
+	else:
+		current_resolution_index = 0
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -98,6 +100,7 @@ func set_fullscreen(enabled: bool) -> void:
 	else:
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_WINDOWED)
 	apply_resolution()
+	save_settings()
 	settings_changed.emit()
 
 
@@ -126,6 +129,7 @@ func set_resolution_index(index: int) -> void:
 	if index >= 0 and index < RESOLUTIONS.size():
 		current_resolution_index = index
 		apply_resolution()
+		save_settings()
 		settings_changed.emit()
 
 
@@ -155,6 +159,7 @@ static func get_resolution_label(index: int) -> String:
 func set_fps_limit(limit: int) -> void:
 	fps_limit = max(0, limit)
 	Engine.max_fps = fps_limit
+	save_settings()
 	settings_changed.emit()
 
 
@@ -163,12 +168,14 @@ func set_vsync(enabled: bool) -> void:
 	vsync_enabled = enabled
 	var mode = DisplayServer.VSYNC_ENABLED if vsync_enabled else DisplayServer.VSYNC_DISABLED
 	DisplayServer.window_set_vsync_mode(mode)
+	save_settings()
 	settings_changed.emit()
 
 
 ## Toggles FPS counter on HUD
 func set_show_fps_counter(enabled: bool) -> void:
 	show_fps_counter = enabled
+	save_settings()
 	settings_changed.emit()
 
 
@@ -271,14 +278,15 @@ func save_settings() -> void:
 	cfg.save(CONFIG_PATH)
 
 
-## Loads user preferences from user://settings.cfg
-func load_settings() -> void:
+## Loads user preferences from user://settings.cfg. Returns true if file was loaded, false otherwise.
+func load_settings() -> bool:
 	var cfg = ConfigFile.new()
 	var err = cfg.load(CONFIG_PATH)
 	if err != OK:
-		return
+		return false
 	current_locale = cfg.get_value("general", "locale", current_locale)
-	current_resolution_index = cfg.get_value("graphics", "resolution_index", current_resolution_index)
+	var loaded_res = cfg.get_value("graphics", "resolution_index", current_resolution_index)
+	current_resolution_index = clamp(loaded_res, 0, RESOLUTIONS.size() - 1)
 	fullscreen_enabled = cfg.get_value("graphics", "fullscreen", fullscreen_enabled)
 	vsync_enabled = cfg.get_value("graphics", "vsync", vsync_enabled)
 	fps_limit = cfg.get_value("graphics", "fps_limit", fps_limit)
@@ -288,6 +296,7 @@ func load_settings() -> void:
 	toggle_sprint = cfg.get_value("controls", "toggle_sprint", toggle_sprint)
 	custom_keybinds = cfg.get_value("controls", "custom_keybinds", {})
 	_apply_all_keybinds()
+	return true
 
 
 ## Parses custom string seed into integer world seed
