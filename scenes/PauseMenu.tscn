@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/PauseMenu.gd" id="1_pause"]
+[ext_resource type="PackedScene" path="res://scenes/SettingsMenu.tscn" id="2_settings"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 44.0
@@ -200,155 +201,12 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
 theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
 text = "Sair do Jogo"
 
-[node name="SettingsPanel" type="PanelContainer" parent="CenterContainer"]
+[node name="SettingsMenu" parent="CenterContainer" instance=ExtResource("2_settings")]
 visible = false
-custom_minimum_size = Vector2(700, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
-
-[node name="VBox" type="VBoxContainer" parent="CenterContainer/SettingsPanel"]
-layout_mode = 2
-theme_override_constants/separation = 18
-
-[node name="SettingsTitle" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
-theme_override_font_sizes/font_size = 36
-text = "Configurações"
-horizontal_alignment = 1
-
-[node name="HSeparator" type="HSeparator" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-
-[node name="LanguageLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 26
-text = "Idioma / Language:"
-
-[node name="LanguageHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-
-[node name="LanguageOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/LanguageHBox"]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
-theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-
-[node name="ResolutionLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 26
-text = "Resolução de Tela:"
-
-[node name="ResolutionHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-
-[node name="ResolutionOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/ResolutionHBox"]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
-theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-
-[node name="FPSLabel" type="Label" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
-theme_override_font_sizes/font_size = 26
-text = "Limite de Taxa de Quadros (FPS):"
-
-[node name="FPSHBox" type="HBoxContainer" parent="CenterContainer/SettingsPanel/VBox"]
-layout_mode = 2
-
-[node name="FPSOption" type="OptionButton" parent="CenterContainer/SettingsPanel/VBox/FPSHBox"]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_font_sizes/font_size = 28
-theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-
-[node name="FullscreenCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-flat = true
-theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_font_sizes/font_size = 26
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "Tela Cheia (Fullscreen)"
-
-[node name="VSyncCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-flat = true
-theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_font_sizes/font_size = 26
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "Sincronização Vertical (V-Sync)"
-
-[node name="FPSCounterCheck" type="CheckBox" parent="CenterContainer/SettingsPanel/VBox"]
-custom_minimum_size = Vector2(0, 48)
-layout_mode = 2
-flat = true
-theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
-theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
-theme_override_font_sizes/font_size = 26
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_focus")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_focus")
-text = "Exibir Contador de FPS na Tela"
-
-[node name="SettingsBackBtn" type="Button" parent="CenterContainer/SettingsPanel/VBox"]
-custom_minimum_size = Vector2(0, 54)
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
-theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
-theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
-text = "Voltar"
 
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/ResumeBtn" to="." method="_on_resume_pressed"]
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/SettingsBtn" to="." method="_on_settings_pressed"]
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/MainMenuBtn" to="." method="_on_main_menu_pressed"]
 [connection signal="pressed" from="CenterContainer/MainPauseVBox/QuitBtn" to="." method="_on_quit_pressed"]
-[connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/LanguageHBox/LanguageOption" to="." method="_on_language_selected"]
-[connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/ResolutionHBox/ResolutionOption" to="." method="_on_resolution_selected"]
-[connection signal="item_selected" from="CenterContainer/SettingsPanel/VBox/FPSHBox/FPSOption" to="." method="_on_fps_selected"]
-[connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/FullscreenCheck" to="." method="_on_fullscreen_toggled"]
-[connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/VSyncCheck" to="." method="_on_vsync_toggled"]
-[connection signal="toggled" from="CenterContainer/SettingsPanel/VBox/FPSCounterCheck" to="." method="_on_fps_counter_toggled"]
-[connection signal="pressed" from="CenterContainer/SettingsPanel/VBox/SettingsBackBtn" to="." method="_on_settings_back_pressed"]
+[connection signal="back_pressed" from="CenterContainer/SettingsMenu" to="." method="_on_settings_back_pressed"]

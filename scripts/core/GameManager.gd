@@ -27,6 +27,22 @@ var current_resolution_index: int = 3
 var show_fps_counter: bool = false
 var current_locale: String = "pt_BR"
 
+# Controls settings
+var mouse_sensitivity: float = 0.003
+var gamepad_sensitivity: float = 2.5
+var toggle_sprint: bool = false
+var custom_keybinds: Dictionary = {}
+
+const CONFIG_PATH: String = "user://settings.cfg"
+
+const DEFAULT_KEYBINDS: Dictionary = {
+	"move_forward": KEY_W,
+	"move_back": KEY_S,
+	"move_left": KEY_A,
+	"move_right": KEY_D,
+	"sprint": KEY_SHIFT,
+}
+
 
 func _init() -> void:
 	randomize_seed()
@@ -36,6 +52,7 @@ func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if seed_string.is_empty():
 		randomize_seed()
+	load_settings()
 	var current_size = DisplayServer.window_get_size()
 	var matched = false
 	for i in range(RESOLUTIONS.size()):
@@ -159,7 +176,118 @@ func set_show_fps_counter(enabled: bool) -> void:
 func set_locale(code: String) -> void:
 	current_locale = code
 	TranslationServer.set_locale(code)
+	save_settings()
 	settings_changed.emit()
+
+
+## Sets mouse sensitivity
+func set_mouse_sensitivity(val: float) -> void:
+	mouse_sensitivity = clamp(val, 0.0005, 0.015)
+	save_settings()
+	settings_changed.emit()
+
+
+## Sets gamepad camera look sensitivity
+func set_gamepad_sensitivity(val: float) -> void:
+	gamepad_sensitivity = clamp(val, 0.5, 6.0)
+	save_settings()
+	settings_changed.emit()
+
+
+## Toggles sprint click mode (hold vs 1-click toggle)
+func set_toggle_sprint(enabled: bool) -> void:
+	toggle_sprint = enabled
+	save_settings()
+	settings_changed.emit()
+
+
+## Remaps an action's keyboard key in InputMap and persists it
+func rebind_key(action_name: String, keycode: int) -> void:
+	custom_keybinds[action_name] = keycode
+	_apply_key_to_input_map(action_name, keycode)
+	save_settings()
+	settings_changed.emit()
+
+
+## Resets all keyboard keybinds to default WASD + Shift
+func reset_default_keybinds() -> void:
+	custom_keybinds.clear()
+	for action in DEFAULT_KEYBINDS.keys():
+		_apply_key_to_input_map(action, DEFAULT_KEYBINDS[action])
+	save_settings()
+	settings_changed.emit()
+
+
+## Returns the display name of the key assigned to an action
+func get_action_key_name(action_name: String) -> String:
+	if custom_keybinds.has(action_name):
+		return OS.get_keycode_string(custom_keybinds[action_name])
+	if DEFAULT_KEYBINDS.has(action_name):
+		return OS.get_keycode_string(DEFAULT_KEYBINDS[action_name])
+	if InputMap.has_action(action_name):
+		for event in InputMap.action_get_events(action_name):
+			if event is InputEventKey:
+				var code = event.physical_keycode if event.physical_keycode != 0 else event.keycode
+				if code != 0:
+					return OS.get_keycode_string(code)
+	return "---"
+
+
+func _apply_all_keybinds() -> void:
+	for action in custom_keybinds.keys():
+		_apply_key_to_input_map(action, custom_keybinds[action])
+
+
+func _apply_key_to_input_map(action_name: String, keycode: int) -> void:
+	if not InputMap.has_action(action_name):
+		return
+	# Remove previous keyboard events for this action
+	var events_to_remove: Array[InputEvent] = []
+	for event in InputMap.action_get_events(action_name):
+		if event is InputEventKey:
+			events_to_remove.append(event)
+	for event in events_to_remove:
+		InputMap.action_erase_event(action_name, event)
+
+	# Add new primary key event
+	var new_event = InputEventKey.new()
+	new_event.physical_keycode = keycode
+	InputMap.action_add_event(action_name, new_event)
+
+
+## Saves user preferences to user://settings.cfg
+func save_settings() -> void:
+	var cfg = ConfigFile.new()
+	cfg.set_value("general", "locale", current_locale)
+	cfg.set_value("graphics", "resolution_index", current_resolution_index)
+	cfg.set_value("graphics", "fullscreen", fullscreen_enabled)
+	cfg.set_value("graphics", "vsync", vsync_enabled)
+	cfg.set_value("graphics", "fps_limit", fps_limit)
+	cfg.set_value("graphics", "show_fps_counter", show_fps_counter)
+	cfg.set_value("controls", "mouse_sensitivity", mouse_sensitivity)
+	cfg.set_value("controls", "gamepad_sensitivity", gamepad_sensitivity)
+	cfg.set_value("controls", "toggle_sprint", toggle_sprint)
+	cfg.set_value("controls", "custom_keybinds", custom_keybinds)
+	cfg.save(CONFIG_PATH)
+
+
+## Loads user preferences from user://settings.cfg
+func load_settings() -> void:
+	var cfg = ConfigFile.new()
+	var err = cfg.load(CONFIG_PATH)
+	if err != OK:
+		return
+	current_locale = cfg.get_value("general", "locale", current_locale)
+	current_resolution_index = cfg.get_value("graphics", "resolution_index", current_resolution_index)
+	fullscreen_enabled = cfg.get_value("graphics", "fullscreen", fullscreen_enabled)
+	vsync_enabled = cfg.get_value("graphics", "vsync", vsync_enabled)
+	fps_limit = cfg.get_value("graphics", "fps_limit", fps_limit)
+	show_fps_counter = cfg.get_value("graphics", "show_fps_counter", show_fps_counter)
+	mouse_sensitivity = cfg.get_value("controls", "mouse_sensitivity", mouse_sensitivity)
+	gamepad_sensitivity = cfg.get_value("controls", "gamepad_sensitivity", gamepad_sensitivity)
+	toggle_sprint = cfg.get_value("controls", "toggle_sprint", toggle_sprint)
+	custom_keybinds = cfg.get_value("controls", "custom_keybinds", {})
+	_apply_all_keybinds()
 
 
 ## Parses custom string seed into integer world seed

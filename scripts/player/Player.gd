@@ -11,11 +11,21 @@ extends CharacterBody3D
 @onready var camera: Camera3D = $Head/Camera3D
 
 var camera_pitch: float = 0.0
+var _is_sprinting: bool = false
 
 
 func _ready() -> void:
 	add_to_group("player")
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	_sync_settings()
+	if GameManager:
+		GameManager.settings_changed.connect(_sync_settings)
+
+
+func _sync_settings() -> void:
+	if GameManager:
+		mouse_sensitivity = GameManager.mouse_sensitivity
+		gamepad_sensitivity = GameManager.gamepad_sensitivity
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -41,8 +51,8 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= gravity * delta
 
-	var current_speed = sprint_speed if _is_sprint_active() else move_speed
 	var input_dir = _get_movement_input()
+	var current_speed = sprint_speed if _is_sprint_active(input_dir) else move_speed
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if direction != Vector3.ZERO:
@@ -80,11 +90,19 @@ func _get_movement_input() -> Vector2:
 	return dir.normalized()
 
 
-## Sprint status querying with InputMap action support and Shift fallback
-func _is_sprint_active() -> bool:
-	if InputMap.has_action("sprint"):
-		return Input.is_action_pressed("sprint")
-	return Input.is_key_pressed(KEY_SHIFT)
+## Sprint status querying with InputMap action support, toggle sprint setting, and Shift fallback
+func _is_sprint_active(input_dir: Vector2) -> bool:
+	if GameManager and GameManager.toggle_sprint:
+		if input_dir == Vector2.ZERO:
+			_is_sprinting = false
+		elif InputMap.has_action("sprint") and Input.is_action_just_pressed("sprint"):
+			_is_sprinting = not _is_sprinting
+		return _is_sprinting
+	else:
+		_is_sprinting = false
+		if InputMap.has_action("sprint"):
+			return Input.is_action_pressed("sprint")
+		return Input.is_key_pressed(KEY_SHIFT)
 
 
 ## Gamepad look vector querying with InputMap actions support

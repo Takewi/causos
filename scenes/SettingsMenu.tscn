@@ -1,0 +1,451 @@
+[gd_scene format=3 uid="uid://df72k0abm87xc"]
+
+[ext_resource type="Theme" path="res://assets/ui_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://scripts/ui/SettingsMenu.gd" id="2_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 36.0
+content_margin_top = 28.0
+content_margin_right = 36.0
+content_margin_bottom = 28.0
+bg_color = Color(0.06, 0.07, 0.06, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.36, 0.32, 0.22, 0.75)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_btn"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.12, 0.14, 0.11, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.35, 0.26, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_hover"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.22, 0.24, 0.18, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.72, 0.42, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tab_pressed"]
+content_margin_left = 18.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 10.0
+bg_color = Color(0.28, 0.24, 0.14, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.82, 0.48, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.12, 0.14, 0.11, 0.85)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.38, 0.35, 0.26, 0.6)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.22, 0.24, 0.18, 0.95)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.72, 0.42, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+content_margin_left = 22.0
+content_margin_top = 12.0
+content_margin_right = 22.0
+content_margin_bottom = 12.0
+bg_color = Color(0.08, 0.1, 0.08, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.95, 0.82, 0.48, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_focus"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.72, 0.42, 0.9)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="SettingsMenu" type="PanelContainer"]
+custom_minimum_size = Vector2(760, 0)
+offset_right = 760.0
+offset_bottom = 600.0
+theme = ExtResource("1_theme")
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+script = ExtResource("2_script")
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="SettingsTitle" type="Label" parent="VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
+theme_override_font_sizes/font_size = 34
+text = "Configurações"
+horizontal_alignment = 1
+
+[node name="TabBar" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="GeneralTabBtn" type="Button" parent="VBox/TabBar"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_btn")
+text = "Geral"
+
+[node name="GraphicsTabBtn" type="Button" parent="VBox/TabBar"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_btn")
+text = "Gráficos"
+
+[node name="ControlsTabBtn" type="Button" parent="VBox/TabBar"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 26
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_btn")
+text = "Controles"
+
+[node name="HSeparator" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="TabContent" type="MarginContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="GeneralPanel" type="VBoxContainer" parent="VBox/TabContent"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="LanguageLabel" type="Label" parent="VBox/TabContent/GeneralPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 26
+text = "Idioma / Language:"
+
+[node name="LanguageHBox" type="HBoxContainer" parent="VBox/TabContent/GeneralPanel"]
+layout_mode = 2
+
+[node name="LanguageOption" type="OptionButton" parent="VBox/TabContent/GeneralPanel/LanguageHBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+
+[node name="GraphicsPanel" type="VBoxContainer" parent="VBox/TabContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ResolutionLabel" type="Label" parent="VBox/TabContent/GraphicsPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 26
+text = "Resolução de Tela:"
+
+[node name="ResolutionHBox" type="HBoxContainer" parent="VBox/TabContent/GraphicsPanel"]
+layout_mode = 2
+
+[node name="ResolutionOption" type="OptionButton" parent="VBox/TabContent/GraphicsPanel/ResolutionHBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+
+[node name="FPSLabel" type="Label" parent="VBox/TabContent/GraphicsPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 26
+text = "Limite de Taxa de Quadros (FPS):"
+
+[node name="FPSHBox" type="HBoxContainer" parent="VBox/TabContent/GraphicsPanel"]
+layout_mode = 2
+
+[node name="FPSOption" type="OptionButton" parent="VBox/TabContent/GraphicsPanel/FPSHBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+
+[node name="FullscreenCheck" type="CheckBox" parent="VBox/TabContent/GraphicsPanel"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+text = "Tela Cheia (Fullscreen)"
+
+[node name="VSyncCheck" type="CheckBox" parent="VBox/TabContent/GraphicsPanel"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+text = "Sincronização Vertical (V-Sync)"
+
+[node name="FPSCounterCheck" type="CheckBox" parent="VBox/TabContent/GraphicsPanel"]
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+text = "Exibir Contador de FPS na Tela"
+
+[node name="ControlsPanel" type="VBoxContainer" parent="VBox/TabContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SubTabBar" type="HBoxContainer" parent="VBox/TabContent/ControlsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KbmSubTabBtn" type="Button" parent="VBox/TabContent/ControlsPanel/SubTabBar"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_btn")
+text = "Teclado & Mouse"
+
+[node name="GamepadSubTabBtn" type="Button" parent="VBox/TabContent/ControlsPanel/SubTabBar"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tab_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_tab_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tab_btn")
+text = "Controle (Layout Xbox)"
+
+[node name="SubHSeparator" type="HSeparator" parent="VBox/TabContent/ControlsPanel"]
+layout_mode = 2
+
+[node name="KbmPanel" type="VBoxContainer" parent="VBox/TabContent/ControlsPanel"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="MouseSensHBox" type="HBoxContainer" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="VBox/TabContent/ControlsPanel/KbmPanel/MouseSensHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 24
+text = "Sensibilidade do Mouse:"
+
+[node name="Slider" type="HSlider" parent="VBox/TabContent/ControlsPanel/KbmPanel/MouseSensHBox"]
+custom_minimum_size = Vector2(240, 36)
+layout_mode = 2
+size_flags_vertical = 4
+min_value = 0.2
+max_value = 3.0
+step = 0.1
+value = 1.0
+
+[node name="Value" type="Label" parent="VBox/TabContent/ControlsPanel/KbmPanel/MouseSensHBox"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
+theme_override_font_sizes/font_size = 24
+text = "1.0x"
+horizontal_alignment = 2
+
+[node name="ToggleSprintKbmCheck" type="CheckBox" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 24
+text = "Alternar Corrida (Clique Único)"
+
+[node name="KeybindsList" type="VBoxContainer" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ResetDefaultsBtn" type="Button" parent="VBox/TabContent/ControlsPanel/KbmPanel"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "Restaurar Teclas Padrão"
+
+[node name="GamepadPanel" type="VBoxContainer" parent="VBox/TabContent/ControlsPanel"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PadSensHBox" type="HBoxContainer" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="Label" type="Label" parent="VBox/TabContent/ControlsPanel/GamepadPanel/PadSensHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.8, 0.75, 0.65, 1)
+theme_override_font_sizes/font_size = 24
+text = "Sensibilidade da Câmera (Analógico):"
+
+[node name="Slider" type="HSlider" parent="VBox/TabContent/ControlsPanel/GamepadPanel/PadSensHBox"]
+custom_minimum_size = Vector2(240, 36)
+layout_mode = 2
+size_flags_vertical = 4
+min_value = 0.2
+max_value = 3.0
+step = 0.1
+value = 1.0
+
+[node name="Value" type="Label" parent="VBox/TabContent/ControlsPanel/GamepadPanel/PadSensHBox"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.85, 0.6, 1)
+theme_override_font_sizes/font_size = 24
+text = "1.0x"
+horizontal_alignment = 2
+
+[node name="ToggleSprintPadCheck" type="CheckBox" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_colors/font_pressed_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_focus_color = Color(0.85, 0.8, 0.7, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.95, 0.9, 0.8, 1)
+theme_override_font_sizes/font_size = 24
+text = "Alternar Corrida (Clique Único)"
+
+[node name="LegendTitle" type="Label" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.84, 0.65, 1)
+theme_override_font_sizes/font_size = 24
+text = "Comandos do Controle:"
+
+[node name="LegendGrid" type="GridContainer" parent="VBox/TabContent/ControlsPanel/GamepadPanel"]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="BottomHSeparator" type="HSeparator" parent="VBox"]
+layout_mode = 2
+
+[node name="SettingsBackBtn" type="Button" parent="VBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+theme_override_styles/focus = SubResource("StyleBoxFlat_btn_focus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_normal")
+text = "Salvar e Voltar"

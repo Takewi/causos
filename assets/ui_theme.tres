@@ -68,11 +68,27 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_checkbox_focus"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.72, 0.42, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [resource]
 Button/styles/focus = SubResource("StyleBoxFlat_focus")
 Button/styles/pressed = SubResource("StyleBoxFlat_pressed")
 CheckBox/styles/disabled = SubResource("StyleBoxEmpty_none")
-CheckBox/styles/focus = SubResource("StyleBoxEmpty_none")
+CheckBox/styles/focus = SubResource("StyleBoxFlat_checkbox_focus")
 CheckBox/styles/hover = SubResource("StyleBoxEmpty_none")
 CheckBox/styles/hover_pressed = SubResource("StyleBoxEmpty_none")
 CheckBox/styles/normal = SubResource("StyleBoxEmpty_none")
