@@ -1,0 +1,26 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage_flower.png" id="1_lksov"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_knhti"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_lksov")
+texture_filter = 2
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.385, 0, -0.385, 0.77, 0.55, 0.77),
+"attribute_data": PackedByteArray("AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAA"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_knhti"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("ZmamvgAAAAAAAACAZmamPgAAAAAAAAAAuB7FPs3MDD8AAAAAZmamvgAAAAAAAACAuB7FPs3MDD8AAAAAuB7Fvs3MDD8AAACAwIy3owAAAABmZqa+wIy3IwAAAABmZqY+mW/ZI83MDD+4HsU+wIy3owAAAABmZqa+mW/ZI83MDD+4HsU+mW/Zo83MDD+4HsW+/39Uld57Yoz/f1SV3ntijP9/VJXee2KM/39Uld57Yoz/f1SV3ntijP9/VJXee2KMVRVUld57rLVVFVSV3nustVUVVJXee6y1VRVUld57rLVVFVSV3nustVUVVJXee6y1")
+}]

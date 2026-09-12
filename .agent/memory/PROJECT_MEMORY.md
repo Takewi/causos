@@ -46,9 +46,28 @@
 - **Sub-Bosque e Estratos Médio e Baixo (1/2 e 1/3 de altura)**:
   - Árvores de porte médio (~5m a 7m) e árvores jovens/baixas (~3m a 4.5m) que quebram a uniformidade e preenchem a linha de visão horizontal.
   - Distribuição com colisão física proporcional e escalada por estrato.
-- **Folhagem Volumétrica**:
-  - Cards 2D e planos angulados cruzados, sem normais invertidas ou troncos cortados.
-  - Tufos de vegetação rasteira distribuídos em 16 subcélulas espaciais por chunk com alturas baricêntricas precisas nos triângulos do terreno.
+- **Catálogo de Texturas de Copas / Folhas (256x256 Pixel Art - Nuvens 2D sem Galhos)**:
+  - Formato de nuvem folhosa pura (sem galhos desenhados na textura, assentando-se perfeitamente sobre os galhos tridimensionais das árvores).
+  - `branch_leaves.png`: Nuvem clássica verde-oliva com folíolos densos e sombreamento em 3 níveis.
+  - `branch_leaves_lush.png`: Nuvem de folhas largas subtropicais (Mata Atlântica) em verde-esmeralda e toques lima.
+  - `branch_leaves_needle.png`: Nuvem de acículas de Araucária / Pinheiro Gaúcho em verde-azulado.
+  - `branch_leaves_dry.png`: Nuvem de folhagem outonal / decídua seca em tons ocre, âmbar e ferrugem.
+  - Distribuídas estrategicamente entre as 15 variações de árvores (`tree_variation_*.tres`).
+- **Folhagem Rasteira e Clutter 3D (9 Arquétipos em MultiMeshInstance3D)**:
+  - `lowpoly_foliage.tres` / `foliage_grass.png`: Tufo denso de grama nativa (64x64).
+  - `foliage_grass_tall.tres` / `foliage_grass_tall.png`: Capim alto com espigas esguias (64x64).
+  - `foliage_fern.tres` / `foliage_fern.png`: Samambaia nativa com 3 frondes arqueadas em leque (128x128).
+  - `foliage_bush.tres` / `foliage_bush.png`: Arbusto lenhoso com ramificações e folhas volumétricas (128x128).
+  - `foliage_dry.tres` / `foliage_dry.png`: Moita de palha seca / capim ressecado (64x64).
+  - `foliage_leaves_dry.tres` / `foliage_leaves_dry.png`: Folhas caídas secas em tons ocre e castanho com agulhas (64x64).
+  - `foliage_leaves_green.tres` / `foliage_leaves_green.png`: Folhas frescas caídas em tons verde-oliva e esmeralda (64x64).
+  - `foliage_twigs.tres` / `foliage_twigs.png`: Gravetos secos e lascas de galho caídos sobre o solo (64x64).
+  - `foliage_flower.tres` / `foliage_flower.png`: Flores silvestres raras da mata em tons dourado e violeta (64x64).
+  - Distribuição estocástica balanceada (reaproveitando a cota existente de instâncias, com 0 perda de FPS) e reboleiras temáticas em 16 subcélulas por chunk.
+  - Otimizações de renderização: `shading_mode = PER_VERTEX`, remoção do depth prepass (`DEPTH_DRAW_OPAQUE_ONLY`) e `TEXTURE_FILTER_NEAREST_WITH_MIPMAPS` para máxima taxa de quadros e zero cache-miss em árvores e folhagens.
+  - Arquitetura desacoplada: `ForestChunk.gd` (~88 linhas) coordena a malha do terreno e delega folhagens para `ChunkFoliageBuilder.gd` e árvores/Poisson para `ChunkTreeBuilder.gd`.
+- **Textura do Solo Uniforme e Verdejante (`ground.png` - 128x128 Seamless)**:
+  - Solo humoso florestal rico com tapete verdejante de musgo e micro-vegetação, gerado por síntese isotrópica periódica 2D FFT para eliminar 100% de qualquer padrão xadrez/grid ortogonal e dithering Bayer 2x2. Baixa variância de luminância para continuidade visual perfeita e homogênea na paisagem 3D, com micro-agulhas de pinheiro e rosetas sutis.
 
 ---
 

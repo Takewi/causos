@@ -16,10 +16,32 @@
   - Variação 13 com maior densidade de ramificação e folhagens adicionais.
   - Eliminação de modelos e texturas duplicados: remoção de `lowpoly_tree.tres` (idêntico a `tree_variation_1.tres`) e `canopy_leaves.png` (cópia binária idêntica de `branch_leaves.png`), padronizando o pipeline para carregar `branch_leaves.png` e as 15 variações limpas.
   - Refatoração do `TreeMeshFactory`: remoção de mais de 1.150 linhas de código de geração procedural offline (`SurfaceTool`), convertendo a classe em um repositório de cache leve de alta performance focado exclusivamente no carregamento dos modelos `.tres` estáticos.
-- [x] **Vegetação Rasteira / Folhagem Otimizada**:
-  - Particionamento espacial em **16 subcélulas** (4x4 de 25x25m) por chunk com AABBs individuais.
-  - Culling de distância GPU (`visibility_range_end = 60m`, além da névoa de 45m), eliminando qualquer popping visual ou clareiras estéreis.
-  - Amostragem Poisson e assentamento a `+0.02m` do solo poligonal.
+- [x] **Vegetação Rasteira e Clutter 3D com 9 Arquétipos (Folhas Caídas, Galhos e Flores)**:
+  - Implementação de 9 arquétipos no sub-bosque mantendo o mesmo orçamento de instâncias para 0 perda de FPS:
+    1. Grama Nativa Comum (`lowpoly_foliage.tres` / `foliage_grass.png`)
+    2. Capim Alto Silvestre com espigas (`foliage_grass_tall.tres` / `foliage_grass_tall.png`)
+    3. Samambaias da Mata com 3 frondes (`foliage_fern.tres` / `foliage_fern.png`)
+    4. Arbustos Folhosos Ramificados (`foliage_bush.tres` / `foliage_bush.png`)
+    5. Tufos de Palha / Capim Seco (`foliage_dry.tres` / `foliage_dry.png`)
+    6. **Folhas Caídas Secas** (`foliage_leaves_dry.tres` / `foliage_leaves_dry.png`): Decalque rasteiro com relevo convexo sutil (tons ocre/castanho/agulhas).
+    7. **Folhas Caídas Verdes** (`foliage_leaves_green.tres` / `foliage_leaves_green.png`): Decalque rasteiro de folhas frescas recém-caídas do dossel.
+    8. **Galhos Secos Caídos** (`foliage_twigs.tres` / `foliage_twigs.png`): Gravetos e lascas de casca de árvore cruzados sobre o solo.
+    9. **Flores Silvestres Raras** (`foliage_flower.tres` / `foliage_flower.png`): Tufo vertical com pequenas flores douradas e violetas raras da mata.
+  - Presença ampliada de clutter (~44% da cota total do sub-bosque): folhas caídas secas (~16%), folhas verdes caídas (~12%), galhos secos (~9%) e flores silvestres (~7% baseline / 12% em canteiros), com escalas ampliadas em 20-30% para leitura nítida na câmera em primeira pessoa.
+  - Geração assíncrona categorizada (`type_transforms`) e montagem eficiente com `MultiMeshInstance3D` por subcélula com AABBs agregados.
+  - Particionamento espacial em **16 subcélulas** (4x4 de 25x25m) por chunk, agrupamento orgânico em reboleiras temáticas e culling de distância GPU (`visibility_range_end = 60m`).
+- [x] **Melhorias e Variações de Texturas com Blender MCP (Estética Retrô Anos 90)**:
+  - **4 Variações de Nuvens 2D de Folhas sem Galhos (256x256 Pixel Art)**: Dossel verde-oliva clássico (`branch_leaves.png`), folhas largas subtropicais de Mata Atlântica (`branch_leaves_lush.png`), leques de acículas de Pinheiro/Araucária gaúcha (`branch_leaves_needle.png`) e folhagem decídua outonal ressecada (`branch_leaves_dry.png`). Texturas sem galhos/gravetos desenhados, estruturadas como nuvens de folhagem pura para assentamento direto sobre os galhos tridimensionais dos 15 modelos de árvores.
+  - **Textura do Solo Uniforme e Verdejante (`ground.png` - 128x128 Seamless)**: Eliminação do padrão xadrez (checkerboard) através de síntese isotrópica periódica 2D FFT e paleta contínua de baixa variância luminosa (std dev ~7.8). Tapete florestal verdejante musgoso e uniforme, sem repetição ortogonal visível em grid, com micro-agulhas de pinheiro, rosetas de trevinho e micro-grão retrô suave perfeitamente encaixado em repetição 4-way.
+  - **Otimização de Performance Gráfica (Foliage & Canopy)**:
+    - Sombreamento por vértice puro (`shading_mode = SHADING_MODE_PER_VERTEX`) em todos os 15 modelos de árvores e 9 de folhagem/clutter, reduzindo drasticamente o custo de fillrate e sombreamento na GPU.
+    - Eliminação do passe duplo de profundidade (`depth_draw_mode = DEPTH_DRAW_OPAQUE_ONLY`) nas folhas com *alpha scissor*, cortando pela metade o custo de rasterização.
+    - Filtragem *Nearest com Mipmaps* (`TEXTURE_FILTER_NEAREST_WITH_MIPMAPS`), preservando a estética pixel art em close e eliminando 100% dos *cache misses* de textura na GPU ao visualizar árvores distantes.
+  - **Modularização de `ForestChunk.gd` (-77% de linhas)**:
+    - Divisão em componentes especializados:
+      - `ForestChunk.gd`: Orquestrador enxuto (~88 linhas) responsável pelo ciclo de vida e malha do terreno.
+      - `ChunkFoliageBuilder.gd`: Responsável pela geração de dados dos 9 arquétipos botânicos e montagem das instâncias `MultiMeshInstance3D`.
+      - `ChunkTreeBuilder.gd`: Responsável pela amostragem de Poisson em 2D, posicionamento por quadrantes, colisores e instâncias `MultiMeshInstance3D` das árvores.
 
 ### Iluminação & Atmosfera
 - [x] **Ambiente Retrô Ensolarado com Penumbra**:

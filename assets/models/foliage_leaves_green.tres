@@ -1,0 +1,26 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage_leaves_green.png" id="1_ub5ib"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_snuda"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_ub5ib")
+texture_filter = 2
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.41, 0.015, -0.41, 0.82, 0.030000001, 0.82),
+"attribute_data": PackedByteArray("AAAAPwAAAD8AAAAAAAAAAAAAgD8AAAAAAAAAPwAAAD8AAIA/AAAAAAAAgD8AAIA/AAAAPwAAAD8AAIA/AACAPwAAAAAAAIA/AAAAPwAAAD8AAAAAAACAPwAAAAAAAAAA"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_snuda"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("AAAAAOxROD0AAAAAhevRvo/CdTyF69G+hevRPo/CdTyF69G+AAAAAOxROD0AAAAAhevRPo/CdTyF69G+hevRPo/CdTyF69E+AAAAAOxROD0AAAAAhevRPo/CdTyF69E+hevRvo/CdTyF69E+AAAAAOxROD0AAAAAhevRvo/CdTyF69E+hevRvo/CdTyF69G+/3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+/")
+}]

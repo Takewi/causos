@@ -1,0 +1,26 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage_leaves_dry.png" id="1_yua54"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gnigq"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_yua54")
+texture_filter = 2
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.44, 0.015, -0.44, 0.88, 0.030000001, 0.88),
+"attribute_data": PackedByteArray("AAAAPwAAAD8AAAAAAAAAAAAAgD8AAAAAAAAAPwAAAD8AAIA/AAAAAAAAgD8AAIA/AAAAPwAAAD8AAIA/AACAPwAAAAAAAIA/AAAAPwAAAD8AAAAAAACAPwAAAAAAAAAA"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_gnigq"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("AAAAAOxROD0AAAAArkfhvo/CdTyuR+G+rkfhPo/CdTyuR+G+AAAAAOxROD0AAAAArkfhPo/CdTyuR+G+rkfhPo/CdTyuR+E+AAAAAOxROD0AAAAArkfhPo/CdTyuR+E+rkfhvo/CdTyuR+E+AAAAAOxROD0AAAAArkfhvo/CdTyuR+E+rkfhvo/CdTyuR+G+/3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+/")
+}]

@@ -1,0 +1,26 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage_twigs.png" id="1_c3nh6"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1vtgd"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_c3nh6")
+texture_filter = 2
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.46, 0.0175, -0.46, 0.92, 0.034999996, 0.92),
+"attribute_data": PackedByteArray("AAAAPwAAAD8AAAAAAAAAAAAAgD8AAAAAAAAAPwAAAD8AAIA/AAAAAAAAgD8AAIA/AAAAPwAAAD8AAIA/AACAPwAAAAAAAIA/AAAAPwAAAD8AAAAAAACAPwAAAAAAAAAA"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_1vtgd"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("AAAAAD0KVz0AAAAAH4Xrvilcjzwfheu+H4XrPilcjzwfheu+AAAAAD0KVz0AAAAAH4XrPilcjzwfheu+H4XrPilcjzwfhes+AAAAAD0KVz0AAAAAH4XrPilcjzwfhes+H4Xrvilcjzwfhes+AAAAAD0KVz0AAAAAH4Xrvilcjzwfhes+H4Xrvilcjzwfheu+/3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+//3///wAA/7//f///AAD/v/9///8AAP+/")
+}]

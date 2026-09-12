@@ -1,25 +1,24 @@
 [gd_resource type="ArrayMesh" format=4]
 
-[ext_resource type="Texture2D" path="res://assets/textures/branch_leaves.png" id="1_a6rrn"]
+[ext_resource type="Texture2D" path="res://assets/textures/branch_leaves_dry.png" id="1_a6rrn"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ascdr"]
 shading_mode = 2
 diffuse_mode = 1
 specular_mode = 2
 albedo_color = Color(0.27, 0.22, 0.15, 1)
-texture_filter = 0
+texture_filter = 2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ow4o3"]
 transparency = 2
 alpha_scissor_threshold = 0.5
 alpha_antialiasing_mode = 0
 cull_mode = 2
-depth_draw_mode = 1
 shading_mode = 2
 diffuse_mode = 1
 specular_mode = 2
 albedo_texture = ExtResource("1_a6rrn")
-texture_filter = 0
+texture_filter = 2
 
 [resource]
 _surfaces = [{

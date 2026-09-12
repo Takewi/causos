@@ -7,19 +7,18 @@ shading_mode = 2
 diffuse_mode = 1
 specular_mode = 2
 albedo_color = Color(0.22, 0.16, 0.1, 1)
-texture_filter = 0
+texture_filter = 2
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e27a4"]
 transparency = 2
 alpha_scissor_threshold = 0.5
 alpha_antialiasing_mode = 0
 cull_mode = 2
-depth_draw_mode = 1
 shading_mode = 2
 diffuse_mode = 1
 specular_mode = 2
 albedo_texture = ExtResource("1_66al4")
-texture_filter = 0
+texture_filter = 2
 
 [resource]
 _surfaces = [{

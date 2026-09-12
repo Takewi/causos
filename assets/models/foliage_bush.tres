@@ -1,0 +1,26 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage_bush.png" id="1_1ijtb"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2vpip"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_1ijtb")
+texture_filter = 2
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.72, 0, -0.6235383, 1.44, 0.88, 1.2470766),
+"attribute_data": PackedByteArray("AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAA"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_2vpip"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 18,
+"vertex_data": PackedByteArray("mpkZvwAAAAAAAACAmpkZPwAAAAAAAAAA7FE4P65HYT8AAAAAmpkZvwAAAAAAAACA7FE4P65HYT8AAAAA7FE4v65HYT8AAACAmpmZvgAAAACBBQW/mpmZPgAAAACBBQU/7FG4Pq5HYT81oB8/mpmZvgAAAACBBQW/7FG4Pq5HYT81oB8/7FG4vq5HYT81oB+/mpmZPgAAAACBBQW/mpmZvgAAAACBBQU/7FG4vq5HYT81oB8/mpmZPgAAAACBBQW/7FG4vq5HYT81oB8/7FG4Pq5HYT81oB+//3//f/9/AID/f/9//38AgP9//3//fwCA/3//f/9/AID/f/9//38AgP9//3//fwCA2S7/f6ym1LTZLv9/rKbUtNku/3+sptS02S7/f6ym1LTZLv9/rKbUtNku/3+sptS0AADZrlJZ1LQAANmuUlnUtAAA2a5SWdS0AADZrlJZ1LQAANmuUlnUtAAA2a5SWdS0")
+}]

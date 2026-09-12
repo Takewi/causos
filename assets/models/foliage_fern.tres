@@ -1,0 +1,26 @@
+[gd_resource type="ArrayMesh" format=4]
+
+[ext_resource type="Texture2D" path="res://assets/textures/foliage_fern.png" id="1_2ufjy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_52udk"]
+transparency = 2
+alpha_scissor_threshold = 0.5
+alpha_antialiasing_mode = 0
+cull_mode = 2
+shading_mode = 2
+diffuse_mode = 1
+specular_mode = 2
+albedo_texture = ExtResource("1_2ufjy")
+texture_filter = 2
+
+[resource]
+_surfaces = [{
+"aabb": AABB(-0.77, 0, -0.66683954, 1.54, 0.58, 1.3336791),
+"attribute_data": PackedByteArray("AAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAAAAAAAAAAgD8AAIA/AACAPwAAgD8AAAAAAAAAAAAAgD8AAIA/AAAAAAAAAAAAAAAA"),
+"format": 34359738391,
+"material": SubResource("StandardMaterial3D_52udk"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 18,
+"vertex_data": PackedByteArray("zcwMvwAAAAAAAACAzcwMPwAAAAAAAAAAuB5FP+F6FD8AAAAAzcwMvwAAAAAAAACAuB5FP+F6FD8AAAAAuB5Fv+F6FD8AAACAzcyMvgAAAABt3/O+zcyMPgAAAABt3/M+uB7FPuF6FD//tSo/zcyMvgAAAABt3/O+uB7FPuF6FD//tSo/uB7FvuF6FD//tSq/zcyMPgAAAABt3/O+zcyMvgAAAABt3/M+uB7FvuF6FD//tSo/zcyMPgAAAABt3/O+uB7FvuF6FD//tSo/uB7FPuF6FD//tSq//3//f/9/AID/f/9//38AgP9//3//fwCA/3//f/9/AID/f/9//38AgP9//3//fwCA2S7/f6ym1LTZLv9/rKbUtNku/3+sptS02S7/f6ym1LTZLv9/rKbUtNku/3+sptS0AADZrlJZ1LQAANmuUlnUtAAA2a5SWdS0AADZrlJZ1LQAANmuUlnUtAAA2a5SWdS0")
+}]
