@@ -4,8 +4,8 @@
 - **Proposta**: Jogo de terror e exploração na mata brasileira, com forte atmosfera psicológica e imersiva.
 - **Fidelidade Visual Retrô**:
   - **Shading**: Obrigatório **Flat Shading** (`shading_mode = SHADING_MODE_PER_VERTEX` ou normais calculadas por face no `SurfaceTool`). Proibido iluminação suave/PBR moderna genérica.
-  - **Texturas & Filtragem**: Sempre filtro **Nearest** (`texture_filter = TEXTURE_FILTER_NEAREST`), sem mipmaps borrados ou interpolação trilinear.
-  - **Transparência**: Sempre **Alpha Scissor** com threshold estrito de `0.5` (`transparency = TRANSPARENCY_ALPHA_SCISSOR`, `alpha_scissor_threshold = 0.5`). Proibido Alpha Blend suave em folhagens ou copas para evitar problemas de ordenação e manter a assinatura gráfica da era PS1/PC dos anos 90.
+  - **Texturas & Filtragem**: Filtro **Nearest** para preservar os pixels e a estética retrô. Na UI e elementos 2D, usa-se `TEXTURE_FILTER_NEAREST` puro (0). Em modelos 3D com texturas repetidas e visualizadas à distância (copas de árvores, folhas caídas, gramas e clutter), é obrigatório o uso de `TEXTURE_FILTER_NEAREST_WITH_MIPMAPS` (1) para eliminar gargalos severos de GPU e cache misses sem introduzir blur bilinear.
+  - **Transparência e Profundidade**: Sempre **Alpha Scissor** com threshold estrito de `0.5` (`transparency = TRANSPARENCY_ALPHA_SCISSOR`, `alpha_scissor_threshold = 0.5`) e `depth_draw_mode = DEPTH_DRAW_OPAQUE_ONLY` (0) em folhagens e árvores para evitar o passe duplo de profundidade que dobra o custo de rasterização. Proibido Alpha Blend suave em folhagens ou copas para manter a assinatura gráfica da era PS1/PC dos anos 90 e evitar problemas de ordenação.
   - **Paleta de Cores**: Tons terrosos, folhagens verde-oliva e florestais, névoa atmosférica verde-escura e iluminação quente de entardecer contrastando com sombras densas.
 
 ---
@@ -16,7 +16,7 @@
     * `scripts/core/`: Controle global, configurações e singletons (`GameManager`).
     * `scripts/player/`: Mecânicas de movimentação e câmera do jogador (`Player`).
     * `scripts/ui/`: Telas e elementos de interface (`MainMenu`, `PauseMenu`, `HUD`).
-    * `scripts/world/`: Geração procedural de relevo (`TerrainModule`), morfologia e cache de malhas (`TreeMeshFactory`), streaming de chunks (`ForestManager`), nós locais de chunk (`ForestChunk`) e parâmetros de mundo (`ForestConfig`).
+    * `scripts/world/`: Geração procedural de relevo (`TerrainModule`), morfologia e cache de malhas (`TreeMeshFactory`), streaming de chunks (`ForestManager`), nós locais de chunk (`ForestChunk`), construtor de árvores e Poisson (`ChunkTreeBuilder`), construtor de folhagens e clutter (`ChunkFoliageBuilder`) e parâmetros de mundo (`ForestConfig`).
   - Proibidos scripts monolíticos ou acoplamento direto entre sistemas sem mediação por nós ou singletons declarados.
 - **Renderização e Densidade com MultiMeshInstance3D**:
   - Toda vegetação densa (árvores, arbustos, tufos de grama) deve ser instanciada obrigatoriamente via `MultiMeshInstance3D`.
@@ -92,3 +92,17 @@
   - Gravação atômica e imediata a cada alteração de propriedade gráfica ou de controle.
 - **Extensibilidade e Skill de Controles (`causos-controls`)**:
   - Novas ações do jogador (`interact`, `flashlight`, etc.) devem ser adicionadas seguindo rigorosamente a skill `.agent/skills/causos-controls/SKILL.md` (registro no `InputMap`, traduções em `translations.csv` e inclusão nas constantes de `SettingsMenu.gd`).
+
+---
+
+## 6. Histórico de Versões e Automação de CI/CD (GitHub Releases)
+- **Workflow Automatizado Multiplataforma (`.github/workflows/build-release.yml`)**:
+  - Acionado a cada push na branch `main`.
+  - Exporta binários headless com Godot CI para Windows (`.exe`, `.zip`), Linux (`.x86_64`, `.tar.gz`, `.zip`) e macOS (`.app` universal com bit `+x` preservado no `.zip`).
+  - Determinação semântica automática de tags com base nos commits (`feat` -> incrementa minor, fix/outros -> incrementa patch).
+- **Versões Publicadas**:
+  - `v0.8.0`: Nova textura de solo uniforme via FFT 2D sem padrão xadrez, clutter 3D rasteiro com 9 arquétipos (folhas secas/verdes, galhos, flores silvestres), otimizações de shaders para GPU integrada (`PER_VERTEX`, `DEPTH_DRAW_OPAQUE_ONLY`, `NEAREST_WITH_MIPMAPS`) e refatoração modular de `ForestChunk` com `ChunkTreeBuilder` e `ChunkFoliageBuilder`.
+  - `v0.7.0`: Correção da persistência de resolução e modo de exibição no primeiro boot da aplicação.
+  - `v0.6.0`: Menu de configurações modular em 3 abas, suporte completo a controle Xbox, navegação por bumpers (`LB`/`RB`), remapeamento de teclado, modo alternar corrida (*toggle sprint*) e sensibilidade analógica.
+  - `v0.5.1` / `v0.5.0`: Correção do bit de execução (+x) para macOS e empacotamento das releases.
+  - `v0.4.1` / `v0.4.0` / `v0.3.0` / `v0.2.0` / `v0.1.0`: Streaming assíncrono com `WorkerThreadPool`, 15 variações de árvores, geração procedural contínua e protótipo inicial.

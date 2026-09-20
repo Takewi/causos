@@ -125,6 +125,11 @@
   - Cálculo semântico de tag no próprio workflow: busca a última tag `vX.Y.Z`, detecta alterações (`feat` incrementa versão minor, caso contrário incrementa patch), garantindo unicidade de tag e publicação sem pular etapas.
   - Geração automática de notas de lançamento (`generate_release_notes: true`) com pacotes `.zip` e `.tar.gz` empacotados e assinados pelo commit sha de destino.
   - Preservação do bit de execução (+x) do bundle macOS na release (PR #1), evitando descompactação intermediária pelo artifact uploader e adicionando validação com `unzip -Z`.
+- [x] **Release `v0.8.0` Publicada e Branches Sincronizadas (`main` & `dev`)**:
+  - Merge concluído da branch `feat/vegetation-textures-variations` nas branches `dev` e `main` (commit `9ddd37a`).
+  - Sincronização remota via `git push origin main` e `git push origin dev`.
+  - Workflow acionado automaticamente no GitHub Actions, gerando a tag semântica `v0.8.0` e os artefatos para Windows, Linux e macOS.
+  - Bateria de testes de regressão automatizada (`test_settings_and_controls.gd`) executada e 100% aprovada.
 
 ---
 
